@@ -8,6 +8,7 @@ local Statuses = script.Statuses
 function Status.Start()
     for _,Module in Statuses:GetChildren() do
         local ModName = Module.Name
+        print(require(Module))
         StatusLibrary[ModName] = require(Module)
     end
     print("Status Library Loaded",  StatusLibrary)
