@@ -23,7 +23,7 @@ end
 local function PlayerAdded(player)
 	if player.Character then
 		task.defer(CharacterAdded, player.Character)
-	end
+	end -- n ocommit
 	player.CharacterAdded:Connect(CharacterAdded)
 	player.CharacterRemoving:Connect(CharacterDied)
 end
