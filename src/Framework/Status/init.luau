@@ -1,4 +1,6 @@
 local Status = {}
+Status.__index = Status
+
 local StatusLibrary = {}
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -14,14 +16,17 @@ function Status.Start()
     print("Status Library Loaded",  StatusLibrary)
 end
 
-function Status.Process()
+function Status.New(Player, Status)
+    local self = setmetatable({}, Status)
 
+    
+    return self
 end
-
 
 ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(Player, StatusName)
     print("processed", StatusName)
     if not StatusLibrary[StatusName] then return warn("Status going by "..StatusName.." not found.") end
+    Status.New(Player, StatusLibrary[StatusName])
 end)
 
 return Status
