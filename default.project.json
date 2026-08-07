@@ -10,7 +10,7 @@
     },
 
     "ServerScriptService": {
-      "Server": {
+      "Framework": {
         "$path": "src/Framework"
       }
     },
