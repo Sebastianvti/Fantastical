@@ -2,7 +2,7 @@ local CharacterLoader = {}
 
 local Players = game:GetService("Players")
 
-local CharacterVariables = require(script.Parent.CharacterVariables)
+local StatusManager = require(script.Parent.StatusManager)
 
 
 function CharacterLoader.Start()
@@ -11,19 +11,18 @@ end
 
 local function CharacterAdded(Character)
 	print("Alive")
-	-- init anything here that needs to be loaded AFTER character loads
-	CharacterVariables.Init(Character)
+	StatusManager.Init(Character)
 end
 
 local function CharacterDied(Character)
-	CharacterVariables.DeInit(Character)
+	StatusManager.DeInit(Character)
 end
 
 
 local function PlayerAdded(player)
 	if player.Character then
 		task.defer(CharacterAdded, player.Character)
-	end -- n ocommit
+	end 
 	player.CharacterAdded:Connect(CharacterAdded)
 	player.CharacterRemoving:Connect(CharacterDied)
 end
