@@ -19,7 +19,7 @@ local function  SplitPackage(Package, IndexPoint : number, EndNum : number)
     local EndPoint
     local Index = 0
     local ReturnPackage = Main.New(Package.Player, Package.Status.Name) table.clear(ReturnPackage.Base)
-    
+
     table.insert(ReturnPackage.SettingBlacklist, "Timer")
 
     if not EndNum then
@@ -57,12 +57,11 @@ function Timer.CreateTimer(Package, PackTime : number, Order : number)
         OsClock = os.clock(),
 
         Task = task.delay(PackTime, function() 
+            Package.CharacterSheet.Active_Timers[TimerName] = nil
             Main.Batch(Package)
-            table.remove(ActiveSheet, table.find(ActiveSheet[TimerName], TimerName))
     end)
     }
 
-    print(Package.CharacterSheet.Active_Timers)
 end
 
 

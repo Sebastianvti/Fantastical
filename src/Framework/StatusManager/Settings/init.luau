@@ -20,7 +20,7 @@ function Settings.VerifySettings(Package)
 
     -- Settings done within the loop do not need ordering
     for Key, Value in pairs(Package.Settings) do -- checks settings of status being passed
-        if Value and SettingKeys[Key] and not table.find(Package.SettingBlacklist) then
+        if Value and SettingKeys[Key] then
             print("Running setting "..Key.." for status "..Package.Status.Name)
             if not SettingKeys[Key](Package) then return false end
         end
