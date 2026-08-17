@@ -3,6 +3,8 @@ return function(Package)
     local TimerMain = require(script.Parent.Parent.Timer)
     local Array = {}
 
+    if table.find(Package.SettingBlacklist, "Timer") then return true end
+
     for Index,Value in Package.Base do 
         if Package.Settings[Value.."Timer"] then table.insert(Array, Index) end
     end
