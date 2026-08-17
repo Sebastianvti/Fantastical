@@ -15,6 +15,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Statuses = script.Statuses
 
+-- Shallow tables whenever the table is not cosmetic
+-- Deep tables whenever the table is cosmetic and just for organization
+
 function StatusManager.Start()
     for _,Module in Statuses:GetChildren() do
         local ModName = Module.Name
@@ -24,7 +27,7 @@ function StatusManager.Start()
     print("Status Library Loaded",  StatusLibrary)
 end
 
-function StatusManager:Batch()
+function StatusManager.Batch(self)
     if not self:DoSettings() then return end
     self:Finalize()
 end
@@ -49,9 +52,7 @@ function StatusManager.New(Player : Player, StatusName : string)
     self.Settings = self.Status.Settings
     self.Base = Methods[self.Status.Method](self)
     self.SubClass = nil
-    self.Timer = {}
-    self.Timer.AddTimer = self.Settings.AddTimer
-    print(self)
+    
     return self
 end
 
@@ -130,7 +131,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(Player, StatusName)
 
     if not StatusLibrary[StatusName] then return warn("Status going by "..StatusName.." not found.") end
     local Status = StatusManager.New(Player, StatusName)
-    Status:Batch()
+    Status.Batch(Status)
 
     print("Processing time : ", os.clock() - StartTime)
     print(StatusManager.GetSheet(Player.Character))

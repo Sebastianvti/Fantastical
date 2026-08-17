@@ -6,15 +6,15 @@ return {
 
     Settings = {
         Conflicts = true, -- Whether this status conflicts with other statuses, if dominant is false, this will not pass, if dominant is true then it will remove the other statuses and apply this one.
-        Dominant = true, -- Whether this status is dominant, if true it will remove conflicting statuses when applied.
-        CanStack = true,
-        AddTimer = false,
-        RemoveTimer = false,
+        Dominant = false, -- Whether this status is dominant, if true it will remove conflicting statuses when applied.
+        CanStack = false,
+        AddTimer = true,
+        SubtractTimer = true,
 
         StackSize = 5, -- any number
         Priority = 3, -- 1 to 5
         AddDuration = 5,
-        RemoveDuration = 5,
+        SubtractDuration = 5,
     },
 
     Incompatible = {},
