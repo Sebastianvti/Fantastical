@@ -31,6 +31,7 @@ function Utility.Modify(self)
         Process(self, Value)
         Sheet.Active = TableOperators[Value](Sheet.Active, Status.Name)
     end
+    print(Sheet)
     return self
 end
 

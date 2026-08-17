@@ -13,8 +13,8 @@ return {
 
         StackSize = 5, -- any number
         Priority = 3, -- 1 to 5
-        AddDuration = 5,
-        SubtractDuration = 5,
+        AddDuration = 1,
+        SubtractDuration = 1,
     },
 
     Incompatible = {},

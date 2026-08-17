@@ -52,7 +52,9 @@ function StatusManager.New(Player : Player, StatusName : string)
     self.Settings = self.Status.Settings
     self.Base = Methods[self.Status.Method](self)
     self.SubClass = nil
-    
+    self.SettingBlacklist = {} -- if this status needs to do multiple setting checks, you can set certain settings on blacklist so that they are only checked a certain number of times
+
+    print(self)
     return self
 end
 
@@ -133,8 +135,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(Player, StatusName)
     local Status = StatusManager.New(Player, StatusName)
     Status.Batch(Status)
 
-    print("Processing time : ", os.clock() - StartTime)
-    print(StatusManager.GetSheet(Player.Character))
+   -- print("Processing time : ", os.clock() - StartTime)
 end)
 
 return StatusManager
