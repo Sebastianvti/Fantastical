@@ -1,9 +1,16 @@
 local Settings = {}
-local SettingKeys = {}
+local SettingKeys = {
+    -- top first, bottom last
+    -- if not specified then order is irrelevant
+    Timer = require(script.TimerSetting),
+    VerifyConflictWithOthers = (script.Conflicts.VerifyConflictWithOthers)
+}
 
-local VerifyConflictWithOthers = require(script.Conflicts.VerifyConflict)
-local Timer = require(script.TimerSetting)
-
+local FalseMessages = {
+    Default = "Setting failed to pass."
+    Timer = "No timer found in status"
+    VerifyConflictWithOthers = "Statuses currently enabled are not compatible."
+}
 
 for _,Module in script:GetChildren() do
     local ModName = Module.Name
@@ -12,15 +19,10 @@ end
 
 
 function Settings.VerifySettings(Package)
-    -- Do settings in order of importance, some need to be done first.
-    if not VerifyConflictWithOthers(Package) then warn("Status did not pass because another active status is conflicting.") return false end -- checks currently existing statuses if the one being added is compatible
-    if not Timer(Package) then return end
-
-    -- Settings done within the loop do not need ordering
-    for Key, Value in pairs(Package.Settings) do -- checks settings of status being passed
+    for Key, Value in pairs(Package.Settings) do 
         if Value and SettingKeys[Key] then
             print("Running setting "..Key.." for status "..Package.Status.Name)
-            if not SettingKeys[Key](Package) then return false end
+            if not SettingKeys[Key](Package) then warn(FalseMessages[Key] or FalseMessages[Default]) return false end
         end
     end
     return true
