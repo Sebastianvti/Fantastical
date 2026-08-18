@@ -20,6 +20,8 @@ local function  SplitPackage(Package, IndexPoint : number, EndNum : number)
     local Index = 0
     local ReturnPackage = Main.New(Package.Player, Package.Status.Name) table.clear(ReturnPackage.Base)
 
+    table.insert(ReturnPackage.SettingBlacklist, "Timer")
+
     if not EndNum then
         EndPoint = IndexPoint
     else
@@ -50,15 +52,16 @@ function Timer.CreateTimer(Package, PackTime : number, Order : number)
     
     local TimerName = (Package.Status.Name.."_"..Order)
     local ActiveSheet = Package.CharacterSheet.Active_Timers
-    
+
     ActiveSheet[TimerName] = {
         OsClock = os.clock(),
-        Task = task.delay(PackTime, function()
-        print("crud")
+
+        Task = task.delay(PackTime, function() 
+            Package.CharacterSheet.Active_Timers[TimerName] = nil
+            Main.Batch(Package)
     end)
     }
 
-    print(Package.CharacterSheet.Active_Timers)
 end
 
 

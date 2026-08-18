@@ -18,6 +18,7 @@ for _,Module in script:GetChildren() do
 end
 
 
+
 function Settings.VerifySettings(Package)
     for Key, Value in pairs(Package.Settings) do 
         if Value and SettingKeys[Key] then
