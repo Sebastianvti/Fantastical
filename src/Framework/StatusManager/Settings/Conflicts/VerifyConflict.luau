@@ -5,7 +5,7 @@ return function(Package)
     local Main = require(script.Parent.Parent.Parent)
     local Priority = require(script.Parent.ComparePriority)
     local Utility = require(script.Parent.Parent.Parent.Utility)
-
+-- Reform?
 if #Package.CharacterSheet.Active > 0 then 
     for _,Status in pairs(Package.CharacterSheet.Active) do
         if table.find(Main.GetIncompats(Status), Package.Status.Name) or table.find(Main.GetIncompatGroups(Status), Main.GetGroup(Package.Status.Name)) then

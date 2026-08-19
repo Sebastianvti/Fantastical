@@ -80,17 +80,33 @@ function StatusManager.ClearActive(Player : Player, Name : string)
     end
 end
 
+function StatusManager.GetStackSize(Name : string, Character : Model)
+    local Sheet = StatusManager.GetSheet(Character)
+    local Key = table.find(Sheet.Active_Stacks, (Name.."_Stack"))
+
+    if not Key then return end
+    return #Key
+end
+
+function StatusManager.ClearStack(Name : string, Character : Model)
+    local Sheet = StatusManager.GetSheet(Character)
+    local Key = table.find(Sheet.Active_Stacks, (Name.."_Stack"))
+
+    if not Key then return end
+    Key = nil
+end
+
 function StatusManager.ClearTimers(Player : Player, Name : string)
     local Character = Player.Character
     local Sheet = StatusManager.GetSheet(Character)
 
     for Key,_ in Sheet.Active_Timers do 
-        task.cancel(Key[Task])
+        task.cancel(Key.Task)
         Key = nil
     end
 end
 
-function  StatusManager.GetAllActive(Name : string, Character : Model) -- checks both timer and actives
+function  StatusManager.GetAllActiveStatuses(Name : string, Character : Model) -- checks both timer and actives
     local GetTimers = StatusManager.GetTimers(Name, Character)
     local GetActive = StatusManager.GetActive(Name, Character)
     return GetTimers + GetActive
@@ -98,16 +114,18 @@ end
 
 function StatusManager.GetActive(Name : string, Character : Model)
     local FoundKeys = 0
-    for _,Value in StatusManager.GetSheet(Character)[Active] do
+    for _,Value in StatusManager.GetSheet(Character).Active do
         if Value == Name then FoundKeys += 1 
+        end
     end
     return FoundKeys
 end
 
 function StatusManager.GetTimers(Name : string, Character : Model)
     local FoundKeys = 0
-    for Key : string,_ in StatusManager.GetSheet(Character)[Active_Timers] do
+    for Key : string,_ in StatusManager.GetSheet(Character).Active_Timers do
         if string.split(Key, "_")[1] == Name then FoundKeys += 1 
+        end
     end
     return FoundKeys
 end

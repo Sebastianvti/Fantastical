@@ -1,12 +1,12 @@
 return 
     function(Package)
 
-    if table.find(Package.CharacterSheet.Active, Package.Status.Name) then return true end
-
       local DominantSetting = Package.Status.Settings.Dominant
       local Main = require(script.Parent.Parent)
       local Utility = require(script.Parent.Parent.Utility)
       local Priority = require(script.ComparePriority)
+      
+    if table.find(Package.CharacterSheet.Active, Package.Status.Name) then return true end
 
        if #Package.Status.Incompatible == 0 and #Package.Status.IncompatibleGroups == 0 then print("No conflicts found, you should disable this setting if it wont be used.") return true end
 

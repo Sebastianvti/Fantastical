@@ -1,6 +1,7 @@
 return function(Package)
     local Main = require(script.Parent.Parent)
     local TimerMain = require(script.Parent.Parent.Timer)
+    
     local Array = {}
 
     if table.find(Package.SettingBlacklist, "Timer") then return true end
