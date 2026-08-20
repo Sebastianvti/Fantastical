@@ -39,7 +39,7 @@ function StatusManager:Finalize()
 end
 
 function StatusManager:DoSettings()
-    if not Settings.VerifySettings(self) then print("Setting caused ability to delay or cancel.") return false end
+    if not Settings.VerifySettings(self) then return false end
     return true
 end
 
@@ -53,8 +53,7 @@ function StatusManager.New(Player : Player, StatusName : string)
     self.Base = Methods[self.Status.Method](self)
     self.SubClass = nil
     self.SettingBlacklist = {} -- if this status needs to do multiple setting checks, you can set certain settings on blacklist so that they are only checked a certain number of times
-
-    print(self)
+    
     return self
 end
 
@@ -177,6 +176,20 @@ end
 function StatusManager.DeInit(Character)
     CharacterSheets[Character] = nil
 end
+
+function Settings.ComparePriority(StatusName : string, OtherStatusName : string)
+    local StatusData = StatusManager.GetSettings(StatusName)
+    local OtherStatusData = StatusManager.GetSettings(OtherStatusName)
+
+    if not StatusData or not OtherStatusData then return warn("One or both statuses not found.") end
+
+    if StatusData.Priority < OtherStatusData.Priority then
+        return true
+    else
+        return false
+    end
+end
+
 
 ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(Player, StatusName)
     local StartTime = os.clock()

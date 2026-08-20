@@ -9,8 +9,8 @@ return function(Package)
      local MaxStackSize = Package.Status.Settings.StackSize
      local Stack = Package.CharacterSheet.Active_Stacks[Key]
 
-     if #Stack + Main.GetTimers(Package.Status.Name, Package.Player.Character) >= MaxStackSize then return false end
+     if #Stack + Main.GetTimers(Package.Status.Name, Package.Player.Character) >= MaxStackSize then return {Result = false, ErrorMsg = "Stack reached max size."} end
 
      Package.Base = {"Add"}
-     return true
+     return {Result = true}
 end

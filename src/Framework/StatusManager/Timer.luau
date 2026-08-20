@@ -30,7 +30,7 @@ local function  SplitPackage(Package, IndexPoint : number, EndNum : number)
 
     for _ = 1, #Package.Base + 1 do
         IndexPoint += Index
-        if IndexPoint > EndPoint then print("Returned") return ReturnPackage end
+        if IndexPoint > EndPoint then return ReturnPackage end
 
         table.insert(ReturnPackage.Base, Package.Base[IndexPoint])
 
@@ -50,12 +50,12 @@ end
 
 function Timer.CreateTimer(Package, PackTime : number, Order : number)
     
-    local TimerName = (Package.Status.Name.."_"..Order)
+    local TimerName = Package.Status.Name
     local ActiveSheet = Package.CharacterSheet.Active_Timers
 
     ActiveSheet[TimerName] = {
         OsClock = os.clock(),
-
+        Index = Order,
         Task = task.delay(PackTime, function() 
             Package.CharacterSheet.Active_Timers[TimerName] = nil
             Main.Batch(Package)
