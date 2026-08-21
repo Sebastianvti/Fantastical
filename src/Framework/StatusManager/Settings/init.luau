@@ -1,32 +1,24 @@
 local Settings = {}
 local SettingKeys = {
-    -- top first, bottom last
-    -- if not specified then order is irrelevant
-    Timer = require(script.TimerSetting),
-    VerifyConflictWithOthers = (script.Conflicts.VerifyConflictWithOthers)
+    -- top is first, and bottom is last. settings at the top usually modify base behavior
+    -- At the bottom should always be finalizer
+    CanStack = require(script.CanStack),
+    TimerSetting = require(script.TimerSetting),
+    VerifyConflict = require(script.Conflicts.VerifyConflict)
+    Conflicts = require(script.Parent.Conflicts)
+    Finalizer = require(script.Parent.Finalizer)
 }
 
-local FalseMessages = {
-    Default = "Setting failed to pass."
-    Timer = "No timer found in status"
-    VerifyConflictWithOthers = "Statuses currently enabled are not compatible."
-}
-
-for _,Module in script:GetChildren() do
-    local ModName = Module.Name
-    SettingKeys[ModName] = require(Module)
-end
-
-
-
-function Settings.VerifySettings(Package) -- this is terrible
-    for Key, Value in pairs(Package.Settings) do 
-        if Value and SettingKeys[Key] then
-            print("Running setting "..Key.." for status "..Package.Status.Name)
-            if not SettingKeys[Key](Package) then warn(FalseMessages[Key] or FalseMessages[Default]) return false end
+function Settings.VerifySettings(Package)
+    for Setting,Method in SettingKeys do
+        if Package.Settings[Setting] == true or Package.Settings[Setting] == nil then
+            
+            local SettingResult = Method(Package)
+            if not SettingResult.Result then warn(SettingResult.ErrorMsg) return end
         end
-    end
+    end 
     return true
 end
+
 
 return Settings

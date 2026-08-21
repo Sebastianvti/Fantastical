@@ -10,6 +10,7 @@ return {
         CanStack = false,
         AddTimer = false,
         SubtractTimer = false,
+        ReactiveTimer = false,
 
         StackSize = 5, -- any number
         Priority = 3, -- 1 to 5

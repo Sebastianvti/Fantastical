@@ -41,7 +41,7 @@ function StatusManager:Finalize()
 end
 
 function StatusManager:DoSettings()
-    if not Settings.VerifySettings(self) then print("Setting caused ability to delay or cancel.") return false end
+    if not Settings.VerifySettings(self) then return false end
     return true
 end
 
@@ -150,6 +150,8 @@ function StatusManager.GetWhitelist(Name : string)
     return StatusData.Whitelist
 end
 
+function StatusManager.ComparePriority(Name: string, N)
+
 function StatusManager.GetSheet(Character)
     return CharacterSheets[Character]
 end
@@ -161,6 +163,7 @@ end
 function StatusManager.DeInit(Character)
     CharacterSheets[Character] = nil
 end
+
 
 ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(Player, StatusName)
     local StartTime = os.clock()
