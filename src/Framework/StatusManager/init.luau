@@ -1,6 +1,8 @@
 local StatusManager = {}
 StatusManager.__index = StatusManager
 
+-- Written 2026
+
 local StatusLibrary = {}
 StatusLibrary.Groups = {}
 local CharacterSheets = {}

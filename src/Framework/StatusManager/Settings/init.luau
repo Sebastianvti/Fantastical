@@ -19,7 +19,7 @@ end
 
 
 
-function Settings.VerifySettings(Package)
+function Settings.VerifySettings(Package) -- this is terrible
     for Key, Value in pairs(Package.Settings) do 
         if Value and SettingKeys[Key] then
             print("Running setting "..Key.." for status "..Package.Status.Name)
