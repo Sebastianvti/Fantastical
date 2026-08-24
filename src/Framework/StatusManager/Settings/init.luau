@@ -4,17 +4,17 @@ local SettingKeys = {
     -- At the bottom should always be finalizer
     CanStack = require(script.CanStack),
     TimerSetting = require(script.TimerSetting),
-    VerifyConflict = require(script.Conflicts.VerifyConflict)
-    Conflicts = require(script.Parent.Conflicts)
+    ConflictSetting = require(script.ConflictSetting)
     Finalizer = require(script.Parent.Finalizer)
 }
 
 function Settings.VerifySettings(Package)
+    if table.find(Package.SettingBlacklist, "All") then return false end
     for Setting,Method in SettingKeys do
-        if Package.Settings[Setting] == true or Package.Settings[Setting] == nil then
+        if Package.Settings[Setting] == true or Package.Settings[Setting] == nil and not table.find(Package.SettingBlacklist, Setting) then
             
             local SettingResult = Method(Package)
-            if not SettingResult.Result then warn(SettingResult.ErrorMsg) return end
+            if not SettingResult.Result then warn(SettingResult.ErrorMsg) return false end
         end
     end 
     return true
