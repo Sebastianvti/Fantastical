@@ -5,7 +5,6 @@ local SettingKeys = {
     CanStack = require(script.CanStack),
     TimerSetting = require(script.TimerSetting),
     ConflictSetting = require(script.ConflictSetting)
-    Finalizer = require(script.Parent.Finalizer)
 }
 
 function Settings.VerifySettings(Package)

@@ -5,6 +5,8 @@ StatusManager.__index = StatusManager
 
 local StatusLibrary = {}
 StatusLibrary.Groups = {}
+StatusLibrary.Statuses = {}
+
 local CharacterSheets = {}
 
 local Methods = require(script.Methods)
@@ -13,6 +15,7 @@ local Utility = require(script.Utility)
 local Settings = require(script.Settings)
 
 local Players = game:GetService("Players")
+local ProximityPromptService = game:GetService("ProximityPromptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Statuses = script.Statuses
@@ -23,8 +26,8 @@ local Statuses = script.Statuses
 function StatusManager.Start()
     for _,Module in Statuses:GetChildren() do
         local ModName = Module.Name
-        StatusLibrary[ModName] = require(Module)
-        StatusLibrary.Groups[StatusLibrary[ModName].Group] = StatusLibrary[ModName].Name
+        StatusLibrary.Statuses[ModName] = require(Module)
+        StatusLibrary.Groups[StatusLibrary.Statuses[ModName].Group] = StatusLibrary.Statuses[ModName].Name
     end
     print("Status Library Loaded",  StatusLibrary)
 end
@@ -51,6 +54,7 @@ function StatusManager.New(Player : Player, StatusName : string)
     self.Player = Player
     self.CharacterSheet = CharacterSheets[Player.Character]
     self.Status = StatusManager.GetStatus(StatusName)
+    self.Name = self.Status.Name
     self.Settings = self.Status.Settings
     self.Base = Methods[self.Status.Method](self)
     self.SubClass = nil
@@ -87,7 +91,7 @@ function StatusManager.ClearTimers(Player : Player, Name : string)
     local Sheet = StatusManager.GetSheet(Character)
 
     for Key,_ in Sheet.Active_Timers do 
-        task.cancel(Key[Task])
+        task.cancel(Key.Task)
         Key = nil
     end
 end
@@ -100,57 +104,32 @@ end
 
 function StatusManager.GetActive(Name : string, Character : Model)
     local FoundKeys = 0
-    for _,Value in StatusManager.GetSheet(Character)[Active] do
-        if Value == Name then FoundKeys += 1 
+    for _,Value in StatusManager.GetSheet(Character).Active do
+        if Value == Name then FoundKeys += 1 end
     end
     return FoundKeys
 end
 
 function StatusManager.GetTimers(Name : string, Character : Model)
     local FoundKeys = 0
-    for Key : string,_ in StatusManager.GetSheet(Character)[Active_Timers] do
-        if string.split(Key, "_")[1] == Name then FoundKeys += 1 
+    for Key : string,_ in StatusManager.GetSheet(Character).Active_Timers do
+        if string.split(Key, "_")[1] == Name then FoundKeys += 1 end
     end
     return FoundKeys
 end
 
-function StatusManager.GetGroup(Name : string)
-    local StatusData = StatusLibrary[Name]
-    if not StatusData then return warn("Status going by "..Name.." not found.") end
-    return StatusData.Group
-end
-
-function StatusManager.GetStatus(Name : string)
-    local StatusData = StatusLibrary[Name]
-    if not StatusData then return warn("Status going by "..Name.." not found.") end
-    return StatusData
-end
-
-function StatusManager.GetSettings(Name : string)
-    local StatusData = StatusLibrary[Name]
-    if not StatusData then return warn("Status going by "..Name.." not found.") end
-    return StatusData.Settings
-end
-
-function StatusManager.GetIncompats(Name : string)
-    local StatusData = StatusLibrary[Name]
-    if not StatusData then return warn("Status going by "..Name.." not found.") end
-    return StatusData.Incompatible
-end
-
-function StatusManager.GetIncompatGroups(Name : string)
-    local StatusData = StatusLibrary[Name]
-    if not StatusData then return warn("Status going by "..Name.." not found.") end
-    return StatusData.IncompatibleGroups
-end
 
 function StatusManager.GetWhitelist(Name : string)
-    local StatusData = StatusLibrary[Name]
-    if not StatusData then return warn("Status going by "..Name.." not found.") end
+    local StatusData = StatusManager.GetStatus(Name)
+    if not StatusData.Result then warn(StatusData.ErrorMsg) return end
     return StatusData.Whitelist
 end
 
-function StatusManager.ComparePriority(Name: string, N)
+function StatusManager.GetStatus(Name : string)
+    local StatusData = StatusLibrary.Statuses[Name]
+    if not StatusData then return {Result = false, ErrorMsg = "Status going by "..Name.." not found."} end
+    return StatusData
+end
 
 function StatusManager.GetSheet(Character)
     return CharacterSheets[Character]
@@ -167,9 +146,11 @@ end
 
 ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(Player, StatusName)
     local StartTime = os.clock()
+    local Status = StatusManager.GetStatus(StatusName)
 
-    if not StatusLibrary[StatusName] then return warn("Status going by "..StatusName.." not found.") end
+    if not Status then return warn(Status.ErrorMsg) end
     local Status = StatusManager.New(Player, StatusName)
+
     Status.Batch(Status)
 
    -- print("Processing time : ", os.clock() - StartTime)

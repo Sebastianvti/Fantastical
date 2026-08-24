@@ -1,6 +1,7 @@
 return {
     Name = script.Name, -- Name of the status, used for identification and referencing
     Group = "Debug", -- Group or category the status belongs to, for organizational purposes
+    Priority = 3, -- 1 to 5
     Method = "Permanent", -- Method of application
     RemovalMethod = nil, -- Method of removal, if you want it to differ from the application method. If nil, it will use the same method as the application.
 
@@ -13,7 +14,6 @@ return {
         ReactiveTimer = false, -- a normal timer only checks settings when its over, reactive timers act as if they are active while still in timing
 
         StackSize = 5, -- any number
-        Priority = 3, -- 1 to 5
         AddDuration = 1,
         SubtractDuration = 1,
     },

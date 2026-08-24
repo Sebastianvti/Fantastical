@@ -56,6 +56,7 @@ function Timer.CreateTimer(Package, PackTime : number, Order : number)
     ActiveSheet[TimerName] = {
         OsClock = os.clock(),
         Index = Order,
+        Reactive = Package.Settings.ReactiveTimer,
         Task = task.delay(PackTime, function() 
             Package.CharacterSheet.Active_Timers[TimerName] = nil
             Main.Batch(Package)

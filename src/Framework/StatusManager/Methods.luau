@@ -4,7 +4,6 @@ function MethodLibrary:Permanent()
 	if table.find(self.CharacterSheet.Active, self.Status.Name) or self.CharacterSheet.Active_Timers[self.Status.Name] then 
 	return {"Subtract"} end
 
-	print("Add")
 	return {"Add"}
 end
 
