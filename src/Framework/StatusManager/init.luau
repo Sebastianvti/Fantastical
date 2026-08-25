@@ -76,11 +76,12 @@ function StatusManager.ClearActive(Player : Player, Name : string)
     for _,Value in Sheet.Active do 
         if Value == Name then
 
-         local ValidatedStatus = StatusManager.New(Players:GetPlayerFromCharacter(Character), Name)
+        local ValidatedStatus = StatusManager.New(Players:GetPlayerFromCharacter(Character), Name)
         
-         ValidatedStatus:DoSettings()
-         ValidatedStatus.Base = {"Subtract"}
-         ValidatedStatus:Finalize()
+        table.insert(ValidatedStatus.SettingBlacklist, "ConflictSetting", "TimerSetting")
+        ValidatedStatus:DoSettings()
+        ValidatedStatus.Base = {"Subtract"}
+        ValidatedStatus:Finalize()
 
         end
     end

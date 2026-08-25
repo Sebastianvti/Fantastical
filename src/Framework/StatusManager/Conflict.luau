@@ -23,15 +23,21 @@ local function ComparePriority(Package, NewStatus)
     return TopPriority
 end
 
+local function RemovePackage(RemovePackage, KeepPackage)
+    Main.ClearAll(RemovePackage.Name)
+
+
+    return KeepPackage
+end
+
 local function Dominance(Package, NewStatus)
 
     local PackageDomin = Package.Settings.Dominant
     local NewStatusDomin = NewStatus.Settings.Dominant 
 
-    local DominantPackage = {
-        [0] = "None",
-        [1] = Package,
-        [2] = NewStatus,
+    local DominanceResult = {
+        [1] = RemovePackage(Package, NewStatus)
+        [2] = RemovePackage(NewStatus, Package)
         [3] = ComparePriority(Package, NewStatus)
     }
 
@@ -39,12 +45,10 @@ local function Dominance(Package, NewStatus)
     
     local PackDominNum = (PackageDomin and 1 ) or 0
     local NewStatNum = (PackageDomin and 2 ) or 0
+    local PackageResult = PackDominNum + NewStatNum
 
-  
-    if Package.Settings.Dominant and NewStatus.Settings.Dominant then
-
-    end
-
+    
+    return DominanceResult[PackageResult] or true
 end
 
 local function IsWhitelisted(Package, NewStatus)
