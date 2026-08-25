@@ -81,10 +81,10 @@ function Conflict.Begin(Package)
     for _,Status in Actives do  -- Checking if incoming status is compatible with anything active.
         local NewStatus = Main.GetStatus(Status)
         if IsWhitelisted then return true end
-        IncompatGroups()
-        IncompatIndividual()
-    end
+        if not IncompatGroups() or not IncompatIndividual() then return false end
 
+    end
+    return true 
 end
 
 return Conflict

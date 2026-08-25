@@ -7,7 +7,7 @@ return
 
         local ConflictCheck = ConflictMain.Begin(Package)
 
-            return {Result = ConflictCheck}
+            return {Result = ConflictCheck, ErrorMsg = "Conflict detected, and failed to pass"}
         end
     
     return {Result = true}
