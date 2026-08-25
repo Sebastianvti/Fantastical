@@ -24,6 +24,7 @@ local Statuses = script.Statuses
 -- Deep tables whenever the table is cosmetic and just for organization
 
 function StatusManager.Start()
+
     for _,Module in Statuses:GetChildren() do
         local ModName = Module.Name
         StatusLibrary.Statuses[ModName] = require(Module)
@@ -49,9 +50,11 @@ function StatusManager:DoSettings()
 end
 
 function StatusManager.New(Player : Player, StatusName : string)
+    if Player:IsA("Model") then Player = Players:GetPlayerFromCharacter(Player) end
+
     local self = setmetatable({}, StatusManager)
 
-    self.Player = Player
+    self.Player = Player 
     self.CharacterSheet = CharacterSheets[Player.Character]
     self.Status = StatusManager.GetStatus(StatusName)
     self.Name = self.Status.Name
@@ -64,19 +67,18 @@ function StatusManager.New(Player : Player, StatusName : string)
     return self
 end
 
-function  StatusManager.ClearAll(Player : Player, Name : string)
-   StatusManager.ClearActive(Player, Name)
-   StatusManager.ClearTimers(Player, Name)
+function  StatusManager.ClearAll(Character : Model, Name : string)
+   StatusManager.ClearActive(Character, Name)
+   StatusManager.ClearTimers(Character, Name)
 end
 
-function StatusManager.ClearActive(Player : Player, Name : string)
-    local Character = Player.Character
+function StatusManager.ClearActive(Character : Model, Name : string)
     local Sheet = StatusManager.GetSheet(Character)
 
     for _,Value in Sheet.Active do 
         if Value == Name then
 
-        local ValidatedStatus = StatusManager.New(Players:GetPlayerFromCharacter(Character), Name)
+        local ValidatedStatus = StatusManager.New(Character, Name)
          
         table.insert(ValidatedStatus.SettingBlacklist, "All")
         ValidatedStatus:DoSettings()
@@ -87,8 +89,7 @@ function StatusManager.ClearActive(Player : Player, Name : string)
     end
 end
 
-function StatusManager.ClearTimers(Player : Player, Name : string)
-    local Character = Player.Character
+function StatusManager.ClearTimers(Character : Model, Name : string)
     local Sheet = StatusManager.GetSheet(Character)
 
     for Key,_ in Sheet.Active_Timers do 
@@ -154,7 +155,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(Player, StatusName)
 
     Status.Batch(Status)
 
-   -- print("Processing time : ", os.clock() - StartTime)
+    print("Processing time : ", os.clock() - StartTime)
 end)
 
 return StatusManager

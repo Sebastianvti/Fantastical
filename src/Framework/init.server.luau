@@ -2,6 +2,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local Cache = {}
 
 for Index,Module in ServerScriptService.Framework:GetChildren() do
+	if not Module:IsA("ModuleScript") then return end
 	
 	local ModName = Module.Name
 	Cache[ModName] = require(Module)
