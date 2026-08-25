@@ -77,8 +77,8 @@ function StatusManager.ClearActive(Player : Player, Name : string)
         if Value == Name then
 
         local ValidatedStatus = StatusManager.New(Players:GetPlayerFromCharacter(Character), Name)
-        
-        table.insert(ValidatedStatus.SettingBlacklist, "ConflictSetting", "TimerSetting")
+         
+        table.insert(ValidatedStatus.SettingBlacklist, "All")
         ValidatedStatus:DoSettings()
         ValidatedStatus.Base = {"Subtract"}
         ValidatedStatus:Finalize()

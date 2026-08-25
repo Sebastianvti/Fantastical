@@ -8,7 +8,7 @@ local SettingKeys = {
 }
 
 function Settings.VerifySettings(Package)
-    if table.find(Package.SettingBlacklist, "All") then return false end
+    if table.find(Package.SettingBlacklist, "All") then return true end
     for Setting,Method in SettingKeys do
         if Package.Settings[Setting] == true or Package.Settings[Setting] == nil and not table.find(Package.SettingBlacklist, Setting) then
             
