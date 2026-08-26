@@ -11,7 +11,7 @@ return function(Package)
     if #Array == 0 then return {Result = true} end
 
         if Package.Settings.RemoveOnAdd then 
-            if #Package.Base == "Add" then
+            if Package.Base[#Package.Base] == "Add" then
                 table.insert(Package.Base, "Subtract")
             end
 
@@ -27,7 +27,7 @@ return function(Package)
         Main.Batch(NewPackage)
     end
 
-    if Package.Settings.ReactiveTimer then Package.Finalizer = {} return {Result = true} end
+    if Package.Settings.ReactiveTimer then return {Result = true} end
     TimerMain.Begin(Package, Array)
     return {Result = false, ErrorMsg = "Timer detected. Status is being applied through the timer."}
 end
