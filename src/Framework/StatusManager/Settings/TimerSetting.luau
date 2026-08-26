@@ -1,7 +1,6 @@
 return function(Package)
     local Main = require(script.Parent.Parent)
     local TimerMain = require(script.Parent.Parent.Timer)
-    
     local Array = {}
 
     for Index,Value in Package.Base do 
@@ -9,12 +8,6 @@ return function(Package)
     end
 
     if #Array == 0 then return {Result = true} end
-
-        if Package.Settings.RemoveOnAdd then 
-            if Package.Base[#Package.Base] == "Add" then
-                table.insert(Package.Base, "Subtract")
-            end
-
 
     if Array[1] > 1 then 
         local Value = Array[1]
@@ -27,7 +20,9 @@ return function(Package)
         Main.Batch(NewPackage)
     end
 
-    if Package.Settings.ReactiveTimer then return {Result = true} end
+    if Package.Settings.RemoveOnAddTimer then table.insert(Package.RepeatSetting, "TimerSetting") return {Result = true} end
+
     TimerMain.Begin(Package, Array)
     return {Result = false, ErrorMsg = "Timer detected. Status is being applied through the timer."}
+
 end

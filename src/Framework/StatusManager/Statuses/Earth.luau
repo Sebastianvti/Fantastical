@@ -1,7 +1,7 @@
 return {
     Name = script.Name, -- Name of the status, used for identification and referencing
     Group = "Debug", -- Group or category the status belongs to, for organizational purposes
-    Priority = 3, -- 1 to 5
+    Priority = 1, -- 1 to 5
     Method = "Permanent", -- Method of application
     RemovalMethod = nil, -- Method of removal, if you want it to differ from the application method. If nil, it will use the same method as the application.
 
@@ -12,7 +12,7 @@ return {
         AddTimer = true, -- time it takes for status to be added 
         SubtractTimer = true, -- time it takes for status to be removed
         RemoveOnAddTimer = false, -- if the timer should start removing on add
-        ReactiveTimer = true, -- if the timer counts as active while in timer (does not add stats in this state)
+        ReactiveTimer = false, -- if the timer counts as active while in timer (does not add stats in this state)
         Staggered = false, -- if the stats are added in portions ever few seconds
 
         StaggerDelay = 5,

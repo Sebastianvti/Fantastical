@@ -12,15 +12,13 @@ local Main = require(script.Parent)
 -- Basically {true 1, false, false, true 2}, the first true is the start point and the last false is the end point, repeating the process
 -- first index is always the timer value
 
--- Naming Convention
-
 local function  SplitPackage(Package, IndexPoint : number, EndNum : number)
     
     local EndPoint
     local Index = 0
     local ReturnPackage = Main.New(Package.Player, Package.Status.Name) table.clear(ReturnPackage.Base)
 
-    table.insert(ReturnPackage.SettingBlacklist, "Timer")
+    table.insert(ReturnPackage.SettingBlacklist, "TimerSetting")
 
     if not EndNum then
         EndPoint = IndexPoint
@@ -38,18 +36,25 @@ local function  SplitPackage(Package, IndexPoint : number, EndNum : number)
     end  
 end
 
+local function RemoveOnAddSetting(Package, IndexTable)
+    if not Package.Setting.RemoveOnAddTimer then return end
+
+    if Package.Base[#IndexTable] == "Add" then
+        table.insert(Package.Base, "Subtract")
+    end
+end
+
 function Timer.Begin(Package, IndexTable : table)
-    local RefPackage = Package
 
     for Index,_ in IndexTable do
+        if Index == #IndexTable then RemoveOnAddSetting(Package, IndexTable) end
 
-        local NewPackage = SplitPackage(Package, Index, IndexTable[Index + 1])
+        local NewPackage = SplitPackage(Package, Index, IndexTable[Index + 1]) -- i forgot why +1 was necessary so if anything breaks its jsut over
         Timer.CreateTimer(NewPackage, Package.Settings[Package.Base[1].."Duration"], Index)
     end
 end
 
 function Timer.CreateTimer(Package, PackTime : number, Order : number)
-    
     local TimerName = Package.Status.Name
     local ActiveSheet = Package.CharacterSheet.Active_Timers
 

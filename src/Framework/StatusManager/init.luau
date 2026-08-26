@@ -61,6 +61,8 @@ function StatusManager.New(Player : Player, StatusName : string)
     self.Settings = self.Status.Settings
     self.Base = Methods[self.Status.Method](self)
     self.SubClass = nil
+    self.StatMethod = {}
+    self.RepeatSetting = {}
     self.SettingBlacklist = {} -- if this status needs to do multiple setting checks, you can set certain settings on blacklist so that they are only checked a certain number of times
 
     print(self)

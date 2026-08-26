@@ -18,7 +18,6 @@ local function MergeTables(Package) -- Compiles all active statuses together, ti
 end
 
 local function RemovePackage(RemovePackage, KeepPackage)
-    print("Removal?")
     local Player = RemovePackage.Player or KeepPackage.Player
     Main.ClearAll(Player.Character, RemovePackage.Name)
 
@@ -27,7 +26,6 @@ end
 
 local function ComparePriority(Package, NewStatus)
     local TopPriority 
-    print("Compared?")
     if Package.Status.Priority == NewStatus.Priority then TopPriority = NewStatus return TopPriority end -- If priority is equal then the one that is currently added wins.
 
     if Package.Status.Priority < NewStatus.Priority then 
@@ -83,7 +81,6 @@ local function IncompatSingle(Package, NewStatus)
 end
 
 function Conflict.Begin(Package)
-    print("Conflict Check.")
 
     local Actives = MergeTables(Package)
     if #Actives == 0 then return true end 

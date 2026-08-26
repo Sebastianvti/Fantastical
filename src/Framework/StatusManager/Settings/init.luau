@@ -1,15 +1,17 @@
 local Settings = {}
-local SettingKeys = {
+
+Settings.SettingKeys = {
     -- top is first, and bottom is last. settings at the top usually modify base behavior
     -- At the bottom should always be finalizer
     CanStack = require(script.CanStack),
     TimerSetting = require(script.TimerSetting),
-    ConflictSetting = require(script.ConflictSetting)
+    ConflictSetting = require(script.ConflictSetting),
+    Repeat = require(script.Repeat)
 }
 
 function Settings.VerifySettings(Package)
     if table.find(Package.SettingBlacklist, "All") then return true end
-    for Setting,Method in SettingKeys do
+    for Setting,Method in Settings.SettingKeys do
         if Package.Settings[Setting] == true or Package.Settings[Setting] == nil and not table.find(Package.SettingBlacklist, Setting) then
             
             local SettingResult = Method(Package)
