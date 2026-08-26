@@ -4,13 +4,17 @@ return function(Package)
     
     local Array = {}
 
-    if table.find(Package.SettingBlacklist, "Timer") then return {Result = true} end
-
     for Index,Value in Package.Base do 
         if Package.Settings[Value.."Timer"] then table.insert(Array, Index) end
     end
 
     if #Array == 0 then return {Result = true} end
+
+        if Package.Settings.RemoveOnAdd then 
+            if #Package.Base == "Add" then
+                table.insert(Package.Base, "Subtract")
+            end
+
 
     if Array[1] > 1 then 
         local Value = Array[1]

@@ -9,9 +9,11 @@ return {
         Conflicts = true, -- Whether this status conflicts with other statuses, if dominant is false, this will not pass, if dominant is true then it will remove the other statuses and apply this one.
         Dominant = false, -- Whether this status is dominant, if true it will remove conflicting statuses when applied.
         CanStack = false,
-        AddTimer = true,
-        SubtractTimer = true,
-        ReactiveTimer = false, -- a normal timer only checks settings when its over, reactive timers act as if they are active while still in timing
+
+        AddTimer = true, -- time it takes for status to be added 
+        SubtractTimer = true, -- time it takes for status to be removed
+        RemoveOnAddTimer = false, -- if the timer should start removing on add
+        ReactiveTimer = false, -- if the timer counts as active while in timer (does not add stats in this state)
 
         StackSize = 5, -- any number
         AddDuration = 1,
