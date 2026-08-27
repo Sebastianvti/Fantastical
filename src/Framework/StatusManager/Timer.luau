@@ -38,17 +38,18 @@ end
 
 local function CalculateTime(Package, IndexTable, Index)
     local DelayTime = 0
-    if not Index then Index = #IndexTable + 1 end
 
-    for IndexInTable,Setting in IndexTable do
-        if IndexInTable == Index then return DelayTime end
-        DelayTime += Package.Settings[Package.Base[Setting].."Duration"]
+    if not Index then Index = #IndexTable end
+
+    for IndexInTable = 1, #IndexTable + 1 do
+        DelayTime += Package.Settings[Package.Base[IndexInTable].."Duration"]
+        if IndexInTable == Index then print(DelayTime) return DelayTime end
     end
-
 end
 
 local function RemoveOnAddSetting(Package, IndexTable)
-    if not Package.Setting.RemoveOnAddTimer then return end
+    print(Package, IndexTable)
+    if not Package.Settings.RemoveOnAddTimer then return end
 
     if Package.Base[#IndexTable] == "Add" then
         table.insert(Package.Base, "Subtract")
@@ -57,9 +58,7 @@ end
 
 
 function Timer.Begin(Package, IndexTable : table)
-    print(Package)
     for Index,_ in IndexTable do
-        print(Package)
         if Index == #IndexTable then RemoveOnAddSetting(Package, IndexTable) end
 
         local NewPackage = SplitPackage(Package, Index, IndexTable[Index + 1]) -- i forgot why +1 was necessary so if anything breaks its jsut over
@@ -70,7 +69,7 @@ end
 function Timer.CreateTimer(Package, PackTime : number, Order : number)
     local TimerName = Package.Status.Name
     local ActiveSheet = Package.CharacterSheet.Active_Timers
-
+    print(PackTime)
     ActiveSheet[TimerName] = {
         OsClock = os.clock(),
         Duration = PackTime,
@@ -79,6 +78,7 @@ function Timer.CreateTimer(Package, PackTime : number, Order : number)
         Task = task.delay(PackTime, function() 
             Package.CharacterSheet.Active_Timers[TimerName] = nil
             Main.Batch(Package)
+            print("Timer Complete : ",Package.CharacterSheet)
     end)
     }
 
