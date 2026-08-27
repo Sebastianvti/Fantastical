@@ -36,6 +36,17 @@ local function  SplitPackage(Package, IndexPoint : number, EndNum : number)
     end  
 end
 
+local function CalculateTime(Package, IndexTable, Index)
+    local DelayTime = 0
+    if not Index then Index = #IndexTable + 1 end
+
+    for IndexInTable,Setting in IndexTable do
+        if IndexInTable == Index then return DelayTime end
+        DelayTime += Package.Settings[Package.Base[Setting].."Duration"]
+    end
+
+end
+
 local function RemoveOnAddSetting(Package, IndexTable)
     if not Package.Setting.RemoveOnAddTimer then return end
 
@@ -44,13 +55,14 @@ local function RemoveOnAddSetting(Package, IndexTable)
     end
 end
 
-function Timer.Begin(Package, IndexTable : table)
 
+function Timer.Begin(Package, IndexTable : table)
+    CalculateTime()
     for Index,_ in IndexTable do
         if Index == #IndexTable then RemoveOnAddSetting(Package, IndexTable) end
 
         local NewPackage = SplitPackage(Package, Index, IndexTable[Index + 1]) -- i forgot why +1 was necessary so if anything breaks its jsut over
-        Timer.CreateTimer(NewPackage, Package.Settings[Package.Base[1].."Duration"], Index)
+        Timer.CreateTimer(NewPackage, CalculateTime(Package, IndexTable, Index), Index)
     end
 end
 
