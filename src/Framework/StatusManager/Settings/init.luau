@@ -4,7 +4,7 @@ Settings.SettingKeys = {
     -- top is first, and bottom is last. settings at the top usually modify base behavior
     -- At the bottom should always be finalizer
     CanStack = require(script.CanStack),
-    StaggeredSetting = require(script.StaggeredSetting)
+   -- StaggeredSetting = require(script.StaggerSetting),
     TimerSetting = require(script.TimerSetting),
     ConflictSetting = require(script.ConflictSetting),
     Repeat = require(script.Repeat)

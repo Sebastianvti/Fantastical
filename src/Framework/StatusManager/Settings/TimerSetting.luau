@@ -20,7 +20,7 @@ return function(Package)
         Main.Batch(NewPackage)
     end
 
-    if Package.Settings.RemoveOnAddTimer then table.insert(Package.RepeatSetting, "TimerSetting") return {Result = true} end
+    if Package.Settings.ReactiveTimer then table.insert(Package.RepeatSetting, "TimerSetting") return {Result = true} end
 
     TimerMain.Begin(Package, Array)
     return {Result = false, ErrorMsg = "Timer detected. Status is being applied through the timer."}

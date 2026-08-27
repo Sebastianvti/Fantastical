@@ -38,7 +38,7 @@ local function ComparePriority(Package, NewStatus)
     return TopPriority
 end
 
-local function FailPackage() -- just returns false
+local function FailPackage()
     return false
 end
 

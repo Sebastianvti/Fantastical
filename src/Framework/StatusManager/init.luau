@@ -39,9 +39,9 @@ function StatusManager.Batch(self)
 end
 
 function StatusManager:Finalize()
-    for _,_ in pairs(self.Base) do
-       local _ = self.SubClass and Utility[self.SubClass](self)  and self.StatMethod()
-       or Utility.Modify(self) and self.StatMethod()
+    for Index,_ in pairs(self.Base) do
+       local _ = self.SubClass and Utility[self.SubClass](self) and self.StatMethod()
+       or Utility.Modify(self, Index) and Utility[self.StatMethod](self, Index)
     end
 end
 
@@ -61,8 +61,8 @@ function StatusManager.New(Player : Player, StatusName : string)
     self.Name = self.Status.Name
     self.Settings = self.Status.Settings
     self.Base = Methods[self.Status.Method](self) -- how the status is applied to the active stats
+    self.StatMethod = "Instant" -- how the player stats are added to the table
     self.SubClass = nil
-    self.StatMethod = {} -- how the player stats are added to the table
     self.RepeatSetting = {}
     self.SettingBlacklist = {} -- if this status needs to do multiple setting checks, you can set certain settings on blacklist so that they are only checked a certain number of times
 
@@ -159,6 +159,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(Player, StatusName)
     Status.Batch(Status)
 
     print("Processing time : ", os.clock() - StartTime)
+    print("FINAL RESULT : ", StatusManager.GetSheet(Player.Character))
 end)
 
 return StatusManager

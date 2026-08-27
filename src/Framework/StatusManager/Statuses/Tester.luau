@@ -12,13 +12,13 @@ return {
         AddTimer = true, -- time it takes for status to be added 
         SubtractTimer = true, -- time it takes for status to be removed
         RemoveOnAddTimer = false, -- if the timer should start removing on add
-        ReactiveTimer = true, -- if the timer counts as active while in timer (does not add stats in this state)
+        ReactiveTimer = false, -- if the timer counts as active while in timer (does not add stats in this state)
         Staggered = false, -- if the stats are added in portions ever few seconds
 
         StaggerDelay = 5,
-        StaggerAmount = 10
+        StaggerAmount = 10,
         StackSize = 5, -- any number
-        AddDuration = 5,
+        AddDuration = 7,
         SubtractDuration = 1,
     },
 

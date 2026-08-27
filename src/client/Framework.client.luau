@@ -3,6 +3,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 
 UserInputService.InputBegan:Connect(function(Input, GPE)
+	if Input.KeyCode == Enum.KeyCode.E then
+	ReplicatedStorage.RemoteEvent:FireServer("Earth")
+	end
 	if Input.KeyCode == Enum.KeyCode.T then
 	ReplicatedStorage.RemoteEvent:FireServer("Tester")
 	end

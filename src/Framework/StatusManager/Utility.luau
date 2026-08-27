@@ -25,13 +25,10 @@ local function Process(self, Operator : string)
     end
 end
 
-function Utility.Instant(self)
-    for _,Value in self.Base do
-        local _ = Status.Custom[Value] and Status.Custom[Value](self)
-        
-        Process(self, Value)
-        Sheet.Active = TableOperators[Value](Sheet.Active, Status.Name)
-    end
+function Utility.Instant(self, Index)
+
+    
+    Process(self, self.Base[Index])
 end
 
 function Utility.Staggered(self)
@@ -39,14 +36,16 @@ function Utility.Staggered(self)
 
 end
 
-function Utility.Modify(self)
+function Utility.Modify(self, Index)
     self = setmetatable(self,  Utility)
 
     local Sheet = self.CharacterSheet
     local Status = self.Status
 
+    local _ = Status.Custom[self.Base[Index]] and Status.Custom[self.Base[Index]](self)
+        
+    Sheet.Active = TableOperators[self.Base[Index]](Sheet.Active, Status.Name)
 
-    print("FINAL RESULT : ",Sheet)
     return self
 end
 

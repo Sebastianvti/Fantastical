@@ -1,6 +1,5 @@
 return function(Package)
      local Main = require(script.Parent.Parent)
-     Package.SubClass = "CanStack"
 
      local Key = (Package.Name.."_Stack")
      
@@ -11,6 +10,8 @@ return function(Package)
 
      if #Stack + Main.GetTimers(Package.Name, Package.Player.Character) >= MaxStackSize then return {Result = false, ErrorMsg = "Stack reached max size."} end
 
+     Package.SubClass = "CanStack"
      Package.Base = {"Add"}
+     
      return {Result = true}
 end
