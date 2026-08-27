@@ -11,6 +11,12 @@ local TableOperators = {
     Subtract = function(Table, Key) table.remove(Table, table.find(Table, Key)) return Table end
 }
 
+local function StaggeredThread()
+    while task.wait(1) do
+    
+    end
+end
+
 local function Process(self, Operator : string)
     for Key, Value in pairs(self.Status.Sheet) do
         if not self.CharacterSheet.Sheet[Key] then continue end
@@ -19,18 +25,27 @@ local function Process(self, Operator : string)
     end
 end
 
-function Utility.Modify(self)
-    self = setmetatable(self,  Utility)
-
-    local Sheet = self.CharacterSheet
-    local Status = self.Status
-
+function Utility.Instant(self)
     for _,Value in self.Base do
         local _ = Status.Custom[Value] and Status.Custom[Value](self)
         
         Process(self, Value)
         Sheet.Active = TableOperators[Value](Sheet.Active, Status.Name)
     end
+end
+
+function Utility.Staggered(self)
+    task.spawn(StaggeredThread) -- put task inside a table
+
+end
+
+function Utility.Modify(self)
+    self = setmetatable(self,  Utility)
+
+    local Sheet = self.CharacterSheet
+    local Status = self.Status
+
+
     print("FINAL RESULT : ",Sheet)
     return self
 end

@@ -43,6 +43,7 @@ local function CalculateTime(Package, IndexTable, Index)
     for IndexInTable,Setting in IndexTable do
         if IndexInTable == Index then return DelayTime end
         DelayTime += Package.Settings[Package.Base[Setting].."Duration"]
+        print(DelayTime)
     end
 
 end
@@ -57,7 +58,6 @@ end
 
 
 function Timer.Begin(Package, IndexTable : table)
-    CalculateTime()
     for Index,_ in IndexTable do
         if Index == #IndexTable then RemoveOnAddSetting(Package, IndexTable) end
 
@@ -72,6 +72,7 @@ function Timer.CreateTimer(Package, PackTime : number, Order : number)
 
     ActiveSheet[TimerName] = {
         OsClock = os.clock(),
+        Duration = PackTime
         Index = Order,
         Reactive = Package.Settings.ReactiveTimer,
         Task = task.delay(PackTime, function() 

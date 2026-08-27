@@ -16,6 +16,7 @@ return {
         Staggered = false, -- if the stats are added in portions ever few seconds
 
         StaggerDelay = 5,
+        StaggerAmount = 10
         StackSize = 5, -- any number
         AddDuration = 5,
         SubtractDuration = 5,
