@@ -48,8 +48,6 @@ local function CalculateTime(Package, IndexTable, Index)
 end
 
 local function RemoveOnAddSetting(Package, IndexTable)
-    print(Package, IndexTable)
-    if not Package.Settings.RemoveOnAddTimer then return end
 
     if Package.Base[#IndexTable] == "Add" then
         table.insert(Package.Base, "Subtract")
@@ -59,7 +57,9 @@ end
 
 function Timer.Begin(Package, IndexTable : table)
     for Index,_ in IndexTable do
-        if Index == #IndexTable then RemoveOnAddSetting(Package, IndexTable) end
+        if Index == #IndexTable then 
+            local _ = Package.Settings.RemoveOnAddTimer and RemoveOnAddSetting(Package, IndexTable) 
+        end
 
         local NewPackage = SplitPackage(Package, Index, IndexTable[Index + 1]) -- i forgot why +1 was necessary so if anything breaks its jsut over
         Timer.CreateTimer(NewPackage, CalculateTime(Package, IndexTable, Index), Index)
