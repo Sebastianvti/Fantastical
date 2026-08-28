@@ -43,7 +43,7 @@ local function CalculateTime(Package, IndexTable, Index)
 
     for IndexInTable = 1, #IndexTable + 1 do
         DelayTime += Package.Settings[Package.Base[IndexInTable].."Duration"]
-        if IndexInTable == Index then print(DelayTime) return DelayTime end
+        if IndexInTable == Index then return DelayTime end
     end
 end
 
@@ -69,7 +69,7 @@ end
 function Timer.CreateTimer(Package, PackTime : number, Order : number)
     local TimerName = Package.Status.Name
     local ActiveSheet = Package.CharacterSheet.Active_Timers
-    print(PackTime)
+
     ActiveSheet[TimerName] = {
         OsClock = os.clock(),
         Duration = PackTime,

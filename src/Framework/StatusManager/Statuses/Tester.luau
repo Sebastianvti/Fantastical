@@ -1,12 +1,12 @@
 return {
     Name = script.Name, -- Name of the status, used for identification and referencing
     Group = "Debug", -- Group or category the status belongs to, for organizational purposes
-    Priority = 3, -- 1 to 5
+    Priority = 1, -- 1 to 5
     Method = "Permanent", -- Method of application
     RemovalMethod = nil, -- Method of removal, if you want it to differ from the application method. If nil, it will use the same method as the application.
 
     Settings = {
-        Dominant = false, -- Whether this status is dominant, if true it will remove conflicting statuses when applied.
+        Dominant = true, -- Whether this status is dominant, if true it will remove conflicting statuses when applied.
         CanStack = false,
 
         AddTimer = true, -- time it takes for status to be added 
@@ -18,7 +18,7 @@ return {
         StaggerDelay = 5,
         StaggerAmount = 10,
         StackSize = 5, -- any number
-        AddDuration = 5,
+        AddDuration = 20,
         SubtractDuration = 1,
     },
 

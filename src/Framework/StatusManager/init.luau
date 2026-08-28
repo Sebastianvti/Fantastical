@@ -59,6 +59,7 @@ function StatusManager.New(Player : Player, StatusName : string)
     self.CharacterSheet = CharacterSheets[Player.Character]
     self.Status = StatusManager.GetStatus(StatusName)
     self.Name = self.Status.Name
+    self.Group = self.Status.Group
     self.Settings = self.Status.Settings
     self.Base = Methods[self.Status.Method](self) -- how the status is applied to the active stats
     self.StatMethod = "Instant" -- how the player stats are added to the table

@@ -1,5 +1,4 @@
 return function(Package)
-    print(Package)
     if #Package.RepeatSetting == 0 then return {Result = true} end
 
     local SettingMain = require(script.Parent)
@@ -9,7 +8,7 @@ return function(Package)
         local SettingIndex = table.find(SettingMain.SettingKeys, Setting)
         local SettingKey = SettingMain.SettingKeys[SettingIndex]
         local Method = require(script.Parent[SettingKey])
-        if not Method(Package) then return {Result = false, ErrorMsg = "Setting within the repeat function failed or began its own process."} end
+        Method(Package)
     end
-    return {Result = true}
+    return {Result = false, ErrorMsg = "Setting within the repeat function failed or began its own process."}
 end 

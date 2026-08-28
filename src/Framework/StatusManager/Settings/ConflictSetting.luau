@@ -1,8 +1,7 @@
 return 
     function(Package)
         local ConflictMain = require(script.Parent.Parent.Conflict)
-
-        if not next(Package.CharacterSheet.Active_Timers) == nil or #Package.CharacterSheet.Active > 0 then 
+        if next(Package.CharacterSheet.Active_Timers) or #Package.CharacterSheet.Active > 0 then 
 
         local ConflictCheck = ConflictMain.Begin(Package)
 
