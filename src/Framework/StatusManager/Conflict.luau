@@ -86,7 +86,7 @@ end
 function Conflict.Begin(Package)
     local Actives = MergeTables(Package)
 
-    if #Actives == 0 then return true end 
+    if #Actives == 0 or table.find(Actives, Package.Name) then return true end 
 
     for _,Status in Actives do  -- Checking if incoming status is compatible with anything active.
         local NewStatus = Main.GetStatus(Status)

@@ -27,7 +27,6 @@ end
 
 function Utility.Instant(self, Index)
 
-    
     Process(self, self.Base[Index])
 end
 
@@ -49,8 +48,8 @@ function Utility.Modify(self, Index)
     return self
 end
 
-function Utility.CanStack(self)
-    local self = Utility.Modify(self)
+function Utility.CanStack(self, Index)
+    local self = Utility.Modify(self, Index)
 
     local Sheet = self.CharacterSheet
     local Status = self.Status
@@ -58,9 +57,7 @@ function Utility.CanStack(self)
     local Stack = Sheet.Active_Stacks
     local StackKey = (Status.Name.."_Stack")
 
-    for _,Value in self.Base do
-    Stack[StackKey] = TableOperators[Value](Stack[StackKey], Status.Name)
-    end
+    Stack[StackKey] = TableOperators[self.Base[Index]](Stack[StackKey], Status.Name)
 
     return self
 end

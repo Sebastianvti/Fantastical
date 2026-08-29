@@ -1,5 +1,6 @@
 local Timer = {}
 local Main = require(script.Parent)
+local HttpService = game:GetService("HttpService")
 
 -- Explaination
 -- A normal status which instantly adds or subtracts relies on a table called "base"
@@ -12,13 +13,23 @@ local Main = require(script.Parent)
 -- Basically {true 1, false, false, true 2}, the first true is the start point and the last false is the end point, repeating the process
 -- first index is always the timer value
 
+local function CreateTimerStatus(Package)
+    local ReturnPackage = Main.New(Package.Player, Package.Status.Name) 
+
+    table.clear(ReturnPackage.Base)
+    table.insert(ReturnPackage.SettingBlacklist, "TimerSetting")
+    table.insert(ReturnPackage.SettingBlacklist, "CanStack")
+
+    ReturnPackage.SubClass = Package.SubClass
+    ReturnPackage.StatMethod = Package.StatMethod
+    return ReturnPackage
+end
+
 local function  SplitPackage(Package, IndexPoint : number, EndNum : number)
     
     local EndPoint
     local Index = 0
-    local ReturnPackage = Main.New(Package.Player, Package.Status.Name) table.clear(ReturnPackage.Base)
-
-    table.insert(ReturnPackage.SettingBlacklist, "TimerSetting")
+    local ReturnPackage = CreateTimerStatus(Package)
 
     if not EndNum then
         EndPoint = IndexPoint
@@ -36,9 +47,10 @@ local function  SplitPackage(Package, IndexPoint : number, EndNum : number)
     end  
 end
 
-local function CalculateTime(Package, IndexTable, Index)
+local function CalculateTime(Package, IndexTable, Index, Instant)
     local DelayTime = 0
 
+    if Instant then return 0 end
     if not Index then Index = #IndexTable end
 
     for IndexInTable = 1, #IndexTable + 1 do
@@ -47,41 +59,49 @@ local function CalculateTime(Package, IndexTable, Index)
     end
 end
 
-local function RemoveOnAddSetting(Package, IndexTable)
+function Timer.RemoveOnAddSetting(Package, IndexTable, Index, Instant)
+    if not Instant and not Package.Base[#IndexTable] == "Add" then return false end
 
-    if Package.Base[#IndexTable] == "Add" then
-        table.insert(Package.Base, "Subtract")
-    end
+    local RemoveTimer = CreateTimerStatus(Package)
+
+    table.insert(RemoveTimer.Base, "Subtract")
+    Timer.CreateTimer(RemoveTimer, CalculateTime(Package, IndexTable, Index, Instant) + RemoveTimer.Settings.SubtractDuration, Index + 1) 
 end
 
 
 function Timer.Begin(Package, IndexTable : table)
     for Index,_ in IndexTable do
-        if Index == #IndexTable then 
-            local _ = Package.Settings.RemoveOnAddTimer and RemoveOnAddSetting(Package, IndexTable) 
-        end
-
         local NewPackage = SplitPackage(Package, Index, IndexTable[Index + 1]) -- i forgot why +1 was necessary so if anything breaks its jsut over
+
         Timer.CreateTimer(NewPackage, CalculateTime(Package, IndexTable, Index), Index)
+
+        if Index == #IndexTable then 
+            local _ = Package.Settings.RemoveOnAddTimer and Timer.RemoveOnAddSetting(Package, IndexTable, Index, false) 
+        end
     end
 end
 
 function Timer.CreateTimer(Package, PackTime : number, Order : number)
     local TimerName = Package.Status.Name
-    local ActiveSheet = Package.CharacterSheet.Active_Timers
+    local TimerThread = Package.CharacterSheet.Timer_Thread
+    local TimerId = HttpService:GenerateGUID(false)
+    local CosmeticTimerTable = Package.CharacterSheet.Active_Timers
 
-    ActiveSheet[TimerName] = {
+    table.insert(CosmeticTimerTable, Package.Name)
+
+    TimerThread[TimerName.."_"..Order.."_"..TimerId] = {
         OsClock = os.clock(),
         Duration = PackTime,
         Index = Order,
         Reactive = Package.Settings.ReactiveTimer,
+        
         Task = task.delay(PackTime, function() 
-            Package.CharacterSheet.Active_Timers[TimerName] = nil
+            TimerThread[TimerName.."_"..Order.."_"..TimerId] = nil
+            table.remove(CosmeticTimerTable, table.find(CosmeticTimerTable, Package.Name))
             Main.Batch(Package)
             print("Timer Complete : ",Package.CharacterSheet)
     end)
     }
-
 end
 
 

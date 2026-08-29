@@ -15,7 +15,6 @@ local Utility = require(script.Utility)
 local Settings = require(script.Settings)
 
 local Players = game:GetService("Players")
-local ProximityPromptService = game:GetService("ProximityPromptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Statuses = script.Statuses
@@ -40,8 +39,13 @@ end
 
 function StatusManager:Finalize()
     for Index,_ in pairs(self.Base) do
-       local _ = self.SubClass and Utility[self.SubClass](self) and self.StatMethod()
-       or Utility.Modify(self, Index) and Utility[self.StatMethod](self, Index)
+       if self.SubClass then 
+        Utility[self.SubClass](self, Index)  
+        Utility[self.StatMethod](self, Index)
+        return end
+
+         Utility.Modify(self, Index) 
+         Utility[self.StatMethod](self, Index)
     end
 end
 
@@ -61,6 +65,7 @@ function StatusManager.New(Player : Player, StatusName : string)
     self.Name = self.Status.Name
     self.Group = self.Status.Group
     self.Settings = self.Status.Settings
+
     self.Base = Methods[self.Status.Method](self) -- how the status is applied to the active stats
     self.StatMethod = "Instant" -- how the player stats are added to the table
     self.SubClass = nil
@@ -96,8 +101,9 @@ end
 function StatusManager.ClearTimers(Character : Model, Name : string)
     local Sheet = StatusManager.GetSheet(Character)
 
-    for Key,_ in Sheet.Active_Timers do 
+    for Key,_ in Sheet.Timer_Thread do 
         task.cancel(Key.Task)
+        table.remove(Sheet.Active_Timers, table.find(Sheet.Active_Timers, string.split(Key, "_")[1]))
         Key = nil
     end
 end
