@@ -76,9 +76,10 @@ function StatusManager.New(Player : Player, StatusName : string)
     return self
 end
 
-function  StatusManager.ClearAll(Character : Model, Name : string)
-   StatusManager.ClearActive(Character, Name)
-   StatusManager.ClearTimers(Character, Name)
+function  StatusManager.ClearStatus(Character : Model, Name : string)
+    StatusManager.ClearActive(Character, Name)
+    StatusManager.ClearTimers(Character, Name)
+    StatusManager.ClearStack(Character, Name) -- if one exists
 end
 
 function StatusManager.ClearActive(Character : Model, Name : string)
@@ -98,13 +99,19 @@ function StatusManager.ClearActive(Character : Model, Name : string)
     end
 end
 
+function StatusManager.ClearStack(Character : Model, Name : string)
+    local Sheet = StatusManager.GetSheet(Character)
+    Sheet.Active_Stacks[Name.."_Stack"] = nil
+end
+
 function StatusManager.ClearTimers(Character : Model, Name : string)
     local Sheet = StatusManager.GetSheet(Character)
 
-    for Key,_ in Sheet.Timer_Thread do 
-        task.cancel(Key.Task)
+    for Key,Timer in Sheet.Timer_Thread do
+        if not Timer.Name == Name then continue end
+        task.cancel(Timer.Task)
         table.remove(Sheet.Active_Timers, table.find(Sheet.Active_Timers, string.split(Key, "_")[1]))
-        Key = nil
+        Timer = nil
     end
 end
 

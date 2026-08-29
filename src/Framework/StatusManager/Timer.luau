@@ -90,13 +90,14 @@ function Timer.CreateTimer(Package, PackTime : number, Order : number)
     table.insert(CosmeticTimerTable, Package.Name)
 
     TimerThread[TimerName.."_"..Order.."_"..TimerId] = {
+        Name = Package.Name,
         OsClock = os.clock(),
         Duration = PackTime,
         Index = Order,
         Reactive = Package.Settings.ReactiveTimer,
-        
+
         Task = task.delay(PackTime, function() 
-            TimerThread[TimerName.."_"..Order.."_"..TimerId] = nil
+            Package.CharacterSheet.Timer_Thread[TimerName.."_"..Order.."_"..TimerId] = nil
             table.remove(CosmeticTimerTable, table.find(CosmeticTimerTable, Package.Name))
             Main.Batch(Package)
             print("Timer Complete : ",Package.CharacterSheet)

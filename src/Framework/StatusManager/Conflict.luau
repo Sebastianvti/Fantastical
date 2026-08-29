@@ -21,7 +21,7 @@ end
 local function RemovePackage(KeepPackage, RemovePackage)
     warn("Removing Package : "..RemovePackage.Name)
     local Player = RemovePackage.Player or KeepPackage.Player
-    Main.ClearAll(Player.Character, RemovePackage.Name)
+    Main.ClearStatus(Player.Character, RemovePackage.Name)
 
     return true
 end
