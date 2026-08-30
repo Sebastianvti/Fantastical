@@ -107,6 +107,7 @@ end
 
 
 -- Combine clear timers into?
+-- TO DO, STAT REVERSALS?
 function StatusManager.ClearThreads(Character, Name)
     local Sheet = StatusManager.GetSheet(Character)
 

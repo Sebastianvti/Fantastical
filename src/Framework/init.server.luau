@@ -1,4 +1,5 @@
 local ServerScriptService = game:GetService("ServerScriptService")
+local SoundScapeTest = require(script.SoundScapeServerTest)
 local Cache = {}
 
 for Index,Module in ServerScriptService.Framework:GetChildren() do
