@@ -80,6 +80,7 @@ function  StatusManager.ClearStatus(Character : Model, Name : string)
     StatusManager.ClearActive(Character, Name)
     StatusManager.ClearTimers(Character, Name)
     StatusManager.ClearStack(Character, Name) -- if one exists
+    StatusManager.ClearThreads(Character, Name)
 end
 
 function StatusManager.ClearActive(Character : Model, Name : string)
@@ -102,6 +103,18 @@ end
 function StatusManager.ClearStack(Character : Model, Name : string)
     local Sheet = StatusManager.GetSheet(Character)
     Sheet.Active_Stacks[Name.."_Stack"] = nil
+end
+
+
+-- Combine clear timers into?
+function StatusManager.ClearThreads(Character, Name)
+    local Sheet = StatusManager.GetSheet(Character)
+
+    for _,Thread in Sheet.Stagger_Thread do
+        if not Thread.Name == Name then continue end
+        task.cancel(Thread.Task)
+        Thread = nil
+    end
 end
 
 function StatusManager.ClearTimers(Character : Model, Name : string)

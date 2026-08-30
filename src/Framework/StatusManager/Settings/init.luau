@@ -4,7 +4,7 @@ Settings.SettingKeys = {
     -- top is first, and bottom is last. settings at the top usually modify base behavior
     -- At the bottom should always be finalizer
     "CanStack",
-   --require(script.StaggerSetting),
+    "Staggered",
     "TimerSetting",
     "ConflictSetting",
     "Repeat" -- useful if you need to check through a setting twice, for example reactive timers need to pass through all checks then return back to timer, repeating the timersetting

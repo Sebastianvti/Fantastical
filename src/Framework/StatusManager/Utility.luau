@@ -1,6 +1,8 @@
 local Utility = {}
 Utility.__index = Utility
 
+local HttpService = game:GetService("HttpService")
+
 local Math = {
     Add = function(a, b) return a + b end,
     Subtract = function(a, b) return a - b end,
@@ -11,9 +13,11 @@ local TableOperators = {
     Subtract = function(Table, Key) table.remove(Table, table.find(Table, Key)) return Table end
 }
 
-local function StaggeredThread()
-    while task.wait(1) do
-    
+local function StaggeredThread(Package)
+    local Index = 0
+    while task.wait(Package.Settings.StaggerDuration) do
+        if Index == Package.Settings.StaggerAmount then break end
+        Index += 1
     end
 end
 
@@ -26,13 +30,16 @@ local function Process(self, Operator : string)
 end
 
 function Utility.Instant(self, Index)
-
     Process(self, self.Base[Index])
 end
 
 function Utility.Staggered(self)
-    task.spawn(StaggeredThread) -- put task inside a table
-
+    local ThreadId = HttpService:GenerateGUID()
+    self.CharacterSheet.Stagger_Thread[ThreadId] = {}
+    local ThreadKey = self.CharacterSheet.Stagger_Thread[ThreadId]
+    
+    ThreadKey.Task = task.spawn(StaggeredThread, self) -- put task inside a table
+    ThreadKey.Name = self.Name
 end
 
 function Utility.Modify(self, Index)
