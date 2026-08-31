@@ -112,7 +112,7 @@ function StatusManager.ClearThreads(Character, Name)
     local Sheet = StatusManager.GetSheet(Character)
 
     for _,Thread in Sheet.Stagger_Thread do
-        if not Thread.Name == Name then continue end
+        if Thread.Name ~= Name then continue end
         task.cancel(Thread.Task)
         Thread = nil
     end
@@ -122,7 +122,7 @@ function StatusManager.ClearTimers(Character : Model, Name : string)
     local Sheet = StatusManager.GetSheet(Character)
 
     for Key,Timer in Sheet.Timer_Thread do
-        if not Timer.Name == Name then continue end
+        if Timer.Name ~= Name then continue end
         task.cancel(Timer.Task)
         table.remove(Sheet.Active_Timers, table.find(Sheet.Active_Timers, string.split(Key, "_")[1]))
         Timer = nil

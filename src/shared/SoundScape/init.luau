@@ -3,19 +3,23 @@ SoundScape.__index = SoundScape
 
 local CollectionService = game:GetService("CollectionService")
 
+-- In this system, "AddTag" is used to play the audio. The client tracks new items being added to the tag, and plays the sound after it does calculations.
+-- This allows you to play sounds normally if you dont want to add the soundscape tag
+
 function SoundScape.New(IDs)
     local self = setmetatable({}, SoundScape)
 
     self.Attachment = Instance.new("Attachment")
     self.Sound = Instance.new("Sound")
     self.Sound.SoundId = ("rbxassetid://"..IDs)
+    self.Sound:SetAttribute("Volume", 1)
+    self.Sound.RollOffMaxDistance = 99999999
     self.Sound.Volume = 0
 
     self:Play()
 end
 
 function SoundScape:Play()
-    print("?")
     self.Attachment.Position = workspace.SpawnLocation.Position
     self.Attachment.Parent = workspace
     self.Sound.Parent = self.Attachment
