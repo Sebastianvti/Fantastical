@@ -1,16 +1,7 @@
 local CharacterLoader = {}
 
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local CollectionService = game:GetService("CollectionService")
-
 local StatusManager = require(script.Parent.StatusManager)
-local SoundScape = require(ReplicatedStorage.Shared.SoundScape)
-
-
-function CharacterLoader.Start()
-	
-end
 
 local function CharacterAdded(Character)
 	print("Alive")
