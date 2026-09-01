@@ -7,7 +7,8 @@ local LocalPlayer = Players.LocalPlayer
 local SoundSpeed = 343
 
 local function PlaySound(Sound : Sound)
-    Sound.Volume = Sound:GetAttribute("Volume")
+    if not Sound then return end
+    Sound.Volume = Sound:GetAttribute("Volume") or 1
     Sound:Play()
 end
 

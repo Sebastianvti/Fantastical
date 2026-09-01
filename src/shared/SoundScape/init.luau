@@ -10,11 +10,6 @@ function SoundScape.New(IDs)
     local self = setmetatable({}, SoundScape)
 
     self.Attachment = Instance.new("Attachment")
-    self.Sound = Instance.new("Sound")
-    self.Sound.SoundId = ("rbxassetid://"..IDs)
-    self.Sound:SetAttribute("Volume", 1)
-    self.Sound.RollOffMaxDistance = 99999999
-    self.Sound.Volume = 0
 
     self:Play()
 end
