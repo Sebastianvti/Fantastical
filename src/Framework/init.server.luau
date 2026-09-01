@@ -7,13 +7,13 @@ local MainServices = {
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
-local Data = require(script.Data)
+local DataStore = require(script.DataStore)
 local ProfileStore = require(script.Library.ProfileStore)
-local MasterTemplate = require(script.Data.Templates.MasterTemplate)
+local MasterTemplate = require(script.DataStore.Templates.MasterTemplate)
 
 local Cache = {}
 
-local PlayerStore = ProfileStore.New(Data.GetStoreName(), MasterTemplate)
+local PlayerStore = ProfileStore.New(DataStore.GetStoreName(), MasterTemplate)
 
 for Folder,Service  in MainServices do
 	for _,Module in Service[Folder]:GetDescendants() do
@@ -39,7 +39,7 @@ for Folder,Service  in MainServices do
 	end
 end
 
-local function PlayerAdded(Player : Player)
+local function PlayerAdded(Player : Player) -- this is for the master profile, it is not tracked cause its not used the moment you load your character
 	
 	local Profile = PlayerStore:StartSessionAsync("Player_"..Player.UserId, {
 		Cancel = function()
@@ -52,13 +52,11 @@ local function PlayerAdded(Player : Player)
 			Profile:Reconcile()
 
 			Profile.OnSessionEnd:Connect(function()
-				Data.Profiles[Player] = nil
-				Player:Kick("Data error.")
+				print("[Data]: Master profile session ended.")
 			end)
 
 			if Player.Parent == Players then
-				Data.Profiles[Player] = Profile
-				Data.LoadCharacter(Player)
+				DataStore.New(Player, Profile):StartProfile()
 			else
 				warn("Player was not parented to Player service")
 				Profile:EndSession()
@@ -70,11 +68,11 @@ local function PlayerAdded(Player : Player)
 end
 
 local function PlayerRemoving(Player : Player)
-	local Profile = Data.Profiles[Player]
+	local Profile = DataStore.Profiles[Player]
 	if not Profile then return end
 
 	Profile:EndSession()
-	Data.Profiles[Player] = nil
+	DataStore.Profiles[Player] = nil
 end
 
 for _,Player in Players:GetPlayers() do

@@ -1,6 +1,6 @@
 return {
     PlayerId = {},
-    LastUsed =  "",
+    LastUsed =  nil,
     LinkedProfiles = {},
     AdminPermissions = 0
 }
