@@ -48,10 +48,10 @@ end
 
 function Cache.GetAnimation()
     for _,Value in Stash.Animations do
-        if not Value.Deployed then Value.Deployed = true return Value end
+        if not Value.Deployed then return Value end
     end
     warn("Cache is full, creating new instance")
-    return Cache.NewAnimation(true)
+    return Cache.NewAnimation()
 end
 
 function Cache.Start()

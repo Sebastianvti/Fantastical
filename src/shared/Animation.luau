@@ -6,15 +6,16 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage.Shared
 
 local Cache = require(Shared.Cache)
-local Playing = false
+
+local Priority = {}
 
 function Animation.LoadPackage(self, Package)
 
 end
 
 function Animation:Stopped()
+    print("?")
     self.AnimationInstance.Deployed = false
-    Playing = false
 end
 
 function Animation.New(Player : Player, AnimationId : number, PlayNow : boolean?)
@@ -41,8 +42,6 @@ function Animation.New(Player : Player, AnimationId : number, PlayNow : boolean?
 end
 
 function Animation:Play()
-    if Playing then return end
-    Playing = true
     self.Track:Play()
 end
 
