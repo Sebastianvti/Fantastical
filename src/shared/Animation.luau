@@ -1,6 +1,16 @@
 local Animation
 Animation.__index = Animation
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Shared = ReplicatedStorage.Shared
+
+local Cache = require(Shared.Cache)
+
+function Animation.LoadPackage(self, Package)
+
+end
+
 function Animation.New(Player : Player)
     local self = setmetatable({}, Animation)
 
@@ -12,5 +22,6 @@ function Animation.New(Player : Player)
 
     return self
 end
+
 
 return Animation
