@@ -30,6 +30,7 @@ function StatusManager.Start()
         StatusLibrary.Groups[StatusLibrary.Statuses[ModName].Group] = StatusLibrary.Statuses[ModName].Name
     end
     print("Status Library Loaded",  StatusLibrary)
+-- fix groups not grouping statuses, see loaded library
 end
 
 function StatusManager.Batch(self)

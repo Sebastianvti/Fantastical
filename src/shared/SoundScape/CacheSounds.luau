@@ -42,7 +42,7 @@ end
 
 
 function CacheSounds.Start() 
-    GetAllSounds()
+    --GetAllSounds()
 end
 
 return CacheSounds
