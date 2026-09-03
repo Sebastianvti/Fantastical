@@ -7,15 +7,17 @@ local Shared = ReplicatedStorage.Shared
 
 local Cache = require(Shared.Cache)
 
-local Priority = {}
-
 function Animation.LoadPackage(self, Package)
 
 end
 
 function Animation:Stopped()
     print("?")
-    self.AnimationInstance.Deployed = false
+   	if self.AnimationInstance then self.AnimationInstance.Deployed = false end
+        for _, connection in pairs(self.Connections or {}) do
+		connection:Disconnect()
+	end
+	self.Connections = {}
 end
 
 function Animation.New(Player : Player, AnimationId : number, PlayNow : boolean?)
@@ -36,8 +38,7 @@ function Animation.New(Player : Player, AnimationId : number, PlayNow : boolean?
     
     self.Track.Stopped:Connect(function() self:Stopped() end)
     self.Connections = {}
-
-    if PlayNow then self:Play() return end
+ 
     return self
 end
 
