@@ -8,6 +8,7 @@ local MainServices = {
 }
 
 local LocalPlayer = Players.LocalPlayer
+local Punch
 local Cache = {}
 
 for Folder,Service  in MainServices do
@@ -34,9 +35,14 @@ for Folder,Service  in MainServices do
 	end
 end
 
+local function Load()
+	Punch = Cache.Animation.New(LocalPlayer, 107336788422588, true)
+end
+
+task.delay(2, Load)
 UserInputService.InputBegan:Connect(function(Input, GPE)
 	if Input.KeyCode == Enum.KeyCode.One then
-		Cache.Animation.New(LocalPlayer, 107336788422588, true)
+		Punch:Play()
 	end
 end)
 
