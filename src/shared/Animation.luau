@@ -36,7 +36,7 @@ function Animation.New(Player : Player, AnimationId : number, PlayNow : boolean?
     self.Track = self.Animator:LoadAnimation(self.Animation)
     self.Track.Looped = false
     
-    self.Track.Stopped:Connect(function() self:Stopped() end)
+    self.Track.Stopped:Once(function() self:Stopped() end)
     self.Connections = {}
  
     return self
@@ -47,7 +47,7 @@ function Animation:Play()
 end
 
 function Animation:Event(Event, Function)
-	self.Connections[Event] = self.Track:GetMarkerReachedSignal(Event):Connect(Function)
+	self.Connections[Event] = self.Track:GetMarkerReachedSignal(Event):Once(Function)
 end
 
 return Animation
