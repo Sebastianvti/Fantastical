@@ -45,6 +45,9 @@ task.delay(2, Load)
 UserInputService.InputBegan:Connect(function(Input, GPE)
 	if Input.KeyCode == Enum.KeyCode.One then
 		Punch:Play()
+		Punch:Stopped(function()
+			print("Animation Stopped")
+		end)
 		HitboxTest:Play()
 	end
 end)

@@ -19,6 +19,7 @@ function Animation.LoadAnimations(Player, Package)
 end
 
 function Animation:Stopped(Func)
+    local _ = Func and Func() 
     -- connect events to this possibly
    	if self.AnimationInstance then self.AnimationInstance.Deployed = false end
         for _, connection in pairs(self.Connections or {}) do
