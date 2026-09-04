@@ -31,7 +31,7 @@ for Folder,Service  in MainServices do
 			end
 			
 			else
-				error("Server failed to load due to a module error.".." This error came from "..(Module.Name))
+				error("Client failed to load due to a module error.".." This error came from "..(Module.Name))
 		end
 	end
 end

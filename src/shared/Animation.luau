@@ -18,8 +18,8 @@ function Animation.LoadAnimations(Player, Package)
     return Package
 end
 
-function Animation:Stopped()
-    print(Playing)
+function Animation:Stopped(Func)
+    -- connect events to this possibly
    	if self.AnimationInstance then self.AnimationInstance.Deployed = false end
         for _, connection in pairs(self.Connections or {}) do
 		connection:Disconnect()
@@ -62,5 +62,7 @@ end
 function Animation:Event(Event, Function)
 	self.Connections[Event] = self.Track:GetMarkerReachedSignal(Event):Once(Function)
 end
+
+
 
 return Animation
