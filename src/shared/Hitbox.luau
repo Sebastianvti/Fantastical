@@ -21,18 +21,21 @@ function Hitbox.New(Player, HitboxParams, Debug)
     if not Player.Character then return end
 
     self.Owner = Player.Character -- FIX: POSITION NOT UPDATING FOR EACH CALL
-    self.Size =  HitboxParams and HitboxParams.Size or Vector3.new(5,3,5)
-    self.Origin = HitboxParams and HitboxParams.Origin or self.Owner.HumanoidRootPart.CFrame
-    self.Range = HitboxParams and HitboxParams.Range or 5
-    self.RayParams = HitboxParams and HitboxParams.RayParams or FallbackParams
-    self.Direction = self.Origin.LookVector * self.Range
+    self.HitboxParams = HitboxParams
     self.Type = "Lone"
     self.Debug = Debug
 
     return self
 end
 
-function Hitbox:Play()
+function Hitbox:Play() -- Central point for hitbox plays
+
+    self.Size =  self.HitboxParams and self.HitboxParams.Size or Vector3.new(5,3,5)
+    self.Origin = self.HitboxParams and self.HitboxParams.Origin or self.Owner.HumanoidRootPart.CFrame
+    self.Range = self.HitboxParams and self.HitboxParams.Range or 5
+    self.RayParams = self.HitboxParams and self.HitboxParams.RayParams or FallbackParams
+    self.Direction = self.Origin.LookVector * self.Range
+
     if self.Debug then self:Visualize() end
     self[self.Type](self)
 end
