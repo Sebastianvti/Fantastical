@@ -38,6 +38,8 @@ function Hitbox:Play() -- Central point for hitbox plays
     self.RayParams = self.HitboxParams and self.HitboxParams.RayParams or FallbackParams
     self.Direction = self.Origin.LookVector * self.Range
 
+    -- comment
+    -- neewline
     if self.Debug then self:Visualize() end
     self[self.Type](self)
 end
