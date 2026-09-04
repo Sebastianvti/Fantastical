@@ -28,6 +28,8 @@ function Hitbox.New(Player, HitboxParams, Debug)
     return self
 end
 
+
+
 function Hitbox:Play() -- Central point for hitbox plays
 
     self.Size =  self.HitboxParams and self.HitboxParams.Size or Vector3.new(5,3,5)
@@ -39,6 +41,30 @@ function Hitbox:Play() -- Central point for hitbox plays
     if self.Debug then self:Visualize() end
     self[self.Type](self)
 end
+
+function Hitbox:Continious()
+    self.Cast = workspace:Blockcast(
+        self.Owner.HumanoidRootPart.CFrame,
+        self.Size,
+        self.Owner.HumanoidRootPart.CFrame.LookVector * self.Range,
+        self.RayParams
+    )
+    if self.Cast then
+        -- if cast result is positive then continue cast but blacklist last hit, until no hits
+        -- are registered
+    end
+end
+
+function Hitbox:Lone()
+    self.Cast = workspace:Blockcast(
+        self.Owner.HumanoidRootPart.CFrame,
+        self.Size,
+        self.Owner.HumanoidRootPart.CFrame.LookVector * self.Range,
+        self.RayParams
+    )
+    -- casts once and if it hits something then it will return the result and stop
+end
+
 
 function Hitbox:Visualize()
 
@@ -69,15 +95,5 @@ function Hitbox:Visualize()
 	Debris:AddItem(CastVisual, 5)
 	Debris:AddItem(CastResult, 5)
 end
-
-function Hitbox:Lone()
-    workspace:Blockcast(
-        self.Owner.HumanoidRootPart.CFrame,
-        self.Size,
-        self.Owner.HumanoidRootPart.CFrame.LookVector * self.Range,
-        self.RayParams
-    )
-end
-
 
 return Hitbox
