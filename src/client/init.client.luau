@@ -21,7 +21,7 @@ for Folder,Service  in MainServices do
 			end)
 
 		if success then
-			if type(result) == "function" then continue end
+			if type(result) == "function" or Module:GetAttribute("Ignore") then continue end
 			
 			local ModName = Module.Name
 			Cache[ModName] = result

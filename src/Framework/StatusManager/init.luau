@@ -55,7 +55,7 @@ function StatusManager:DoSettings()
     return true
 end
 
-function StatusManager.New(Player : Player, StatusName : string)
+function StatusManager.New(Player , StatusName : string)
     if Player:IsA("Model") then Player = Players:GetPlayerFromCharacter(Player) end
 
     local self = setmetatable({}, StatusManager)
@@ -183,7 +183,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(Player, StatusName)
     local Status = StatusManager.GetStatus(StatusName)
 
     if not Status then return warn(Status.ErrorMsg) end
-    local Status = StatusManager.New(Player, StatusName)
+    Status = StatusManager.New(Player, StatusName)
 
     Status.Batch(Status)
 
