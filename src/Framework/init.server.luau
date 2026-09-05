@@ -1,11 +1,12 @@
+local Players = game:GetService("Players")
+local ServerScriptService = game:GetService("ServerScriptService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local MainServices = {
-	Framework = game:GetService("ServerScriptService"),
-	Shared = game:GetService("ReplicatedStorage")
+	Framework = ServerScriptService,
+	Shared = ReplicatedStorage
 }
-
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 
 local DataStore = require(script.DataStore)
 local ProfileStore = require(script.Library.ProfileStore)
@@ -30,7 +31,6 @@ for Folder,Service  in MainServices do
 			Cache[ModName] = result
 	
 			if Cache[ModName].Start then
-				print(ModName)
 				Cache[ModName].Start()
 			end
 			

@@ -1,4 +1,7 @@
 {
     "explorer.compactFolders": false,
+    "robloxLsp.diagnostics.neededFileStatus": {
+        "": "Opened"
+    }
 }
 
