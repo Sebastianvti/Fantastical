@@ -34,6 +34,7 @@ local Threads = {}
 
 local RangeChart = require(script.RangeChart)
 local ChatPacket = require(Packets.Chat)
+local Processor = require(script.ProcessMsg)
 
 local function PassMessage()
     InputBar:ReleaseFocus()
@@ -45,6 +46,11 @@ local function PassMessage()
         Type = "Normal",
     }
 
+    -- if command then return end
+    local Content = Processor.Process(Information.Content)
+    if not Content then return end
+
+    Information.Content = Content
     Chat.New(Information)
 end
 
@@ -75,7 +81,7 @@ local function LoopRange() -- Instead of using RunService, i use a loop to detec
             local Character = Player.Character
             local Type = Info[3]
 
-            --if Character == LocalPlayer.Character then continue end
+            if Character == LocalPlayer.Character then continue end
 
             local Magnitude = (LocalPlayer.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude
 
