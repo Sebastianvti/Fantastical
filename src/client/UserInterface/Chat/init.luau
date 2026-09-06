@@ -172,12 +172,12 @@ function Chat:LinkChat()
 end
 
 function Chat:GetStartingState()
-    for _,Value in RangeChart[self.Type] do
+    for Key,Value in RangeChart[self.Type] do
         local Ranges = string.split(Value, "-")
         local Magnitude = GetMagnitude(self.Character)
 
         if Magnitude >= tonumber(Ranges[1]) and Magnitude <= tonumber(Ranges[2]) then
-            return Value
+            return Key
         end
     end
 end
@@ -188,6 +188,7 @@ function Chat:BubbleChat()
 
     local Container = ActiveContainers[self.Player.Name]
     local StartingState = self:GetStartingState()
+    print(StartingState)
 
     self.BubbleChat = BubbleChatTemplate:Clone()
 
@@ -198,8 +199,7 @@ function Chat:BubbleChat()
 
     self.BubbleChat:SetAttribute("Message", self.Content)
 
-    Chat[StartingState](self.Player, 
-    self.BubbleChat.Name)
+    Chat[StartingState](self.Player, self.BubbleChat.Name)
     self:LinkChat()
 end
 
@@ -207,7 +207,7 @@ function Chat:Window()
     local WindowMsg : Frame = WindowTemplate:Clone()
 
     WindowMsg.Name = self.Player.Name.."_"..string.sub(HttpService:GenerateGUID(false),1, 6)
-    WindowMsg.Message.Text = "{Clear} ".."Iona Zierke: "..(self.Content)
+    WindowMsg.Message.Text = "{Sharp} ".."Iona Zierke: "..(self.Content)
     WindowMsg.BackgroundTransparency = Transparent and 0.9 or 1
     WindowMsg.Parent = ChatWindow
     WindowMsg.Visible = true
