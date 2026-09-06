@@ -37,9 +37,8 @@ function ProcessMsg.Process(Text : string)
 
     Text = CorrectText(Text)
     Text = EnrichText(Text)
-    Text = PaintText(Text)
+    --Text = PaintText(Text)
 
-    print(Text)
     return Text
 end
 

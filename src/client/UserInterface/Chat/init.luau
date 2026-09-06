@@ -13,6 +13,8 @@ local UserInterface = PlayerGui:WaitForChild("UserInterface")
 local Shared = ReplicatedStorage.Shared
 local Packets = Shared.Packets
 
+local Network = require(Shared.Network)
+
 local Messaging = UserInterface.Messaging
 local Window : CanvasGroup = Messaging.Window
 
@@ -36,12 +38,12 @@ local RangeChart = require(script.RangeChart)
 local ChatPacket = require(Packets.Chat)
 local Processor = require(script.ProcessMsg)
 
-local function PassMessage()
+local function PassMessage(Content)
     InputBar:ReleaseFocus()
 
     local Information : ChatPacket.Params = {
         Sender = LocalPlayer,
-        Content = InputBar.Text,
+        Content = Content,
         ChatWindow = true,
         Type = "Normal",
     }
@@ -54,8 +56,25 @@ local function PassMessage()
     Chat.New(Information)
 end
 
+local function ResetPlaceHolder()
+    InputBar.PlaceholderText = "Press / to begin typing..."
+end
+
+local function GetMagnitude(Character : Model)
+    return (LocalPlayer.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude
+end
+
 local function FocusLost(Enter)
-    if Enter then PassMessage() end
+    if not Enter then return end
+
+    if string.len(InputBar.Text) > 255 then 
+        InputBar.Text = "" InputBar.PlaceholderText = "Message was over 255 characters long." 
+        task.delay(4, ResetPlaceHolder) 
+        return
+    end
+
+    Network.Chatted:FireServer(InputBar.Text)
+    InputBar.Text = ""
 end
 
 local function AddBubbleChat(Player : Player)
@@ -83,9 +102,7 @@ local function LoopRange() -- Instead of using RunService, i use a loop to detec
 
             if Character == LocalPlayer.Character then continue end
 
-            local Magnitude = (LocalPlayer.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude
-
-            if Magnitude >= MaxRange then continue end
+            local Magnitude = GetMagnitude(Character)
 
             for Key,Value in RangeChart[Type] do
                 local Ranges = string.split(Value, "-")
@@ -154,19 +171,35 @@ function Chat:LinkChat()
     task.spawn(LoopRange)
 end
 
+function Chat:GetStartingState()
+    for _,Value in RangeChart[self.Type] do
+        local Ranges = string.split(Value, "-")
+        local Magnitude = GetMagnitude(self.Character)
+
+        if Magnitude >= tonumber(Ranges[1]) and Magnitude <= tonumber(Ranges[2]) then
+            return Value
+        end
+    end
+end
+
 
 function Chat:BubbleChat()
     if not ActiveContainers:FindFirstChild(self.Player.Name) then AddBubbleChat(self.Player) end
 
     local Container = ActiveContainers[self.Player.Name]
+    local StartingState = self:GetStartingState()
+
     self.BubbleChat = BubbleChatTemplate:Clone()
 
-    self.BubbleChat.Name = self.Player.Name.."_"..string.sub(HttpService:GenerateGUID(false),1, 6).."_"..(self.Type) -- PlrName | RandomName | Type
+    self.BubbleChat.Name = self.Player.Name.."_"..string.sub(HttpService:GenerateGUID(false),1, 8).."_"..(self.Type) -- PlrName | RandomName | Type
     self.BubbleChat.Message.Text = self.Content
     self.BubbleChat.Visible = true
     self.BubbleChat.Parent = Container.BubbleChatList
 
     self.BubbleChat:SetAttribute("Message", self.Content)
+
+    Chat[StartingState](self.Player, 
+    self.BubbleChat.Name)
     self:LinkChat()
 end
 
@@ -198,8 +231,8 @@ end
 
 function Chat.Hide(Player)
     local Container = GetContainer(Player)
+    
     Container.Visible = false
-
 end
 
 UserInputService.InputBegan:Connect(function(Input, GPE)
@@ -212,6 +245,8 @@ UserInputService.InputBegan:Connect(function(Input, GPE)
          InputBar:CaptureFocus()
     end
 end)
+
 InputBar.FocusLost:Connect(FocusLost)
+Network.Chatted.OnClientEvent:Connect(PassMessage)
 
 return Chat
