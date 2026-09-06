@@ -78,6 +78,7 @@ end
 
 task.delay(2, Load)
 UserInputService.InputBegan:Connect(function(Input, GPE)
+	if GPE then return end
 	if Input.KeyCode == Enum.KeyCode.One then
 		Punch:Play()
 		Punch:Stopped(function()

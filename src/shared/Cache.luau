@@ -57,7 +57,7 @@ end
 
 function Cache.Start()
     if not RunService:IsClient() then return end
-    print("Client")
+    
     for Key,Instances in PreloadServices do
         for i = 1, Instances do
             Cache["New"..Key]()

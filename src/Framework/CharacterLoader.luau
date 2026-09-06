@@ -1,7 +1,11 @@
 local CharacterLoader = {}
 
 local Players = game:GetService("Players")
+local ServerStorage = game:GetService("ServerStorage")
+
+local StoreHouse = ServerStorage.StoreHouse
 local StatusManager = require(script.Parent.StatusManager)
+
 
 local function CharacterAdded(Character)
 	print("Alive")
