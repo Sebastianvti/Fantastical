@@ -3,6 +3,9 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
+local Shared = ReplicatedStorage.Shared
+local Network = require(Shared.Network)
+
 local MainServices = {
 	Framework = ServerScriptService,
 	Shared = ReplicatedStorage
@@ -11,32 +14,46 @@ local MainServices = {
 local DataStore = require(script.DataStore)
 local ProfileStore = require(script.Library.ProfileStore)
 local MasterTemplate = require(script.DataStore.Templates.MasterTemplate)
+local Lync = require(Shared.Lync)
 
 local Cache = {}
+local FailModuleByType = {"userdata", "function"}
 
 local PlayerStore = ProfileStore.New(DataStore.GetStoreName(), MasterTemplate)
 
-for Folder,Service  in MainServices do
-	for _,Module in Service[Folder]:GetDescendants() do
-			if not Module:IsA("ModuleScript") then continue end
+--Lync.start()
+local function PCallResult(Module)
+		local success, result = pcall(function()
+			return require(Module)
+		end)
 
-			local success, result = pcall(function()
-				return require(Module)
-			end)
+			if success then
+			if table.find(FailModuleByType, type(Module)) then return end
 
-		if success then
-			if type(result) == "function" or Module:GetAttribute("Ignore") then continue end
-			
 			local ModName = Module.Name
 			Cache[ModName] = result
-	
+
 			if Cache[ModName].Start then
 				Cache[ModName].Start()
 			end
 			
-			else
-				error("Server failed to load due to a module error.".." This error came from "..(Module.Name))
-		end
+		else
+			error("Client failed to load due to a module error.".." This error came from "..(Module.Name))
+	end
+end
+
+local function RequireDescendants(Module : ModuleScript)
+	for _,Module in Module:GetDescendants() do
+		if not Module:IsA("ModuleScript") or Module:GetAttribute("Ignore") then continue end
+		PCallResult(Module)
+	end
+end
+
+for Folder,Service  in MainServices do
+	for _,Module in Service[Folder]:GetChildren() do
+			if not Module:IsA("ModuleScript") or Module:GetAttribute("Ignore") then continue end
+			PCallResult(Module)
+			RequireDescendants(Module)
 	end
 end
 

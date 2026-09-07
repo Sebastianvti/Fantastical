@@ -3,40 +3,56 @@ local StarterPlayer = game:GetService("StarterPlayer")
 local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+
+local Shared = ReplicatedStorage.Shared
+local Network = require(Shared.Network)
+
+local LocalPlayer = Players.LocalPlayer
+
+local Lync = require(Shared.Lync)
 
 local MainServices = {
 	Client = StarterPlayer.StarterPlayerScripts,
 	Shared = ReplicatedStorage
 }
 
-local LocalPlayer = Players.LocalPlayer
-local Punch
-local HitboxTest 
 local Cache = {}
+local FailModuleByType = {"function"}
 
+Lync.start()
+local function PCallResult(Module)
+		local success, result = pcall(function()
+			return require(Module)
+		end)
 
+			if success and type(Module) ~= "function" then
+			if table.find(FailModuleByType, type(Module)) then print("=") return end
 
-for Folder,Service  in MainServices do
-	for _,Module in Service[Folder]:GetDescendants() do
-			if not Module:IsA("ModuleScript") then continue end
-
-			local success, result = pcall(function()
-				return require(Module)
-			end)
-
-		if success then
-			if type(result) == "function" or Module:GetAttribute("Ignore") then continue end
-			
 			local ModName = Module.Name
 			Cache[ModName] = result
-	
+			
 			if Cache[ModName].Start then
 				Cache[ModName].Start()
 			end
 			
-			else
-				error("Client failed to load due to a module error.".." This error came from "..(Module.Name))
-		end
+		else
+			error("Client failed to load due to a module error.".." This error came from "..(Module.Name))
+	end
+end
+
+local function RequireDescendants(Module : ModuleScript)
+	for _,Module in Module:GetDescendants() do
+		if not Module:IsA("ModuleScript") or Module:GetAttribute("Ignore") then continue end
+		PCallResult(Module)
+	end
+end
+
+for Folder,Service  in MainServices do
+	for _,Module in Service[Folder]:GetChildren() do
+			if not Module:IsA("ModuleScript") and not Module:IsA("Folder") or Module:GetAttribute("Ignore") then continue end
+			if Module:IsA("ModuleScript") then PCallResult(Module) end
+			RequireDescendants(Module)
 	end
 end
 
@@ -68,25 +84,6 @@ for _,player in Players:GetPlayers() do
 end
 
 Players.PlayerAdded:Connect(PlayerAdded)
-
-
-
-local function Load()
-	Punch = Cache.Animation.New(LocalPlayer, 107336788422588, true)
-	HitboxTest = Cache.Hitbox.New(LocalPlayer, nil, true)
-end
-
-task.delay(2, Load)
-UserInputService.InputBegan:Connect(function(Input, GPE)
-	if GPE then return end
-	if Input.KeyCode == Enum.KeyCode.One then
-		Punch:Play()
-		Punch:Stopped(function()
-			print("Animation Stopped")
-		end)
-		HitboxTest:Play()
-	end
-end)
 
 UserInputService.InputBegan:Connect(function(Input, GPE)
 	if GPE then return end

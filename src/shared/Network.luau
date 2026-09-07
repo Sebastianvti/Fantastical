@@ -1,11 +1,4 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Lync = require(game:GetService("ReplicatedStorage").Shared.Lync)
 
-local Shared = ReplicatedStorage.Shared
 
-local Network = require(Shared.QuickNet)
-local Type = Network.Data
-
-return {
-    Chatted = Network:register("Chatted", Type.String)
-
-}   
+return  {}

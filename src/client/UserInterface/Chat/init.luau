@@ -2,9 +2,11 @@ local Chat = {}
 Chat.__index = Chat
 
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer.PlayerGui
@@ -27,7 +29,6 @@ local WindowTemplate = Container.MessageTemplate
 
 local ChatWindow : ScrollingFrame = Window.ChatWindow
 local InputBar : TextBox = Window.InputBar
-local MaxRange = BubbleChatContainer.MaxDistance
 
 local Transparent = true -- On the chat window, every other message background is transparent, this just turns off when the next message background needs to be non transparent
 
@@ -37,6 +38,13 @@ local Threads = {}
 local RangeChart = require(script.RangeChart)
 local ChatPacket = require(Packets.Chat)
 local Processor = require(script.ProcessMsg)
+
+local function ChangeVisbility(Transparency : number)
+    if InputBar:IsFocused() and Transparency == 1 then Threads["HideInterface"] = task.delay(4, ChangeVisbility, 1) return end
+
+    local Change = TweenService:Create(Window, TweenInfo.new(0.5), {GroupTransparency = Transparency})
+    Change:Play()
+end
 
 local function PassMessage(Content)
     InputBar:ReleaseFocus()
@@ -67,13 +75,15 @@ end
 local function FocusLost(Enter)
     if not Enter then return end
 
-    if string.len(InputBar.Text) > 255 then 
-        InputBar.Text = "" InputBar.PlaceholderText = "Message was over 255 characters long." 
+    Threads["HideInterface"] = task.delay(8, ChangeVisbility, 1)
+
+    if not Processor.PreProcess(InputBar.Text) then 
         task.delay(4, ResetPlaceHolder) 
         return
     end
 
-    Network.Chatted:FireServer(InputBar.Text)
+    Network.Chatted:fireServer(InputBar.Text)
+    RunService.PostSimulation:Connect(Lync.flush)
     InputBar.Text = ""
 end
 
@@ -120,6 +130,7 @@ end
 function Chat.CharacterStart() -- this is a dumb solution, but :CaptureFocus DOESNT WORK for keybinds, so your text cursor doesnt show up. this is the only way to force it to do so
     -- it made me really frustrated, trying to work this out. i dont know the solution, tried everything. minor delays dont work no matter how long you set it to
     InputBar:CaptureFocus()
+    Threads["HideInterface"] = task.delay(4, ChangeVisbility, 1)
     InputBar:ReleaseFocus()
 end
 
@@ -163,7 +174,7 @@ function Chat:LinkChat()
     end
 
     table.insert(self.ActiveBubbles, self.BubbleChat.Name)
-    Threads[self.BubbleChat.Name] = task.delay(8, Chat.RemoveBubble, self, true)
+    Threads[self.BubbleChat.Name] = task.delay(8, Chat.TweenChat, self, false, true)
 
     self.BubbleChat.Caret.Visible = true
 
@@ -188,7 +199,6 @@ function Chat:BubbleChat()
 
     local Container = ActiveContainers[self.Player.Name]
     local StartingState = self:GetStartingState()
-    print(StartingState)
 
     self.BubbleChat = BubbleChatTemplate:Clone()
 
@@ -200,7 +210,33 @@ function Chat:BubbleChat()
     self.BubbleChat:SetAttribute("Message", self.Content)
 
     Chat[StartingState](self.Player, self.BubbleChat.Name)
+
+    self:TweenChat(true)
     self:LinkChat()
+end
+
+function Chat:TweenChat(Visibility : boolean, Remove : boolean)
+    local Bg,TextTr,Caret = 1,1,1
+
+    if Visibility then 
+        self.BubbleChat.Message.BackgroundTransparency = 1
+        self.BubbleChat.Message.TextTransparency = 1
+        self.BubbleChat.Caret.ImageTransparency = 1
+
+        Bg,TextTr,Caret = 0.6,0,0.7
+    end
+
+    local TweenChat = TweenService:Create(self.BubbleChat.Message, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {BackgroundTransparency = Bg, TextTransparency = TextTr})
+    local TweenCaret = TweenService:Create(self.BubbleChat.Caret, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {ImageTransparency = Caret})
+
+    TweenCaret:Play()
+    TweenChat:Play()
+
+    if Remove then TweenChat.Completed:Once(function()
+            self:RemoveBubble()
+        end)
+        
+    end 
 end
 
 function Chat:Window()
@@ -241,12 +277,14 @@ UserInputService.InputBegan:Connect(function(Input, GPE)
     if InputBar:IsFocused() and not GPE then
         InputBar:ReleaseFocus()
     else
-        task.wait()
+        if Threads["HideInterface"] then task.cancel(Threads["HideInterface"]) 
+            Threads["HideInterface"] = nil 
+            ChangeVisbility(0) 
+        end
          InputBar:CaptureFocus()
     end
 end)
 
-InputBar.FocusLost:Connect(FocusLost)
-Network.Chatted.OnClientEvent:Connect(PassMessage)
+--InputBar.FocusLost:Connect(FocusLost)
 
 return Chat

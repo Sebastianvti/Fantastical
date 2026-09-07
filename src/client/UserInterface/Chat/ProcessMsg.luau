@@ -31,6 +31,13 @@ local function CorrectText(Text)
     return Text
 end
 
+function ProcessMsg.PreProcess(Text : string)
+    if string.len(Text) > 255 or string.len(Text) == 0 then return false end
+
+    Text = string.gsub(Text, "^%s+", "")
+    return Text
+end
+
 function ProcessMsg.Process(Text : string)
     Text = string.gsub(Text, "^%s+", "")
     if string.len(Text) > 250 then return end
