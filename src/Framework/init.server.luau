@@ -21,7 +21,9 @@ local FailModuleByType = {"userdata", "function"}
 
 local PlayerStore = ProfileStore.New(DataStore.GetStoreName(), MasterTemplate)
 
---Lync.start()
+Lync.start()
+RunService.PostSimulation:Connect(function(deltaTimeSim) Lync.flush() end)
+
 local function PCallResult(Module)
 		local success, result = pcall(function()
 			return require(Module)

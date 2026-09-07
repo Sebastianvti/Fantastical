@@ -21,6 +21,7 @@ local Cache = {}
 local FailModuleByType = {"function"}
 
 Lync.start()
+RunService.PostSimulation:Connect(function(deltaTimeSim) Lync.flush() end)
 local function PCallResult(Module)
 		local success, result = pcall(function()
 			return require(Module)

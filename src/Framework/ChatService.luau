@@ -37,6 +37,6 @@ local function Chatted(Sender, Msg)
     end
 end
 
-Network.Chatted:onServer(Chatted)
+--Network.Chatted:onServer(Chatted)
 
 return ChatService
