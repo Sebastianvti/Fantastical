@@ -1,6 +1,7 @@
 local ChatService = {}
 
 local Players = game:GetService("Players")
+local ProximityPromptService = game:GetService("ProximityPromptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage.Shared
@@ -19,24 +20,43 @@ local function ObserveArea(Character : Model)
     return workspace:GetPartBoundsInRadius(Character.HumanoidRootPart.Position, 500, Overlap)
 end
 
-local function Chatted(Sender, Msg)
-    print(Sender, Msg)
-    local Character = Sender.Character
-    local Area = ObserveArea(Character)
+local function IsLooking(Head, Character)
+    print(Head, Character)
+    local IsLooking = workspace:Raycast(Character.Head.Position, Head.Position - Character.Head.Position, Params)
+    local IsLooking2 = workspace:Raycast(Character.Head.Position, workspace.Dummy.Head.Position - Character.Head.Position, Params)
 
-    Params.FilterDescendantsInstances = {Character}
+    print(IsLooking)
+    print(IsLooking2)
+
+    if IsLooking and IsLooking.Instance == Head then
+        print("Returned true")
+        return true
+    else
+        print("Returned false")
+        return false
+    end
+end
+
+local function Chatted(Package, Client)
+    if not Client.Character then return end
+
+    local ClientCharacter = Client.Character
+    local Area = ObserveArea(ClientCharacter)
+
+    Params.FilterDescendantsInstances = {ClientCharacter}
 
     for _,Head in Area do
         
         local Character = Head.Parent
         local Player = Players:GetPlayerFromCharacter(Character)
+        local AppearInWindow = true
 
-        if Player ~= Sender then workspace:Raycast(Character.Head, Head.Position - Character.Head.Position) end
+        if Player ~= Client then AppearInWindow = IsLooking(Head, ClientCharacter) end
 
-       --Network.Chatted:FireClient(Player, Msg)
+       Network.Chatted:fireClient(Player, {Sender = Client, Message = Package.Message, Type = "Normal", Windowed = AppearInWindow})
     end
 end
 
---Network.Chatted:onServer(Chatted)
+Network.Chatted:onClient(Chatted)
 
 return ChatService

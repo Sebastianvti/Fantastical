@@ -6,14 +6,12 @@ local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer.PlayerGui
 
 local UserInterface = PlayerGui:WaitForChild("UserInterface")
 local Shared = ReplicatedStorage.Shared
-local Packets = Shared.Packets
 
 local Network = require(Shared.Network)
 
@@ -36,7 +34,6 @@ local ChatBubbles = {} -- This is not nested, all values passed here contain all
 local Threads = {}
 
 local RangeChart = require(script.RangeChart)
-local ChatPacket = require(Packets.Chat)
 local Processor = require(script.ProcessMsg)
 
 local function ChangeVisbility(Transparency : number)
@@ -46,22 +43,20 @@ local function ChangeVisbility(Transparency : number)
     Change:Play()
 end
 
-local function PassMessage(Content)
+local function OverrideVisiblityThread()
+    if Threads["HideInterface"] then task.cancel(Threads["HideInterface"]) end
+    task.delay(5, ChangeVisbility, 1)
+end
+
+local function PassMessage(Package)
     InputBar:ReleaseFocus()
 
-    local Information : ChatPacket.Params = {
-        Sender = LocalPlayer,
-        Content = Content,
-        ChatWindow = true,
-        Type = "Normal",
-    }
-
     -- if command then return end
-    local Content = Processor.Process(Information.Content)
-    if not Content then return end
+    local ProcessedMsg = Processor.Process(Package.Message)
+    if not ProcessedMsg then return end
 
-    Information.Content = Content
-    Chat.New(Information)
+    Package.Message = ProcessedMsg
+    Chat.New(Package)
 end
 
 local function ResetPlaceHolder()
@@ -82,8 +77,7 @@ local function FocusLost(Enter)
         return
     end
 
-    Network.Chatted:fireServer(InputBar.Text)
-    RunService.PostSimulation:Connect(Lync.flush)
+    Network.Chatted:fireServer({Sender = LocalPlayer, Message = InputBar.Text})
     InputBar.Text = ""
 end
 
@@ -139,9 +133,9 @@ function Chat.New(ChatParams)
 
     self.Player = ChatParams.Sender
     self.Character = ChatParams.Sender.Character
-    self.Content = ChatParams.Content
+    self.Content = ChatParams.Message
     self.Type = "Normal"
-    self.WindowEnabled = ChatParams.ChatWindow
+    self.WindowEnabled = ChatParams.Windowed
     self.ActiveBubbles = ChatBubbles
 
     self:Send()
@@ -248,6 +242,8 @@ function Chat:Window()
     WindowMsg.Parent = ChatWindow
     WindowMsg.Visible = true
 
+    OverrideVisiblityThread()
+    ChangeVisbility(0)
     if Transparent then Transparent = false else Transparent = true end
 end
 
@@ -285,6 +281,9 @@ UserInputService.InputBegan:Connect(function(Input, GPE)
     end
 end)
 
---InputBar.FocusLost:Connect(FocusLost)
+InputBar.FocusLost:Connect(FocusLost)
+Network.Chatted:onServer(function(Package) PassMessage(Package) end) 
+    
+
 
 return Chat
