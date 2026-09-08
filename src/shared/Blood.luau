@@ -1,0 +1,3 @@
+local Blood = {}
+
+return Blood
