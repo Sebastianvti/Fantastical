@@ -69,15 +69,15 @@ end
 
 local function FocusLost(Enter)
     if not Enter then return end
-
     Threads["HideInterface"] = task.delay(8, ChangeVisbility, 1)
 
-    if not Processor.PreProcess(InputBar.Text) then 
+    local PreProcessedTxt = Processor.PreProcess(InputBar.Text)
+    if not PreProcessedTxt then 
         task.delay(4, ResetPlaceHolder) 
         return
     end
 
-    Network.Chatted:fireServer({Sender = LocalPlayer, Message = InputBar.Text})
+    Network.Chatted:fireServer({Sender = LocalPlayer, Message = PreProcessedTxt})
     InputBar.Text = ""
 end
 

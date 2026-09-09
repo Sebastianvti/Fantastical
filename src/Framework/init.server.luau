@@ -25,6 +25,8 @@ Lync.start()
 RunService.PostSimulation:Connect(function(deltaTimeSim) Lync.flush() end)
 
 local function PCallResult(Module)
+	if Module:GetAttribute("Ignore") then return end
+	
 		local success, result = pcall(function()
 			return require(Module)
 		end)

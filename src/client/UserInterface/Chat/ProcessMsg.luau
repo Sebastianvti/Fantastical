@@ -1,5 +1,6 @@
 local ProcessMsg = {}
 
+local ColorChart = require(script.Parent.ColorChart)
 local Prefixes = require(script.Parent.Prefix)
 
 local function EnrichText(Text)
@@ -14,27 +15,28 @@ local function EnrichText(Text)
 end
 
 local function PaintText(Text)
-	local Pattern = "%C%/" .. "(.-)" .. "%C%/%(%d+%,%d+%,%d+%)"
-    local Color = string.match(Text, "%d+%,%d+%,%d+")
-    local Split = string.split(Color, ",")
+	local Pattern = "%#" .. "(.-)" .. "%(" .."(.-)".. "%)"
 
-    game:GetService("Players").LocalPlayer.PlayerGui.UserInterface.Messaging.Window.ChatWindow.BorderColor3 = Color3.fromRGB(Split[1], Split[2], Split[3]) -- not pretty but its a nothing burger code
 
-	Text = Text:gsub(Pattern, function(Content)
-		return `<font color="rgb({Color})">{Content}</font>`
-	end)
-    
+
+    Text = Text:gsub(Pattern, function(Content, FontColor)
+            if not ColorChart[FontColor:lower()] then FontColor = ColorChart.black else 
+                FontColor = ColorChart[FontColor:lower()]:ToHex()
+            end
+        return `<font color="#{FontColor}">{Content}</font>`
+    end)
     return Text
 end
 
 local function CorrectText(Text)
-    return Text
+    return Text 
 end
 
 function ProcessMsg.PreProcess(Text : string)
     if string.len(Text) > 255 or string.len(Text) == 0 then return false end
 
     Text = string.gsub(Text, "^%s+", "")
+    Text = string.gsub(Text, "%s+$", "" )
     return Text
 end
 
@@ -44,7 +46,7 @@ function ProcessMsg.Process(Text : string)
 
     Text = CorrectText(Text)
     Text = EnrichText(Text)
-    --Text = PaintText(Text)
+    Text = PaintText(Text)
 
     return Text
 end

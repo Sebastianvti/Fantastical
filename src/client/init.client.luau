@@ -21,8 +21,10 @@ local Cache = {}
 local FailModuleByType = {"function"}
 
 Lync.start()
-RunService.PostSimulation:Connect(function(deltaTimeSim) Lync.flush() end)
+RunService.PostSimulation:Connect(function() Lync.flush() end)
 local function PCallResult(Module)
+	if Module:GetAttribute("Ignore") then return end
+	
 		local success, result = pcall(function()
 			return require(Module)
 		end)
@@ -51,9 +53,10 @@ end
 
 for Folder,Service  in MainServices do
 	for _,Module in Service[Folder]:GetChildren() do
-			if not Module:IsA("ModuleScript") and not Module:IsA("Folder") or Module:GetAttribute("Ignore") then continue end
-			if Module:IsA("ModuleScript") then PCallResult(Module) end
-			RequireDescendants(Module)
+		if not Module:IsA("ModuleScript") and not Module:IsA("Folder") or Module:GetAttribute("Ignore") then continue end
+
+		if Module:IsA("ModuleScript") then PCallResult(Module) end
+		RequireDescendants(Module)
 	end
 end
 
