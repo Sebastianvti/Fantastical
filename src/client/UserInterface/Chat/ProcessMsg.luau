@@ -27,13 +27,18 @@ local function PaintText(Text)
     return Text
 end
 
+local function Insensitive(pattern)
+    return (string.gsub(pattern, "%a", function(char)
+        return string.format("[%s%s]", string.lower(char), string.upper(char))
+    end))
+end
+
 local function CorrectText(Text)
-        for Pattern,Solution in CorrectionChart do
-            Text = string.gsub(Text:lower(), Pattern, function()
-                    return Solution
-            end)
-        end
-    return Text 
+    for Pattern, Solution in pairs(CorrectionChart) do
+        local InsensitivePattern = Insensitive(Pattern)
+        Text = string.gsub(Text, InsensitivePattern, Solution)
+    end
+    return Text
 end
 
 function ProcessMsg.PreProcess(Text : string)

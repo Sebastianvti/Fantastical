@@ -45,7 +45,7 @@ end
 
 local function OverrideVisiblityThread()
     if Threads["HideInterface"] then task.cancel(Threads["HideInterface"]) end
-    task.delay(5, ChangeVisbility, 1)
+    task.delay(8, ChangeVisbility, 1)
 end
 
 local function PassMessage(Package)
