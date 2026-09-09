@@ -150,7 +150,10 @@ end
 
 function Chat:RemoveBubble(TimedOut : boolean)
     local Removing = self.ActiveBubbles[1]
-    local PlrContainer = GetContainer(self.Player)
+    if not Removing then return end
+
+    local Player = Players[string.split(Removing, "_")[1]]
+    local PlrContainer = GetContainer(Player)
 
     if not PlrContainer[Removing] then return end
 
@@ -169,7 +172,6 @@ function Chat:LinkChat()
     PlrContainer[self.ActiveBubbles[#self.ActiveBubbles]].Caret.Visible = false 
     end
 
-    table.insert(self.ActiveBubbles, self.BubbleChat.Name)
     Threads[self.BubbleChat.Name] = task.delay(8, Chat.TweenChat, self, false, true)
     self.BubbleChat.Caret.Visible = true
 
@@ -190,7 +192,6 @@ end
 
 
 function Chat:BubbleChat()
-    print("?")
     if not ActiveContainers:FindFirstChild(self.Player.Name) then AddBubbleChat(self.Player) end
 
     local Container = ActiveContainers[self.Player.Name]
@@ -206,6 +207,7 @@ function Chat:BubbleChat()
     self.BubbleChat:SetAttribute("Message", self.Content)
 
     Chat[StartingState](self.Player, self.BubbleChat.Name)
+    table.insert(self.ActiveBubbles, self.BubbleChat.Name)
 
     self:TweenChat(true)
     self:LinkChat()
