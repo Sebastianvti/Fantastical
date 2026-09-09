@@ -150,11 +150,11 @@ end
 
 function Chat:RemoveBubble(TimedOut : boolean)
     local Removing = self.ActiveBubbles[1]
-    local Container = GetContainer(self.Player)
+    local PlrContainer = GetContainer(self.Player)
 
-    if not Container[Removing] then return end
+    if not PlrContainer[Removing] then return end
 
-    Container[Removing]:Destroy()
+    PlrContainer[Removing]:Destroy()
     table.remove(self.ActiveBubbles, 1)
 
     if Threads[Removing] and not TimedOut then task.cancel(Threads[Removing]) end
@@ -163,13 +163,10 @@ function Chat:RemoveBubble(TimedOut : boolean)
 end
 
 function Chat:LinkChat()
-    local Container = GetContainer(self.Player)
+    local PlrContainer = GetContainer(self.Player)
 
     if #self.ActiveBubbles ~= 0 then -- Removes caret visibility on the chat message that is about to lose its place above the head.
-    print(self.ActiveBubbles)
-    print(self.ActiveBubbles[#self.ActiveBubbles])
-    print(Container)
-    Container[self.ActiveBubbles[#self.ActiveBubbles]].Caret.Visible = false 
+    PlrContainer[self.ActiveBubbles[#self.ActiveBubbles]].Caret.Visible = false 
     end
 
     table.insert(self.ActiveBubbles, self.BubbleChat.Name)
@@ -260,16 +257,16 @@ function Chat.Visible(Player, Bubble)
 end
 
 function Chat.Dotted(Player, Bubble)
-    local Container = GetContainer(Player)
-    Container.Visible = true
+    local PlrContainer = GetContainer(Player)
+    PlrContainer.Visible = true
 
     Container[Bubble].Message.Text = "..."
 end
 
 function Chat.Hide(Player)
-    local Container = GetContainer(Player)
+    local PlrContainer = GetContainer(Player)
     
-    Container.Visible = false
+    PlrContainer.Visible = false
 end
 
 UserInputService.InputBegan:Connect(function(Input, GPE)
