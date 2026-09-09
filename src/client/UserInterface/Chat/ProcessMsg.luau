@@ -1,5 +1,6 @@
 local ProcessMsg = {}
 
+local CorrectionChart = require(script.Parent.CorrectionChart)
 local ColorChart = require(script.Parent.ColorChart)
 local Prefixes = require(script.Parent.Prefix)
 
@@ -17,8 +18,6 @@ end
 local function PaintText(Text)
 	local Pattern = "%#" .. "(.-)" .. "%(" .."(.-)".. "%)"
 
-
-
     Text = Text:gsub(Pattern, function(Content, FontColor)
             if not ColorChart[FontColor:lower()] then FontColor = ColorChart.black else 
                 FontColor = ColorChart[FontColor:lower()]:ToHex()
@@ -29,6 +28,11 @@ local function PaintText(Text)
 end
 
 local function CorrectText(Text)
+        for Pattern,Solution in CorrectionChart do
+            Text = string.gsub(Text:lower(), Pattern, function()
+                    return Solution
+            end)
+        end
     return Text 
 end
 

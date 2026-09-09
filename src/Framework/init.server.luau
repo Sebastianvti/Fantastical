@@ -17,7 +17,7 @@ local MasterTemplate = require(script.DataStore.Templates.MasterTemplate)
 local Lync = require(Shared.Lync)
 
 local Cache = {}
-local FailModuleByType = {"userdata", "function"}
+local FailModuleByType = {"function"}
 
 local PlayerStore = ProfileStore.New(DataStore.GetStoreName(), MasterTemplate)
 
@@ -26,13 +26,13 @@ RunService.PostSimulation:Connect(function(deltaTimeSim) Lync.flush() end)
 
 local function PCallResult(Module)
 	if Module:GetAttribute("Ignore") then return end
-	
+
 		local success, result = pcall(function()
 			return require(Module)
 		end)
 
 			if success then
-			if table.find(FailModuleByType, type(Module)) then return end
+			if table.find(FailModuleByType, type(Module)) then print(Module)  return end
 
 			local ModName = Module.Name
 			Cache[ModName] = result
@@ -44,20 +44,24 @@ local function PCallResult(Module)
 		else
 			error("Client failed to load due to a module error.".." This error came from "..(Module.Name))
 	end
+
 end
 
-local function RequireDescendants(Module : ModuleScript)
-	for _,Module in Module:GetDescendants() do
+local function RequireChildren(Module : ModuleScript)
+	for _,Module in Module:GetChildren() do
 		if not Module:IsA("ModuleScript") or Module:GetAttribute("Ignore") then continue end
+
+		RequireChildren(Module)
 		PCallResult(Module)
 	end
 end
 
 for Folder,Service  in MainServices do
 	for _,Module in Service[Folder]:GetChildren() do
-			if not Module:IsA("ModuleScript") or Module:GetAttribute("Ignore") then continue end
-			PCallResult(Module)
-			RequireDescendants(Module)
+			if not Module:IsA("ModuleScript") and not Module:IsA("Folder") or Module:GetAttribute("Ignore") then continue end
+			if Module:IsA("ModuleScript") then PCallResult(Module) end
+
+			RequireChildren(Module)
 	end
 end
 

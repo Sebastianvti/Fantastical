@@ -1,7 +1,7 @@
 local ChatService = {}
 
 local Players = game:GetService("Players")
-local ProximityPromptService = game:GetService("ProximityPromptService")
+local TextService = game:GetService("TextService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage.Shared
@@ -12,6 +12,20 @@ local CharacterLoader = require(script.Parent.CharacterLoader)
 local Overlap = OverlapParams.new()
 local Params = RaycastParams.new()
 Params.FilterType = Enum.RaycastFilterType.Exclude
+
+local function Filter(Text, Player)
+	if not Text or Text == "" then return end
+
+	-- Filter the text for the specific player
+	local success, filtered = pcall(function()
+		return TextService:FilterStringAsync(Text, Player.UserId)
+	end)
+
+	if success and filtered then
+		local SafeText = filtered:GetNonChatStringForBroadcastAsync()
+		return SafeText
+	end
+end
 
 local function ObserveArea(Character : Model)
     Overlap.FilterType = Enum.RaycastFilterType.Include
@@ -38,6 +52,7 @@ local function Chatted(Package, Client)
     local ClientCharacter = Client.Character
     local Area = ObserveArea(ClientCharacter)
 
+    Package.Message = Filter(Package.Message, Client)
     Params.FilterDescendantsInstances = {ClientCharacter}
 
     for _,Head in Area do

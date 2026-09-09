@@ -24,17 +24,17 @@ Lync.start()
 RunService.PostSimulation:Connect(function() Lync.flush() end)
 local function PCallResult(Module)
 	if Module:GetAttribute("Ignore") then return end
-	
+
 		local success, result = pcall(function()
 			return require(Module)
 		end)
 
-			if success and type(Module) ~= "function" then
-			if table.find(FailModuleByType, type(Module)) then print("=") return end
+			if success then
+			if table.find(FailModuleByType, type(Module)) then print(Module)  return end
 
 			local ModName = Module.Name
 			Cache[ModName] = result
-			
+
 			if Cache[ModName].Start then
 				Cache[ModName].Start()
 			end
@@ -42,21 +42,24 @@ local function PCallResult(Module)
 		else
 			error("Client failed to load due to a module error.".." This error came from "..(Module.Name))
 	end
+
 end
 
-local function RequireDescendants(Module : ModuleScript)
-	for _,Module in Module:GetDescendants() do
+local function RequireChildren(Module : ModuleScript)
+	for _,Module in Module:GetChildren() do
 		if not Module:IsA("ModuleScript") or Module:GetAttribute("Ignore") then continue end
+
+		RequireChildren(Module)
 		PCallResult(Module)
 	end
 end
 
 for Folder,Service  in MainServices do
 	for _,Module in Service[Folder]:GetChildren() do
-		if not Module:IsA("ModuleScript") and not Module:IsA("Folder") or Module:GetAttribute("Ignore") then continue end
+			if not Module:IsA("ModuleScript") and not Module:IsA("Folder") or Module:GetAttribute("Ignore") then continue end
+			if Module:IsA("ModuleScript") then PCallResult(Module) end
 
-		if Module:IsA("ModuleScript") then PCallResult(Module) end
-		RequireDescendants(Module)
+			RequireChildren(Module)
 	end
 end
 
