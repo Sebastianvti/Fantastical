@@ -21,12 +21,7 @@ local function ObserveArea(Character : Model)
 end
 
 local function IsLooking(Head, Character)
-    print(Head, Character)
     local IsLooking = workspace:Raycast(Character.Head.Position, Head.Position - Character.Head.Position, Params)
-    local IsLooking2 = workspace:Raycast(Character.Head.Position, workspace.Dummy.Head.Position - Character.Head.Position, Params)
-
-    print(IsLooking)
-    print(IsLooking2)
 
     if IsLooking and IsLooking.Instance == Head then
         print("Returned true")

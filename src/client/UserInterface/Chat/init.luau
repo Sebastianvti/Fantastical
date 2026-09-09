@@ -152,6 +152,8 @@ function Chat:RemoveBubble(TimedOut : boolean)
     local Removing = self.ActiveBubbles[1]
     local Container = GetContainer(self.Player)
 
+    if not Container[Removing] then return end
+
     Container[Removing]:Destroy()
     table.remove(self.ActiveBubbles, 1)
 
@@ -164,12 +166,14 @@ function Chat:LinkChat()
     local Container = GetContainer(self.Player)
 
     if #self.ActiveBubbles ~= 0 then -- Removes caret visibility on the chat message that is about to lose its place above the head.
+    print(self.ActiveBubbles)
+    print(self.ActiveBubbles[#self.ActiveBubbles])
+    print(Container)
     Container[self.ActiveBubbles[#self.ActiveBubbles]].Caret.Visible = false 
     end
 
     table.insert(self.ActiveBubbles, self.BubbleChat.Name)
     Threads[self.BubbleChat.Name] = task.delay(8, Chat.TweenChat, self, false, true)
-
     self.BubbleChat.Caret.Visible = true
 
     if #self.ActiveBubbles > 3 then self:RemoveBubble() end
@@ -189,6 +193,7 @@ end
 
 
 function Chat:BubbleChat()
+    print("?")
     if not ActiveContainers:FindFirstChild(self.Player.Name) then AddBubbleChat(self.Player) end
 
     local Container = ActiveContainers[self.Player.Name]
