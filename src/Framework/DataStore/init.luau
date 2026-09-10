@@ -45,7 +45,7 @@ function DataStore:StartProfile()
 		end
 	})
 
-	print(ProfileName)
+	print("[ProfileStore]:..Loaded as "..ProfileName)
 	self.MasterProfile.Data.LastUsed = ProfileName
     self:LinkAccount()
 

@@ -8,6 +8,7 @@ local Shared = ReplicatedStorage.Shared
 local Network = require(Shared.Network)
 
 local CharacterLoader = require(script.Parent.CharacterLoader)
+local Admin = require(script.Parent.Admin)
 
 local Overlap = OverlapParams.new()
 local Params = RaycastParams.new()
@@ -55,6 +56,13 @@ local function Chatted(Package, Client)
     Package.Message = Filter(Package.Message, Client)
     Params.FilterDescendantsInstances = {ClientCharacter}
 
+    if string.sub(Package.Message, 1,1) == "/" then 
+        local NewText = Admin.New(Client, Package.Message)
+        if not NewText then return end
+        
+       Package.Message = NewText.Content
+    end
+
     for _,Head in Area do
         
         local Character = Head.Parent
@@ -67,6 +75,6 @@ local function Chatted(Package, Client)
     end
 end
 
-Network.Chatted:onClient(Chatted)
+Network.Chatted:onServer(Chatted)
 
 return ChatService

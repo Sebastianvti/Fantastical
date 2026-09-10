@@ -3,6 +3,11 @@ StatusManager.__index = StatusManager
 
 -- Written 2026
 
+-- TO DO
+-- fix statuses not being displayed with their group on run time
+-- put all threads into one table
+-- do staggered timers
+
 local StatusLibrary = {}
 StatusLibrary.Groups = {}
 StatusLibrary.Statuses = {}
@@ -33,28 +38,6 @@ function StatusManager.Start()
 -- fix groups not grouping statuses, see loaded library
 end
 
-function StatusManager.Batch(self)
-    if not self:DoSettings() then return end
-    self:Finalize()
-end
-
-function StatusManager:Finalize()
-    for Index,_ in pairs(self.Base) do
-       if self.SubClass then 
-        Utility[self.SubClass](self, Index)  
-        Utility[self.StatMethod](self, Index)
-        return end
-
-         Utility.Modify(self, Index) 
-         Utility[self.StatMethod](self, Index)
-    end
-end
-
-function StatusManager:DoSettings()
-    if not Settings.VerifySettings(self) then return false end
-    return true
-end
-
 function StatusManager.New(Player , StatusName : string)
     if Player:IsA("Model") then Player = Players:GetPlayerFromCharacter(Player) end
 
@@ -75,6 +58,28 @@ function StatusManager.New(Player , StatusName : string)
 
     print(self)
     return self
+end
+
+function StatusManager.Batch(self)
+    if not self:DoSettings() then return end
+    self:Finalize()
+end
+
+function StatusManager:Finalize()
+    for Index,_ in pairs(self.Base) do
+       if self.SubClass then 
+        Utility[self.SubClass](self, Index)  
+        Utility[self.StatMethod](self, Index)
+        return end
+
+         Utility.Modify(self, Index) 
+         Utility[self.StatMethod](self, Index)
+    end
+end
+
+function StatusManager:DoSettings()
+    if not Settings.VerifySettings(self) then return false end
+    return true
 end
 
 function  StatusManager.ClearStatus(Character : Model, Name : string)

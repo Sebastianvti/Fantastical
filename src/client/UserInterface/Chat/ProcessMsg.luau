@@ -1,11 +1,13 @@
 local ProcessMsg = {}
 
-local CorrectionChart = require(script.Parent.CorrectionChart)
-local ColorChart = require(script.Parent.ColorChart)
-local Prefixes = require(script.Parent.Prefix)
+local Charts = script.Parent.Charts
+
+local CorrectionChart = require(Charts.CorrectionChart)
+local ColorChart = require(Charts.ColorChart)
+local PrefixChart = require(Charts.PrefixChart)
 
 local function EnrichText(Text)
-    for Symbol,Prefix in Prefixes do
+    for Symbol,Prefix in PrefixChart do
 		local Pattern = Symbol .. "(.-)" .. Symbol
     
 		Text = Text:gsub(Pattern, function(Content)

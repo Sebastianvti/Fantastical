@@ -17,6 +17,7 @@ local Network = require(Shared.Network)
 
 local Messaging = UserInterface.Messaging
 local Window : CanvasGroup = Messaging.Window
+local Charts = script.Charts
 
 local Container = Window.Container 
 local ActiveContainers = Container.ActiveContainers
@@ -33,7 +34,7 @@ local Transparent = true -- On the chat window, every other message background i
 local ChatBubbles = {} -- This is not nested, all values passed here contain all essential information seperated by underscores. PlrName_ID_Type
 local Threads = {}
 
-local RangeChart = require(script.RangeChart)
+local RangeChart = require(Charts.RangeChart)
 local Processor = require(script.ProcessMsg)
 
 local function ChangeVisbility(Transparency : number)
@@ -109,9 +110,9 @@ local function LoopRange() -- Instead of using RunService, i use a loop to detec
             local Magnitude = GetMagnitude(Character)
 
             for Key,Value in RangeChart[Type] do
-                local Ranges = string.split(Value, "-")
+                local Minimum,Maximum = Value.Minimum,Value.Maximum
                 
-                if Magnitude >= tonumber(Ranges[1]) and Magnitude <= tonumber(Ranges[2]) then
+                if Magnitude >= Minimum and Magnitude <= Maximum then
                     Chat[Key](Player, Bubble)
 
                 end
@@ -148,6 +149,42 @@ function Chat:Send()
     InputBar.Text = ""
 end
 
+function Chat:BubbleChat()
+    if not ActiveContainers:FindFirstChild(self.Player.Name) then AddBubbleChat(self.Player) end
+
+    local Container = ActiveContainers[self.Player.Name]
+    local StartingState = self:GetStartingState()
+
+    self.BubbleChat = BubbleChatTemplate:Clone()
+
+    self.BubbleChat.Name = self.Player.Name.."_"..string.sub(HttpService:GenerateGUID(false),1, 8).."_"..(self.Type) -- PlrName | RandomName | Type
+    self.BubbleChat.Message.Text = self.Content
+    self.BubbleChat.Visible = true
+    self.BubbleChat.Parent = Container.BubbleChatList
+
+    self.BubbleChat:SetAttribute("Message", self.Content)
+
+    Chat[StartingState](self.Player, self.BubbleChat.Name)
+    table.insert(self.ActiveBubbles, self.BubbleChat.Name)
+
+    self:TweenChat(true)
+    self:LinkChat()
+end
+
+function Chat:Window()
+    local WindowMsg : Frame = WindowTemplate:Clone()
+
+    WindowMsg.Name = self.Player.Name.."_"..string.sub(HttpService:GenerateGUID(false),1, 6)
+    WindowMsg.Message.Text = "{Sharp} ".."Iona Zierke: "..(self.Content)
+    WindowMsg.BackgroundTransparency = Transparent and 0.9 or 1
+    WindowMsg.Parent = ChatWindow
+    WindowMsg.Visible = true
+
+    OverrideVisiblityThread()
+    ChangeVisbility(0)
+    if Transparent then Transparent = false else Transparent = true end
+end
+
 function Chat:RemoveBubble(TimedOut : boolean)
     local Removing = self.ActiveBubbles[1]
     if not Removing then return end
@@ -181,37 +218,16 @@ end
 
 function Chat:GetStartingState()
     for Key,Value in RangeChart[self.Type] do
-        local Ranges = string.split(Value, "-")
+        local Minimum,Maximum = Value.Minimum,Value.Maximum
         local Magnitude = GetMagnitude(self.Character)
 
-        if Magnitude >= tonumber(Ranges[1]) and Magnitude <= tonumber(Ranges[2]) then
+        if Magnitude >= Minimum and Magnitude <= Maximum then
             return Key
         end
     end
 end
 
 
-function Chat:BubbleChat()
-    if not ActiveContainers:FindFirstChild(self.Player.Name) then AddBubbleChat(self.Player) end
-
-    local Container = ActiveContainers[self.Player.Name]
-    local StartingState = self:GetStartingState()
-
-    self.BubbleChat = BubbleChatTemplate:Clone()
-
-    self.BubbleChat.Name = self.Player.Name.."_"..string.sub(HttpService:GenerateGUID(false),1, 8).."_"..(self.Type) -- PlrName | RandomName | Type
-    self.BubbleChat.Message.Text = self.Content
-    self.BubbleChat.Visible = true
-    self.BubbleChat.Parent = Container.BubbleChatList
-
-    self.BubbleChat:SetAttribute("Message", self.Content)
-
-    Chat[StartingState](self.Player, self.BubbleChat.Name)
-    table.insert(self.ActiveBubbles, self.BubbleChat.Name)
-
-    self:TweenChat(true)
-    self:LinkChat()
-end
 
 function Chat:TweenChat(Visibility : boolean, Remove : boolean)
     local Bg,TextTr,Caret = 1,1,1
@@ -233,22 +249,7 @@ function Chat:TweenChat(Visibility : boolean, Remove : boolean)
     if Remove then TweenChat.Completed:Once(function()
             self:RemoveBubble()
         end)
-        
     end 
-end
-
-function Chat:Window()
-    local WindowMsg : Frame = WindowTemplate:Clone()
-
-    WindowMsg.Name = self.Player.Name.."_"..string.sub(HttpService:GenerateGUID(false),1, 6)
-    WindowMsg.Message.Text = "{Sharp} ".."Iona Zierke: "..(self.Content)
-    WindowMsg.BackgroundTransparency = Transparent and 0.9 or 1
-    WindowMsg.Parent = ChatWindow
-    WindowMsg.Visible = true
-
-    OverrideVisiblityThread()
-    ChangeVisbility(0)
-    if Transparent then Transparent = false else Transparent = true end
 end
 
 function Chat.Visible(Player, Bubble)
@@ -286,7 +287,7 @@ UserInputService.InputBegan:Connect(function(Input, GPE)
 end)
 
 InputBar.FocusLost:Connect(FocusLost)
-Network.Chatted:onServer(function(Package) PassMessage(Package) end) 
+Network.Chatted:onClient(function(Package) PassMessage(Package) end) 
     
 
 

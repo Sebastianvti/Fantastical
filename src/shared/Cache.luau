@@ -18,7 +18,6 @@ local function GenName(Prefix : string)
     return (Prefix.."_"..string.sub(HttpService:GenerateGUID(false), 1, 7))
 end
 
-
 function Cache:AddToCache(Storage : string)
     Stash[Storage][self.ID] = {}
     Stash[Storage][self.ID] = self
