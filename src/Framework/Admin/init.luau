@@ -56,6 +56,10 @@ function Admin.New(Sender : Player, Text : string)
     self:Execute()
 end
 
+function Admin:GetRank()
+    
+end
+
 function Admin:CheckPermission()
     if self.Permissions > DataStore[self.Sender].AdminPermissions then
     end

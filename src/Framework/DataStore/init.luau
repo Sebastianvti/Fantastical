@@ -85,6 +85,7 @@ function DataStore.New(Player : Player, MasterProfile)
 
 	self.Player = Player
 	self.MasterProfile = MasterProfile or self:GetMaster()
+	self.Data = nil
 	self.LinkedProfiles = self.MasterProfile.LinkedProfiles
 	self.CharacterProfile = MasterProfile.Data.LastUsed
 
