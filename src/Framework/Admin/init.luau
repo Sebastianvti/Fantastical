@@ -1,9 +1,13 @@
 local Admin = {}
 Admin.__index = Admin
 
+local Framework = script.Parent
+local Data = script.Data
+
 local Commands = {}
 
-local Repository = require(script.Repository)
+local Repository = require(Data.Repository)
+local DataStore = require(Framework.DataStore)
 
 local function RemoveCommandFromString(Text: string)
    local Seperation = string.split(Text, " ")[1]
@@ -38,15 +42,21 @@ function Admin.New(Sender : Player, Text : string)
     self.Command = GetCommand(Text)
     if not self.Command then return end
 
+    self.Permission = self.Command.Perm
+    if not self:CheckPermission() then return end
+
     self.Sender = Sender
     self.Content = RemoveCommandFromString(Text)
-    print(self.Content)
     if not self.Command.ClientCommand then self:Execute()
-    print(self)
     return self end
 
     self.Subjects = {}
     self.Args = {}
+    self:Execute()
+end
+
+function Admin:CheckPermission()
+    
 end
 
 local TestingPatterns = "Dude, Play3er Helvetica"
