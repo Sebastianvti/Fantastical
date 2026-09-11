@@ -46,6 +46,7 @@ function Admin.New(Sender : Player, Text : string)
     if not self:CheckPermission() then return end
 
     self.Sender = Sender
+    self.Character = Sender.Character
     self.Content = RemoveCommandFromString(Text)
     if not self.Command.ClientCommand then self:Execute()
     return self end
@@ -56,7 +57,9 @@ function Admin.New(Sender : Player, Text : string)
 end
 
 function Admin:CheckPermission()
-    
+    if self.Permissions >= DataStore[self.Character].AdminPermissions then
+        return false end
+    -- add master profile check
 end
 
 local TestingPatterns = "Dude, Play3er Helvetica"
