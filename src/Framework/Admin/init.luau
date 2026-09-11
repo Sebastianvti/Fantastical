@@ -7,6 +7,7 @@ local Data = script.Data
 local Commands = {}
 
 local Repository = require(Data.Repository)
+local Ranks = require(Data.Ranks)
 local DataStore = require(Framework.DataStore)
 
 local function RemoveCommandFromString(Text: string)
@@ -21,7 +22,7 @@ local function GetCommand(Text : string)
 
     if Repository[Command] then
         RemoveCommandFromString(Text, Seperation)
-        return Repository[Command].Activation
+        return Repository[Command]
     end
 end
 
@@ -38,33 +39,38 @@ end
 
 function Admin.New(Sender : Player, Text : string)
     local self = setmetatable({}, Admin)
-    
-    self.Command = GetCommand(Text)
-    if not self.Command then return end
-
-    self.Permission = self.Command.Perm
-    if not self:CheckPermission() then return end
 
     self.Sender = Sender
     self.Character = Sender.Character
+    self.Command = GetCommand(Text)
+    if not self.Command then return end
+
+    self.Profile = DataStore.Profiles[self.Sender].Data
+    self.Permission = self.Command.Perm
+    if not self:CheckPermission() then warn("p") return end
+
     self.Content = RemoveCommandFromString(Text)
-    if not self.Command.ClientCommand then self:Execute()
-    return self end
+    self.Activation = self.Command.Activation
+    if not self.Command.ClientCommand then self:Execute() return self end
 
     self.Subjects = {}
     self.Args = {}
     self:Execute()
 end
 
-function Admin:GetRank()
-    
+function Admin:GetRank(Rank : string)
+    local RankIndex = table.find(Ranks, Rank)
+    if not RankIndex then warn("Could not find index from "..Rank) return end
+
+    return RankIndex
 end
 
 function Admin:CheckPermission()
-    if self.Permissions > DataStore[self.Sender].AdminPermissions then
-    end
-    
-    -- add master profile check
+    if self.Permission <= self:GetRank(self.Profile.AdminPermission) then print("Slot had permission to run command.") return true end
+    if self.Permission <= self:GetRank(DataStore.New(self.Sender).Data.AdminPermission) then print("Master Profile had permission to run command.") return true end
+
+    warn(self.Player.Name..(" had insufficient permissions for Command: "..(self.Command)))
+    return false
 end
 
 local TestingPatterns = "Dude, Play3er Helvetica"

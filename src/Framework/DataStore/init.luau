@@ -33,8 +33,8 @@ function DataStore.GetStoreName()
 end
 
 function DataStore:LinkAccount(ProfileName)
-	if table.find(self.MasterProfile.Data.LinkedProfiles, ProfileName) then return end
-	 table.insert(self.MasterProfile.Data.LinkedProfiles, ProfileName)
+	if table.find(self.LinkedProfiles, ProfileName) then return end
+	 table.insert(self.LinkedProfiles, ProfileName)
 end
 
 
@@ -72,7 +72,6 @@ function DataStore:StartProfile()
 		else
 			self.Player:Kick("Character data failed to load.")
 	end
-	print(DataStore.Profiles)
 end
 
 
@@ -85,10 +84,9 @@ function DataStore.New(Player : Player, MasterProfile)
 
 	self.Player = Player
 	self.MasterProfile = MasterProfile or self:GetMaster()
-	self.Data = nil
-	self.LinkedProfiles = self.MasterProfile.LinkedProfiles
-	self.CharacterProfile = MasterProfile.Data.LastUsed
-
+	self.Data = self.MasterProfile.Data
+	self.LinkedProfiles = self.Data.LinkedProfiles
+	self.CharacterProfile = self.Data.LastUsed
 	return self	
 end
 
