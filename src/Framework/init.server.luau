@@ -23,7 +23,8 @@ local PlayerStore = ProfileStore.New(DataStore.GetStoreName(), MasterTemplate)
 
 Lync.start()
 RunService.PostSimulation:Connect(function(deltaTimeSim) Lync.flush() end)
-
+-- You dont need to define ignore on all scripts you dont want, most of the time they are filtered out.
+-- If you have big ones like the networking system, best just ignore it just to be safe.
 local function PCallResult(Module)
 	if Module:GetAttribute("Ignore") then return end
 
