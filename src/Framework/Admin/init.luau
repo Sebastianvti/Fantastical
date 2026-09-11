@@ -57,8 +57,9 @@ function Admin.New(Sender : Player, Text : string)
 end
 
 function Admin:CheckPermission()
-    if self.Permissions >= DataStore[self.Character].AdminPermissions then
-        return false end
+    if self.Permissions > DataStore[self.Sender].AdminPermissions then
+    end
+    
     -- add master profile check
 end
 

@@ -1,10 +1,10 @@
 return {
-    ["Owner"] = 1, -- me
-    ["Core"] = 2, -- anyone i deem important
-    ["Admin"] = 3, -- admins
-    ["Staff"] = 4, -- mod/staff
-    ["High Player"] = 5, -- given to player slots
-    ["Player"] = 6, 
+    "Owner",
+    "Core", -- anyone i deem important
+    "Admin",
+    "Staff",
+    "High Player",
+    "Player"
 }
 
 -- All players have 2 admin ranks.

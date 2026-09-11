@@ -13,8 +13,10 @@ local GetStoreName = RunService:IsStudio() and "Test" or "Live"
 
 local ProfileStore = require(Library.ProfileStore)
 local CharacterTemplate = require(Templates.CharacterTemplate)
+local MasterTemplate = require(Templates.MasterTemplate)
 
 local PlayerStore = ProfileStore.New(GetStoreName, CharacterTemplate)
+local MasterStore = ProfileStore.New(GetStoreName, MasterTemplate)
 
 
 local function GenName()
@@ -74,11 +76,15 @@ function DataStore:StartProfile()
 end
 
 
+function DataStore:GetMaster()
+	return MasterStore:GetAsync("Player_"..(self.Player.UserId))
+end
+
 function DataStore.New(Player : Player, MasterProfile)
 	local self = setmetatable({}, DataStore)
 
 	self.Player = Player
-	self.MasterProfile = MasterProfile
+	self.MasterProfile = MasterProfile or self:GetMaster()
 	self.LinkedProfiles = self.MasterProfile.LinkedProfiles
 	self.CharacterProfile = MasterProfile.Data.LastUsed
 

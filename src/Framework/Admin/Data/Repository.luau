@@ -6,7 +6,7 @@ return {
     status = {Perm = 2, Activation = "status"}, -- function
 
     -- CHAT COMMANDS --
-    yell = {Perm = 5, Activation = "yell", ChatCommand = true},
-    y = {Perm = 5, Activation = "yell", ChatCommand = true},
+    yell = {Perm = 6, Activation = "yell", ChatCommand = true},
+    y = {Perm = 6, Activation = "yell", ChatCommand = true},
 
 }
