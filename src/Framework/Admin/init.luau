@@ -2,12 +2,15 @@ local Admin = {}
 Admin.__index = Admin
 
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Shared = ReplicatedStorage.Shared
 local Framework = script.Parent
 local Data = script.Data
 
 local Commands = {}
 
+local Network = require(Shared.Network)
 local Repository = require(Data.Repository)
 local Ranks = require(Data.Ranks)
 local DataStore = require(Framework.DataStore)
@@ -83,6 +86,26 @@ function Admin.Start()
         if type(Command.Perm) ~= "string" then continue end
             Command.Perm = GetRank(Command.Perm)
     end
+end
+
+function Admin.DataLoaded(Player, Profile)
+    local SlotRank = GetRank(Profile.Data.AdminPermission)
+    local MasterRank = GetRank(DataStore.New(Player).Data.AdminPermission)
+    local Rank
+    local Result = {}
+
+    if MasterRank > SlotRank then
+        Rank = SlotRank
+    else
+        Rank = MasterRank
+    end
+
+    for Command,Value in Repository do
+        if Value.Perm < Rank then continue end
+        Result[Command] = Value.Parameters
+    end
+    print(Result)
+    Network.AllowCommands:fireClient(Player, {CommandParams = Result})
 end
 
 function Admin.New(Sender : Player, Text : string)

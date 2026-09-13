@@ -4,7 +4,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local Shared = ReplicatedStorage.Shared
-local Network = require(Shared.Network)
 
 local MainServices = {
 	Framework = ServerScriptService,
@@ -21,8 +20,6 @@ local FailModuleByType = {"function"}
 
 local PlayerStore = ProfileStore.New(DataStore.GetStoreName(), MasterTemplate)
 
-Lync.start()
-RunService.PostSimulation:Connect(function(deltaTimeSim) Lync.flush() end)
 -- You dont need to define ignore on all scripts you dont want, most of the time they are filtered out.
 -- If you have big ones like the networking system, best just ignore it just to be safe.
 local function PCallResult(Module)
@@ -57,12 +54,22 @@ local function RequireChildren(Module : ModuleScript)
 	end
 end
 
-for Folder,Service  in MainServices do
-	for _,Module in Service[Folder]:GetChildren() do
-			if not Module:IsA("ModuleScript") and not Module:IsA("Folder") or Module:GetAttribute("Ignore") then continue end
-			if Module:IsA("ModuleScript") then PCallResult(Module) end
+local function Load()
+	for Folder,Service  in MainServices do
+		for _,Module in Service[Folder]:GetChildren() do
+				if not Module:IsA("ModuleScript") and not Module:IsA("Folder") or Module:GetAttribute("Ignore") then continue end
+				if Module:IsA("ModuleScript") then PCallResult(Module) end
 
-			RequireChildren(Module)
+				RequireChildren(Module)
+		end
+	end
+end
+
+local function DataLoaded(Player, PlrProfile)
+	for _,ModuleData in Cache do
+		if ModuleData.DataLoaded then
+			ModuleData.DataLoaded(Player, PlrProfile)
+		end
 	end
 end
 
@@ -83,7 +90,8 @@ local function PlayerAdded(Player : Player) -- this is for the master profile, i
 			end)
 
 			if Player.Parent == Players then
-				DataStore.New(Player, Profile):StartProfile()
+				local ProfileLoaded = DataStore.New(Player, Profile):StartProfile()
+				if ProfileLoaded then DataLoaded(Player, ProfileLoaded) end
 			else
 				warn("Player was not parented to Player service")
 				Profile:EndSession()
@@ -106,5 +114,10 @@ for _,Player in Players:GetPlayers() do
 	task.spawn(PlayerAdded, Player)
 end
 
+Load()
 Players.PlayerAdded:Connect(PlayerAdded)
 Players.PlayerRemoving:Connect(PlayerRemoving)
+
+Lync.start()
+RunService.PostSimulation:Connect(function() Lync.flush() end)
+game:BindToClose(Lync.close)

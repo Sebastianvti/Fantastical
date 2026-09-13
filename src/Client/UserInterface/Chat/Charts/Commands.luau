@@ -1,0 +1,1 @@
+return {} -- commands are provided by server during runtime, server has to confirm what commands the player is allowed, these are only visual though, commands are ran through the server

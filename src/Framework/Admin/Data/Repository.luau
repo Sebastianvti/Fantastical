@@ -1,3 +1,4 @@
+local TextService = game:GetService("TextService")
 return {
     -- Check perms in 
     -- Activation is the function
@@ -17,7 +18,14 @@ return {
     -- CHAT COMMANDS --
 
     -- YELL
-    yell = {Perm = "Player", Activation = "yell", ChatCommand = true},
-    y = {Perm = "Player", Activation = "yell", ChatCommand = true},
+    yell = {
+        Perm = "Player", Activation = "yell", ChatCommand = true,
+        Parameters = {"Text: string"}
+    },
+    y = {
+        Perm = "Player", Activation = "yell", ChatCommand = true,
+        Parameters = {"Text: string"}
+    },
+    
 
 }

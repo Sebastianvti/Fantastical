@@ -11,6 +11,8 @@ local Templates = script.Templates
 local Library = script.Parent.Library
 local GetStoreName = RunService:IsStudio() and "Test" or "Live"
 
+local CharacterLoader = require(script.Parent.CharacterLoader)
+
 local ProfileStore = require(Library.ProfileStore)
 local CharacterTemplate = require(Templates.CharacterTemplate)
 local MasterTemplate = require(Templates.MasterTemplate)
@@ -47,7 +49,6 @@ function DataStore:StartProfile()
 		end
 	})
 
-	print("[ProfileStore]:..Loaded as "..ProfileName)
 	self.MasterProfile.Data.LastUsed = ProfileName
     self:LinkAccount()
 
@@ -64,6 +65,8 @@ function DataStore:StartProfile()
 			if self.Player.Parent == Players then
 				DataStore.Profiles[self.Player] = self.CharacterProfile
 				self.MasterProfile:EndSession()
+				print("[ProfileStore]: Loaded as "..ProfileName)
+				return self.CharacterProfile
 			else
 				warn("Player was not parented to Player service")
 				self.CharacterProfile:EndSession()

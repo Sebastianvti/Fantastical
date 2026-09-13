@@ -36,6 +36,7 @@ local Threads = {}
 
 local RangeChart = require(Charts.RangeChart)
 local Processor = require(script.ProcessMsg)
+local CmdParameter = require(script.CmdParameter)
 
 local function ChangeVisbility(Transparency : number)
     if InputBar:IsFocused() and Transparency == 1 then Threads["HideInterface"] = task.delay(4, ChangeVisbility, 1) return end
@@ -94,7 +95,7 @@ local function GetContainer(Player)
     return ActiveContainers[Player.Name].BubbleChatList
 end
 
-local function LoopRange() -- Instead of using RunService, i use a loop to detect chat messages in range, runservice has a lot of issues. This runs on a different thread
+local function LoopRange() -- Instead of using RunService, i use a loop to detect chat messages in range, runservice has a lot of issues, besides precision is not critical here. This runs on a different thread
     while task.wait(1) do
         if #ChatBubbles == 0 then break end
 
@@ -171,6 +172,31 @@ function Chat:BubbleChat()
     self:LinkChat()
 end
 
+function Chat:TweenChat(Visibility : boolean, Remove : boolean)
+
+    local Bg,TextTr,Caret = 1,1,1
+
+    if Visibility then 
+        self.BubbleChat.Message.BackgroundTransparency = 1
+        self.BubbleChat.Message.TextTransparency = 1
+        self.BubbleChat.Caret.ImageTransparency = 1
+
+        Bg,TextTr,Caret = 0.6,0,0.7
+    end
+
+    local TweenChat = TweenService:Create(self.BubbleChat.Message, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {BackgroundTransparency = Bg, TextTransparency = TextTr})
+    local TweenCaret = TweenService:Create(self.BubbleChat.Caret, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {ImageTransparency = Caret})
+
+    TweenCaret:Play()
+    TweenChat:Play()
+
+    if Remove then TweenChat.Completed:Once(function()
+            self:RemoveBubble()
+        end)
+    end 
+end
+
+
 function Chat:Window()
     local WindowMsg : Frame = WindowTemplate:Clone()
 
@@ -227,31 +253,6 @@ function Chat:GetStartingState()
     end
 end
 
-
-
-function Chat:TweenChat(Visibility : boolean, Remove : boolean)
-    local Bg,TextTr,Caret = 1,1,1
-
-    if Visibility then 
-        self.BubbleChat.Message.BackgroundTransparency = 1
-        self.BubbleChat.Message.TextTransparency = 1
-        self.BubbleChat.Caret.ImageTransparency = 1
-
-        Bg,TextTr,Caret = 0.6,0,0.7
-    end
-
-    local TweenChat = TweenService:Create(self.BubbleChat.Message, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {BackgroundTransparency = Bg, TextTransparency = TextTr})
-    local TweenCaret = TweenService:Create(self.BubbleChat.Caret, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {ImageTransparency = Caret})
-
-    TweenCaret:Play()
-    TweenChat:Play()
-
-    if Remove then TweenChat.Completed:Once(function()
-            self:RemoveBubble()
-        end)
-    end 
-end
-
 function Chat.Visible(Player, Bubble)
     local Container = GetContainer(Player)
     Container.Visible = true
@@ -286,9 +287,9 @@ UserInputService.InputBegan:Connect(function(Input, GPE)
     end
 end)
 
+
 InputBar.FocusLost:Connect(FocusLost)
-Network.Chatted:onClient(function(Package) PassMessage(Package) end) 
+Network.AllowCommands:onClient(CmdParameter.Update)
+Network.Chatted:onClient(PassMessage)
     
-
-
 return Chat
