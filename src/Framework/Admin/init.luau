@@ -1,6 +1,8 @@
 local Admin = {}
 Admin.__index = Admin
 
+local Players = game:GetService("Players")
+
 local Framework = script.Parent
 local Data = script.Data
 
@@ -26,15 +28,61 @@ local function GetCommand(Text : string)
     end
 end
 
+local function GetRank(Rank : string)
+    local RankIndex = table.find(Ranks, Rank)
+    if not RankIndex then warn("Could not find index from "..Rank) return end
+    
+    return RankIndex
+end
+
+local function GetPlayersandArgs (Text: string)
+    local SplitPlayerandArgs = "^(.-%w+)%w?%s(.-%w+)"
+    local Matches = {string.match(Text, SplitPlayerandArgs)}
+    
+    return {Players = Matches[1], Args = Matches[2]}
+end
+
+local function CleanString(Text)
+    return string.gsub(Text, "%p", "")
+end
+
+local function GetPlayers(Text : string)
+    Text = CleanString(Text)
+    local Seperation = string.split(Text, ",")
+    local PlayersFound = {}
+
+    for _,Name in Seperation do
+        for _,Player in Players:GetPlayers() do
+            if (string.sub(string.lower(Player.Name), 1, string.len(Name))) == string.lower(Name) then
+                table.insert(PlayersFound, Player)
+            end
+        end
+    end
+    if #PlayersFound == 0 then return false end
+    return PlayersFound
+end
+
+local function GetParameters(Text : string)
+    Text = CleanString(Text)
+    local Seperation = string.split(Text, ",")
+    local ParametersFound = {}
+
+    for _,Parameter in Seperation do
+        table.insert(ParametersFound, Parameter)
+    end
+    return ParametersFound
+end
+
 function Admin.Start()
     for _,Command in script.Commands:GetChildren() do
         local Name = Command.Name
         Commands[Name] = require(Command)
     end
-end
 
-function Admin:Execute()
-    Commands[self.Command](self)
+    for _,Command in Repository do
+        if type(Command.Perm) ~= "string" then continue end
+            Command.Perm = GetRank(Command.Perm)
+    end
 end
 
 function Admin.New(Sender : Player, Text : string)
@@ -43,42 +91,35 @@ function Admin.New(Sender : Player, Text : string)
     self.Sender = Sender
     self.Character = Sender.Character
     self.Command = GetCommand(Text)
-    if not self.Command then return end
+    if not self.Command then warn("command does not exist") return end
 
     self.Profile = DataStore.Profiles[self.Sender].Data
     self.Permission = self.Command.Perm
-    if not self:CheckPermission() then warn("p") return end
-
     self.Content = RemoveCommandFromString(Text)
     self.Activation = self.Command.Activation
-    if not self.Command.ClientCommand then self:Execute() return self end
 
-    self.Subjects = {}
-    self.Args = {}
-    self:Execute()
+    if not self:CheckPermission() then return end
+    if self.Command.ChatCommand then self:Execute() return self end
+
+    local PlayersAndArgs = GetPlayersandArgs(self.Content) 
+    
+    self.Subjects = GetPlayers(PlayersAndArgs.Players)
+    if not self.Subject then return end
+
+    self.Args = GetParameters(Text)
+    --self:Execute()
 end
 
-function Admin:GetRank(Rank : string)
-    local RankIndex = table.find(Ranks, Rank)
-    if not RankIndex then warn("Could not find index from "..Rank) return end
-
-    return RankIndex
+function Admin:Execute()
+    Commands[self.Activation](self)
 end
 
 function Admin:CheckPermission()
-    if self.Permission <= self:GetRank(self.Profile.AdminPermission) then print("Slot had permission to run command.") return true end
-    if self.Permission <= self:GetRank(DataStore.New(self.Sender).Data.AdminPermission) then print("Master Profile had permission to run command.") return true end
+    if self.Permission >= GetRank(self.Profile.AdminPermission) then print("Slot had permission to run command.") return true end
+    if self.Permission >= GetRank(DataStore.New(self.Sender).Data.AdminPermission) then print("Master Profile had permission to run command.") return true end
 
-    warn(self.Player.Name..(" had insufficient permissions for Command: "..(self.Command)))
+    warn(self.Sender.Name..(" had insufficient permissions for Command: "..(self.Activation)))
     return false
 end
-
-local TestingPatterns = "Dude, Play3er Helvetica"
-local SplitPlayerandArgs = "(.+)%s(.+)"
---local Pattern = "(%w+),*%s*(%w+)"
-
-local Matches = {string.match(TestingPatterns, SplitPlayerandArgs)}
-
-print(Matches)
 
 return Admin
