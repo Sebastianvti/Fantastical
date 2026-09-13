@@ -17,27 +17,32 @@ local CmdBox : Frame = Window.CmdSuggest
 local CmdText : TextLabel = CmdBox.Suggest
 
 local Commands = require(Charts.Commands)
-CmdParameter.TweenBar = TweenService:Create(CmdBox, TweenInfo.new(0.7), {Size = UDim2.new(0,537,0,27)})
 
 function  CmdParameter.Update(Packet)
     Commands = Packet
     print(Commands)
 end
 
-local function TweenBar()
-    if CmdParameter.TweenBar.PlaybackState == Enum.PlaybackState.Playing then
-        CmdParameter.TweenBar:Cancel()
+local function TweenBar(Open : boolean)
+    if CmdParameter.TweenBar and CmdParameter.TweenBar.PlaybackState == Enum.PlaybackState.Playing then CmdParameter.TweenBar:Cancel() end
+
+    if not Open then 
+        CmdParameter.TweenBar = TweenService:Create(CmdBox, TweenInfo.new(0.25), {Size = UDim2.new(0,537,0,0), BorderSizePixel = 0})
+    else
+        CmdParameter.TweenBar = TweenService:Create(CmdBox, TweenInfo.new(0.25), {Size = UDim2.new(0,537,0,27), BorderSizePixel = 2})
     end
+   
     CmdParameter.TweenBar:Play()
 end
 
 local function ClearSuggest()
+    print("?")
     CmdText.Text = ""
+    TweenBar(false)
 end
 
 local function Suggest(Text, Parameters)
-    CmdBox.Size = UDim2.new(0,537,0,0)
-    TweenBar()
+    TweenBar(true)
     CmdText.Text = ("[Cmd]: "..Text.." "..table.concat(Parameters, " "))
 end
 
@@ -53,7 +58,8 @@ local function AssumeCommand(Text)
     ClearSuggest()
 end
 
-local function Changed()
+local function Changed(prop)
+    if not InputBar:IsFocused() then return end
     if string.len(InputBar.Text) == 0 then return end
     local NoSpace = string.gsub(InputBar.Text, "^%s+", "")
 
@@ -63,6 +69,7 @@ local function Changed()
     AssumeCommand(string.split(RemoveSpacesAfterSlash, " ")[1])
 end
 
+InputBar.FocusLost:Connect(ClearSuggest)
 InputBar.Changed:Connect(Changed)
 
 return CmdParameter
