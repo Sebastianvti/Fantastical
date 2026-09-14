@@ -36,18 +36,18 @@ local function TweenBar(Open : boolean)
 end
 
 local function ClearSuggest()
-    print("?")
     CmdText.Text = ""
     TweenBar(false)
 end
 
-local function Suggest(Text, Parameters)
+local function Suggest(Text : string, Parameters)
     TweenBar(true)
-    CmdText.Text = ("[Cmd]: "..Text.." "..table.concat(Parameters, " "))
+    CmdText.Text = ("[Cmd]: "..Text.." "..table.concat(Parameters, ", "))
 end
 
 local function AssumeCommand(Text)
     local NoSlash = string.sub(Text, 2)
+    
     for Key,Parameters in Commands.CommandParams do
         local SubString = string.sub(string.lower(Key), 1, string.len(NoSlash))
         if SubString ~= string.lower(NoSlash) or SubString == "" then continue end
@@ -58,9 +58,10 @@ local function AssumeCommand(Text)
     ClearSuggest()
 end
 
-local function Changed(prop)
+local function Changed()
     if not InputBar:IsFocused() then return end
     if string.len(InputBar.Text) == 0 then return end
+    
     local NoSpace = string.gsub(InputBar.Text, "^%s+", "")
 
     if string.sub(NoSpace, 1, 1) ~= "/" then return end

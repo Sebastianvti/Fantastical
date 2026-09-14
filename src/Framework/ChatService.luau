@@ -52,6 +52,8 @@ local function Chatted(Package, Client)
 
     local ClientCharacter = Client.Character
     local Area = ObserveArea(ClientCharacter)
+    local ChatType
+    local OverwriteWindow
 
     Package.Message = Filter(Package.Message, Client)
     Params.FilterDescendantsInstances = {ClientCharacter}
@@ -60,7 +62,9 @@ local function Chatted(Package, Client)
         local NewText = Admin.New(Client, Package.Message)
         if not NewText then return end
         
-       Package.Message = NewText.Content
+       Package.Message = NewText.Content.Text
+       ChatType = NewText.Content.Type
+       OverwriteWindow = NewText.Content.WindowOverwrite
     end
 
     for _,Head in Area do
@@ -71,7 +75,7 @@ local function Chatted(Package, Client)
 
         if Player ~= Client then AppearInWindow = IsLooking(Head, ClientCharacter) end
 
-       Network.Chatted:fireClient(Player, {Sender = Client, Message = Package.Message, Type = "Normal", Windowed = AppearInWindow})
+       Network.Chatted:fireClient(Player, {Sender = Client, Message = Package.Message, Type = ChatType or "Normal", Windowed = OverwriteWindow or AppearInWindow})
     end
 end
 

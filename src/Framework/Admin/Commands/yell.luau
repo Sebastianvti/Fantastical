@@ -1,5 +1,5 @@
 return function (self)
-    self.Content = string.upper(self.Content)
+    self.Content = {Text = string.upper(self.Content), Type = "Yell", WindowOverwrite = true}
     print(self)
     return self
 end
