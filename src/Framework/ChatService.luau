@@ -1,4 +1,5 @@
 local ChatService = {}
+ChatService.__index = ChatService
 
 local Players = game:GetService("Players")
 local TextService = game:GetService("TextService")
@@ -47,38 +48,45 @@ local function IsLooking(Head, Character)
     end
 end
 
-local function Chatted(Package, Client)
+function ChatService.New(Packet, Client)
     if not Client.Character then return end
+    local self = setmetatable({}, ChatService)
+    self.Client = Client
+    self.Character = Client.Character
+    self.Area = ObserveArea(self.Character)
+    self.Message = Filter(Packet.Message, Client) -- optional
+    self.Type = "Normal"
+    self.Window = false -- if true, chat will always appear in chat box regardless of visibility to recieiver
+    
+    self:Inspect()
+    self:Execute()
+end
 
-    local ClientCharacter = Client.Character
-    local Area = ObserveArea(ClientCharacter)
-    local ChatType
-    local OverwriteWindow
-
-    Package.Message = Filter(Package.Message, Client)
-    Params.FilterDescendantsInstances = {ClientCharacter}
-
-    if string.sub(Package.Message, 1,1) == "/" then 
-        local NewText = Admin.New(Client, Package.Message)
+function ChatService:Inspect()
+    if string.sub(self.Message, 1,1) ~= "/" then return end
+        local NewText = Admin.New(self.Client, self.Message)
         if not NewText then return end
-        
-       Package.Message = NewText.Content.Text
-       ChatType = NewText.Content.Type
-       OverwriteWindow = NewText.Content.WindowOverwrite
-    end
 
-    for _,Head in Area do
+        self.Type = NewText.Type
+        self.Message = NewText.Text
+        self.Window = NewText.OverwriteWindow
+end
+
+function ChatService:Execute()
+    Params.FilterDescendantsInstances = {self.Character}
+
+    for _,Head in self.Area do
         
         local Character = Head.Parent
         local Player = Players:GetPlayerFromCharacter(Character)
         local AppearInWindow = true
 
-        if Player ~= Client then AppearInWindow = IsLooking(Head, ClientCharacter) end
+        if Player ~= self.Client then AppearInWindow = IsLooking(Head, self.Character) end
 
-       Network.Chatted:fireClient(Player, {Sender = Client, Message = Package.Message, Type = ChatType or "Normal", Windowed = OverwriteWindow or AppearInWindow})
+       Network.Chatted:fireClient(Player, {Sender = self.Client, Message = self.Message, Type = self.Type, Windowed = self.Window or AppearInWindow})
     end
 end
 
-Network.Chatted:onServer(Chatted)
+Network.Chatted:onServer(ChatService.New)
 
 return ChatService
