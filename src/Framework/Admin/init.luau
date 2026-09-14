@@ -88,7 +88,12 @@ function Admin.Start()
     end
 end
 
+local function AutoRank()
+
+end
+
 function Admin.DataLoaded(Player, Profile)
+
     local SlotRank = GetRank(Profile.Data.AdminPermission)
     local MasterRank = GetRank(DataStore.New(Player).Data.AdminPermission)
     local Rank

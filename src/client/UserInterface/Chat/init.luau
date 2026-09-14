@@ -91,18 +91,21 @@ local function AddBubbleChat(Player : Player)
     NewContainer.Adornee = Player.Character.HumanoidRootPart
 end
 
-local function GetContainer(Player)
-    return ActiveContainers[Player.Name].BubbleChatList
+local function GetContainer(PlayerName : string)
+    return ActiveContainers[PlayerName].BubbleChatList
 end
 
 local function LoopRange() -- Instead of using RunService, i use a loop to detect chat messages in range, runservice has a lot of issues, besides precision is not critical here. This runs on a different thread
     while task.wait(1) do
-        if #ChatBubbles == 0 then break end
+        print(ChatBubbles)
+        if #ChatBubbles == 0 then Threads.LoopRange = nil break end
 
         for _,Bubble in ChatBubbles do
 
             local Info = string.split(Bubble, "_")
-            local Player = Players[Info[1]]
+            local Player = Players:FindFirstChild(Info[1])
+            if not Player then continue end -- bubbles from a player who has left will eventually clear out
+
             local Character = Player.Character
             local Type = Info[3]
 
@@ -215,10 +218,10 @@ function Chat:RemoveBubble(TimedOut : boolean)
     local Removing = self.ActiveBubbles[1]
     if not Removing then return end
 
-    local Player = Players[string.split(Removing, "_")[1]]
-    local PlrContainer = GetContainer(Player)
-
-    if not PlrContainer[Removing] then return end
+    local PlayerName = string.split(Removing, "_")[1]
+    local PlrContainer = GetContainer(PlayerName)
+    
+    if not PlrContainer or PlrContainer[Removing] then return end
 
     PlrContainer[Removing]:Destroy()
     table.remove(self.ActiveBubbles, 1)
@@ -229,7 +232,7 @@ function Chat:RemoveBubble(TimedOut : boolean)
 end
 
 function Chat:LinkChat()
-    local PlrContainer = GetContainer(self.Player)
+    local PlrContainer = GetContainer(self.Player.Name)
 
     if #self.ActiveBubbles ~= 0 then -- Removes caret visibility on the chat message that is about to lose its place above the head.
     PlrContainer[self.ActiveBubbles[#self.ActiveBubbles]].Caret.Visible = false 
@@ -239,7 +242,8 @@ function Chat:LinkChat()
     self.BubbleChat.Caret.Visible = true
 
     if #self.ActiveBubbles > 3 then self:RemoveBubble() end
-    task.spawn(LoopRange)
+    if Threads.LoopRange then return end
+    Threads["LoopRange"] = task.spawn(LoopRange)
 end
 
 function Chat:GetStartingState()
@@ -254,21 +258,21 @@ function Chat:GetStartingState()
 end
 
 function Chat.Visible(Player, Bubble)
-    local Container = GetContainer(Player)
+    local Container = GetContainer(Player.Name)
     Container.Visible = true
 
     Container[Bubble].Message.Text = Container[Bubble]:GetAttribute("Message")
 end
 
 function Chat.Dotted(Player, Bubble)
-    local PlrContainer = GetContainer(Player)
+    local PlrContainer = GetContainer(Player.Name)
     PlrContainer.Visible = true
 
     Container[Bubble].Message.Text = "..."
 end
 
 function Chat.Hide(Player)
-    local PlrContainer = GetContainer(Player)
+    local PlrContainer = GetContainer(Player.Name)
     
     PlrContainer.Visible = false
 end

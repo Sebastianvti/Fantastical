@@ -1,4 +1,4 @@
 return {
-    Owner = {"TangoroaVeitayaki"}
+    Owner = {1037243012}
 
 }
