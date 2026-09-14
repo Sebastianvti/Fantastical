@@ -83,7 +83,7 @@ local function FocusLost(Enter)
     InputBar.Text = ""
 end
 
-local function AddBubbleChat(Player : Player)
+local function AddContainer(Player : Player)
     local NewContainer = BubbleChatContainer:Clone()
 
     NewContainer.Parent = ActiveContainers
@@ -137,7 +137,6 @@ function Chat.New(ChatParams)
     local self = setmetatable({}, Chat)
 
     self.Player = ChatParams.Sender
-    self.Character = ChatParams.Sender.Character
     self.Content = ChatParams.Message
     self.Type = "Normal"
     self.WindowEnabled = ChatParams.Windowed
@@ -154,9 +153,10 @@ function Chat:Send()
 end
 
 function Chat:BubbleChat()
-    if not ActiveContainers:FindFirstChild(self.Player.Name) then AddBubbleChat(self.Player) end
+    if not ActiveContainers:FindFirstChild(self.Player.Name) then AddContainer(self.Player) end
 
     local Container = ActiveContainers[self.Player.Name]
+    Container.Adornee = self.Player.Character.HumanoidRootPart
     local StartingState = self:GetStartingState()
 
     self.BubbleChat = BubbleChatTemplate:Clone()
@@ -219,13 +219,14 @@ function Chat:RemoveBubble(TimedOut : boolean)
     if not Removing then return end
 
     local PlayerName = string.split(Removing, "_")[1]
-    local PlrContainer = GetContainer(PlayerName)
-    
-    if not PlrContainer or PlrContainer[Removing] then return end
+    local PlrContainer : BillboardGui = GetContainer(PlayerName)
 
+    if not PlrContainer or not PlrContainer[Removing] then return end
     PlrContainer[Removing]:Destroy()
+
     table.remove(self.ActiveBubbles, 1)
 
+    if not Players:FindFirstChild(PlayerName) and not PlrContainer:FindFirstChildOfClass("Frame") then PlrContainer.Parent:Destroy() end
     if Threads[Removing] and not TimedOut then task.cancel(Threads[Removing]) end
 
     Threads[Removing] = nil
@@ -249,7 +250,7 @@ end
 function Chat:GetStartingState()
     for Key,Value in RangeChart[self.Type] do
         local Minimum,Maximum = Value.Minimum,Value.Maximum
-        local Magnitude = GetMagnitude(self.Character)
+        local Magnitude = GetMagnitude(self.Player.Character)
 
         if Magnitude >= Minimum and Magnitude <= Maximum then
             return Key

@@ -7,6 +7,7 @@ local RunService = game:GetService("RunService")
 
 local Shared = ReplicatedStorage.Shared
 
+local LocalPlayer = Players.LocalPlayer
 local Lync = require(Shared.Lync)
 
 local MainServices = {
@@ -71,18 +72,19 @@ local function CharacterDied(Character)
 	print("Client Died")
 end
 
-local function PlayerAdded(player)
+local function PlayerAdded(Player)
+	if Player ~= LocalPlayer then return end
 	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
 
-	if player.Character then
-		task.defer(CharacterAdded, player.Character)
+	if Player.Character then
+		task.defer(CharacterAdded, Player.Character)
 	end 
-	player.CharacterAdded:Connect(CharacterAdded)
-	player.CharacterRemoving:Connect(CharacterDied)
+	Player.CharacterAdded:Connect(CharacterAdded)
+	Player.CharacterRemoving:Connect(CharacterDied)
 end
 
-for _,player in Players:GetPlayers() do
-	task.defer(PlayerAdded, player)
+for _,Player in Players:GetPlayers() do
+	task.defer(PlayerAdded, Player)
 end
 
 Load()
