@@ -1,4 +1,4 @@
 return function (self)
-    self.Content = {Text = string.upper(self.Content), Type = "Yell", WindowOverwrite = true}
+    self.Content = {Message = string.upper(self.Content), Type = "Yell", OverwriteWindow = true}
     return self
 end

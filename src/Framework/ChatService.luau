@@ -64,12 +64,12 @@ end
 
 function ChatService:Inspect()
     if string.sub(self.Message, 1,1) ~= "/" then return end
-        local NewText = Admin.New(self.Client, self.Message)
-        if not NewText then return end
+        local Command = Admin.New(self.Client, self.Message)
+        if not Command then return end
 
-        self.Type = NewText.Type
-        self.Message = NewText.Text
-        self.Window = NewText.OverwriteWindow
+        self.Type = Command.Content.Type
+        self.Message = Command.Content.Message
+        self.Window = Command.Content.OverwriteWindow
 end
 
 function ChatService:Execute()

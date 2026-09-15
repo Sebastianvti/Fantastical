@@ -47,7 +47,7 @@ end
 
 local function AssumeCommand(Text)
     local NoSlash = string.sub(Text, 2)
-    
+    if not Commands.CommandParams then return end
     for Key,Parameters in Commands.CommandParams do
         local SubString = string.sub(string.lower(Key), 1, string.len(NoSlash))
         if SubString ~= string.lower(NoSlash) or SubString == "" then continue end

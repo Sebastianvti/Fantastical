@@ -29,9 +29,9 @@ local WindowTemplate = Container.MessageTemplate
 local ChatWindow : ScrollingFrame = Window.ChatWindow
 local InputBar : TextBox = Window.InputBar
 
-local Transparent = true -- On the chat window, every other message background is transparent, this just turns off when the next message background needs to be non transparent
+local Transparent = true -- On the chat window, every other message background is transparent, this just turns off when the next message background needs to be non transparent. Generally insignificant
 
-local ChatBubbles = {} -- This is not nested, all values passed here contain all essential information seperated by underscores. PlrName_ID_Type
+local ChatBubbles = {} -- This is not nested, all values passed here contain all essential information seperated by underscores. PlrName_ID_Type, the reason i use this over nested is because this can be indexed more easily
 local Threads = {}
 
 local RangeChart = require(Charts.RangeChart)
@@ -97,7 +97,6 @@ end
 
 local function LoopRange() -- Instead of using RunService, i use a loop to detect chat messages in range, runservice has a lot of issues, besides precision is not critical here. This runs on a different thread
     while task.wait(1) do
-        print(ChatBubbles)
         if #ChatBubbles == 0 then Threads.LoopRange = nil break end
 
         for _,Bubble in ChatBubbles do
@@ -138,7 +137,7 @@ function Chat.New(ChatParams)
 
     self.Player = ChatParams.Sender
     self.Content = ChatParams.Message
-    self.Type = "Normal"
+    self.Type = ChatParams.Type
     self.WindowEnabled = ChatParams.Windowed
     self.ActiveBubbles = ChatBubbles
 
@@ -259,17 +258,17 @@ function Chat:GetStartingState()
 end
 
 function Chat.Visible(Player, Bubble)
-    local Container = GetContainer(Player.Name)
-    Container.Visible = true
+    local PlrContainer = GetContainer(Player.Name)
+    PlrContainer.Visible = true
 
-    Container[Bubble].Message.Text = Container[Bubble]:GetAttribute("Message")
+    PlrContainer[Bubble].Message.Text = PlrContainer[Bubble]:GetAttribute("Message")
 end
 
 function Chat.Dotted(Player, Bubble)
     local PlrContainer = GetContainer(Player.Name)
     PlrContainer.Visible = true
 
-    Container[Bubble].Message.Text = "..."
+    PlrContainer[Bubble].Message.Text = "..."
 end
 
 function Chat.Hide(Player)
