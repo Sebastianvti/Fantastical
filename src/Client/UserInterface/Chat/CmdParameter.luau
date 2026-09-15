@@ -1,7 +1,10 @@
 local CmdParameter = {}
 
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+
+local Misc = ReplicatedStorage.Shared.Misc
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer.PlayerGui
@@ -15,12 +18,13 @@ local Window : CanvasGroup = Messaging.Window
 local InputBar : TextBox = Window.InputBar
 local CmdBox : Frame = Window.CmdSuggest
 local CmdText : TextLabel = CmdBox.Suggest
+local Connection
 
+local ParameterTrack = require(Misc.ParameterTrack)
 local Commands = require(Charts.Commands)
 
 function  CmdParameter.Update(Packet)
     Commands = Packet
-    print(Commands)
 end
 
 local function TweenBar(Open : boolean)
@@ -38,21 +42,30 @@ end
 local function ClearSuggest()
     CmdText.Text = ""
     TweenBar(false)
+    if Connection then Connection = nil end
 end
 
-local function Suggest(Text : string, Parameters)
+local function Suggest(Cmd : string, Parameters)
     TweenBar(true)
-    CmdText.Text = ("[Cmd]: "..Text.." "..table.concat(Parameters, ", "))
+    CmdText.Text = ("[Cmd]: "..Cmd.." "..table.concat(Parameters, ", "))
+
+    local Parameters = ParameterTrack.New(Parameters)
+    Connection = InputBar:GetPropertyChangedSignal("Text"):Connect(function()
+        local NoCommandMsg = InputBar.Text
+        Parameters:Track(NoCommandMsg)
+    end)
 end
 
 local function AssumeCommand(Text)
     local NoSlash = string.sub(Text, 2)
     if not Commands.CommandParams then return end
-    for Key,Parameters in Commands.CommandParams do
+
+    for Key,Value in Commands.CommandParams do
         local SubString = string.sub(string.lower(Key), 1, string.len(NoSlash))
         if SubString ~= string.lower(NoSlash) or SubString == "" then continue end
 
-        Suggest(Key, Parameters)
+        if Connection then Connection = nil end
+        Suggest(Key, Value)
         return
     end
     ClearSuggest()
@@ -71,6 +84,6 @@ local function Changed()
 end
 
 InputBar.FocusLost:Connect(ClearSuggest)
-InputBar.Changed:Connect(Changed)
+InputBar:GetPropertyChangedSignal("Text"):Connect(Changed)
 
 return CmdParameter

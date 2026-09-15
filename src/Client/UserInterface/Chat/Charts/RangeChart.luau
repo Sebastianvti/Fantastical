@@ -32,14 +32,14 @@ return {
     Whisper = {
         Visible = {
             Minimum = 0, 
-            Maximum = 3,
+            Maximum = 4,
         },
         Dotted = {
-            Minimum = 4,
-            Maximum = 7,
+            Minimum = 5,
+            Maximum = 9,
         },
         Hide = {
-            Minimum = 8,
+            Minimum = 10,
             Maximum = 700
         }
     },

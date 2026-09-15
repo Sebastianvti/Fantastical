@@ -96,7 +96,7 @@ local function GetContainer(PlayerName : string)
 end
 
 local function LoopRange() -- Instead of using RunService, i use a loop to detect chat messages in range, runservice has a lot of issues, besides precision is not critical here. This runs on a different thread
-    while task.wait(1) do
+    while task.wait(0.7) do
         if #ChatBubbles == 0 then Threads.LoopRange = nil break end
 
         for _,Bubble in ChatBubbles do
@@ -258,10 +258,11 @@ function Chat:GetStartingState()
     return "Hide"
 end
 
-function Chat.Visible(Player, Bubble)
+function Chat.Visible(Player, Bubble, Type)
+    if Type == "Whisper" then return end
+
     local PlrContainer = GetContainer(Player.Name)
     PlrContainer.Visible = true
-
     PlrContainer[Bubble].Message.Text = PlrContainer[Bubble]:GetAttribute("Message")
 end
 

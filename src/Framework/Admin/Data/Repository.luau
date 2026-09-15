@@ -9,7 +9,8 @@ return {
     -- FORMAT
     -- [COMMAND NAME] (PUT NAME IN COMMENT)
     -- [command in full name]
-    -- [..all commands following are abbreviations or shortenings]
+    -- [..all commands following are abbreviations or shortenings]¨
+    -- If text/string is a parameter, then make it the very last, or else i have to write complicated code
 
     -- STATUS
     status = {Perm = 2, Activation = "status"},
@@ -20,21 +21,21 @@ return {
     -- YELL
     yell = {
         Perm = "Player", Activation = "yell", ChatCommand = true,
-        Parameters = {"Text: string"}
+        Parameters = {"Chat : Message"}
     },
     y = {
         Perm = "Player", Activation = "yell", ChatCommand = true,
-        Parameters = {"Text: string"}
+        Parameters = {"Chat : Message"}
     },
     
     -- WHISPER
     whisper = {
         Perm = "Player", Activation = "whisper", ChatCommand = true,
-        Parameters = {"Text: string"}
+        Parameters = {"Chat : Message"}
     },
     w = {
         Perm = "Player", Activation = "whisper", ChatCommand = true,
-        Parameters = {"Text: string"}
+        Parameters = {"Chat : Message"}
     },
     
 }

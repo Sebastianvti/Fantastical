@@ -5,12 +5,14 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage.Shared
+local Misc = Shared.Misc
 local Framework = script.Parent
 local Data = script.Data
 
 local Commands = {}
 
 local Network = require(Shared.Network)
+local ParameterTrack = require(Misc.ParameterTrack)
 local Repository = require(Data.Repository)
 local Ranks = require(Data.Ranks)
 local VIP = require(Data.VIP)
@@ -41,7 +43,7 @@ local function GetRank(Rank : string)
 end
 
 local function GetPlayersandArgs (Text: string)
-    local SplitPlayerandArgs = "^(.-%w+)%w?%s(.-%w+)"
+    local SplitPlayerandArgs = "^(.-%w+)%w?%s(.+)"
     local Matches = {string.match(Text, SplitPlayerandArgs)}
     
     return {Players = Matches[1], Args = Matches[2]}
@@ -150,6 +152,11 @@ function Admin.New(Sender : Player, Text : string)
     self.Args = GetParameters(Text)
     --self:Execute()
 end
+
+local example = "tango,      arlgith m16,     params     "
+
+local cleanedText = string.gsub(example, " +", " ")
+
 
 function Admin:Execute()
     Commands[self.Activation](self)
