@@ -128,8 +128,8 @@ end
 function Chat.CharacterStart() -- this is a dumb solution, but :CaptureFocus DOESNT WORK for keybinds, so your text cursor doesnt show up. this is the only way to force it to do so
     -- it made me really frustrated, trying to work this out. i dont know the solution, tried everything. minor delays dont work no matter how long you set it to
     InputBar:CaptureFocus()
-    Threads["HideInterface"] = task.delay(4, ChangeVisbility, 1)
     InputBar:ReleaseFocus()
+    Threads["HideInterface"] = task.delay(4, ChangeVisbility, 1)
 end
 
 function Chat.New(ChatParams)

@@ -13,6 +13,8 @@ local Commands = {}
 local Network = require(Shared.Network)
 local Repository = require(Data.Repository)
 local Ranks = require(Data.Ranks)
+local VIP = require(Data.VIP)
+
 local DataStore = require(Framework.DataStore)
 
 local function RemoveCommandFromString(Text: string)
@@ -88,11 +90,22 @@ function Admin.Start()
     end
 end
 
-local function AutoRank()
+local function AutoRank(Player) 
+    local UserId = Player.UserId
+    if not VIP[UserId] then return end
 
+    local Profile = DataStore.New(Player)
+    Profile.Data.AdminPermission = VIP[UserId].Rank
+
+   Profile.MasterProfile:SetAsync()
 end
 
 function Admin.DataLoaded(Player, Profile)
+    Admin.UpdatePermissions(Player, Profile)
+    AutoRank(Player)
+end
+
+function Admin.UpdatePermissions(Player, Profile)
 
     local SlotRank = GetRank(Profile.Data.AdminPermission)
     local MasterRank = GetRank(DataStore.New(Player).Data.AdminPermission)
@@ -109,7 +122,7 @@ function Admin.DataLoaded(Player, Profile)
         if Value.Perm < Rank then continue end
         Result[Command] = Value.Parameters
     end
-    print(Result)
+
     Network.AllowCommands:fireClient(Player, {CommandParams = Result})
 end
 
