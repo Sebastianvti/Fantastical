@@ -116,7 +116,7 @@ local function LoopRange() -- Instead of using RunService, i use a loop to detec
                 local Minimum,Maximum = Value.Minimum,Value.Maximum
                 
                 if Magnitude >= Minimum and Magnitude <= Maximum then
-                    Chat[Key](Player, Bubble)
+                    Chat[Key](Player, Bubble, Type)
 
                 end
             end
@@ -255,6 +255,7 @@ function Chat:GetStartingState()
             return Key
         end
     end
+    return "Hide"
 end
 
 function Chat.Visible(Player, Bubble)
@@ -264,7 +265,7 @@ function Chat.Visible(Player, Bubble)
     PlrContainer[Bubble].Message.Text = PlrContainer[Bubble]:GetAttribute("Message")
 end
 
-function Chat.Dotted(Player, Bubble)
+function Chat.Dotted(Player, Bubble, Type)
     local PlrContainer = GetContainer(Player.Name)
     PlrContainer.Visible = true
 

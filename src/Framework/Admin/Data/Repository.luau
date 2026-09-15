@@ -27,5 +27,14 @@ return {
         Parameters = {"Text: string"}
     },
     
-
+    -- WHISPER
+    whisper = {
+        Perm = "Player", Activation = "whisper", ChatCommand = true,
+        Parameters = {"Text: string"}
+    },
+    w = {
+        Perm = "Player", Activation = "whisper", ChatCommand = true,
+        Parameters = {"Text: string"}
+    },
+    
 }
