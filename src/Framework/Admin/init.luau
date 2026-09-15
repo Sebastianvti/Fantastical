@@ -80,6 +80,16 @@ local function GetParameters(Text : string)
     return ParametersFound
 end
 
+local function AutoRank(Player) 
+    local UserId = Player.UserId
+    if not VIP[UserId] then return end
+
+    local Profile = DataStore.New(Player)
+    Profile.Data.AdminPermission = VIP[UserId].Rank
+
+   Profile.MasterProfile:SetAsync()
+end
+
 function Admin.Start()
     for _,Command in script.Commands:GetChildren() do
         local Name = Command.Name
@@ -90,16 +100,6 @@ function Admin.Start()
         if type(Command.Perm) ~= "string" then continue end
             Command.Perm = GetRank(Command.Perm)
     end
-end
-
-local function AutoRank(Player) 
-    local UserId = Player.UserId
-    if not VIP[UserId] then return end
-
-    local Profile = DataStore.New(Player)
-    Profile.Data.AdminPermission = VIP[UserId].Rank
-
-   Profile.MasterProfile:SetAsync()
 end
 
 function Admin.DataLoaded(Player, Profile)
