@@ -23,7 +23,8 @@ local Connection
 local ParameterTrack = require(Misc.ParameterTrack)
 local Commands = require(Charts.Commands)
 
-function  CmdParameter.Update(Packet)
+
+function CmdParameter.Update(Packet)
     Commands = Packet
 end
 
@@ -42,18 +43,23 @@ end
 local function ClearSuggest()
     CmdText.Text = ""
     TweenBar(false)
-    if Connection then Connection = nil end
+    
+    if Connection then Connection:Disconnect() end
 end
 
 local function Suggest(Cmd : string, Parameters)
     TweenBar(true)
-    CmdText.Text = ("[Cmd]: "..Cmd.." "..table.concat(Parameters, ", "))
-
-    local Parameters = ParameterTrack.New(Parameters)
+    
+    CmdText.Text = (Cmd.." "..table.concat(Parameters, ", "))
+    local Parameters = ParameterTrack.New(Parameters, CmdText)
+    Parameters:Highlight(Cmd)
+    
+    if Connection then Connection:Disconnect() end
     Connection = InputBar:GetPropertyChangedSignal("Text"):Connect(function()
         local NoCommandMsg = InputBar.Text
         Parameters:Track(NoCommandMsg)
     end)
+
 end
 
 local function AssumeCommand(Text)
@@ -62,9 +68,8 @@ local function AssumeCommand(Text)
 
     for Key,Value in Commands.CommandParams do
         local SubString = string.sub(string.lower(Key), 1, string.len(NoSlash))
-        if SubString ~= string.lower(NoSlash) or SubString == "" then continue end
 
-        if Connection then Connection = nil end
+        if SubString ~= string.lower(NoSlash) or SubString == "" then continue end
         Suggest(Key, Value)
         return
     end

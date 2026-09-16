@@ -36,7 +36,7 @@ local Threads = {}
 
 local RangeChart = require(Charts.RangeChart)
 local Processor = require(script.ProcessMsg)
-local CmdParameter = require(script.CmdParameter)
+local CmdSuggest = require(script.CmdSuggest)
 
 local function ChangeVisbility(Transparency : number)
     if InputBar:IsFocused() and Transparency == 1 then Threads["HideInterface"] = task.delay(4, ChangeVisbility, 1) return end
@@ -203,7 +203,7 @@ function Chat:Window()
     local WindowMsg : Frame = WindowTemplate:Clone()
 
     WindowMsg.Name = self.Player.Name.."_"..string.sub(HttpService:GenerateGUID(false),1, 6)
-    WindowMsg.Message.Text = "{Sharp} ".."Iona Zierke: "..(self.Content)
+    WindowMsg.Message.Text = "{Hoarse} ".."Iona Zierke: "..(self.Content)
     WindowMsg.BackgroundTransparency = Transparent and 0.9 or 1
     WindowMsg.Parent = ChatWindow
     WindowMsg.Visible = true
@@ -295,7 +295,7 @@ end)
 
 
 InputBar.FocusLost:Connect(FocusLost)
-Network.AllowCommands:onClient(CmdParameter.Update)
+Network.AllowCommands:onClient(CmdSuggest.Update)
 Network.Chatted:onClient(PassMessage)
     
 return Chat

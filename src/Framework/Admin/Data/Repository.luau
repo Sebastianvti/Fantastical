@@ -21,21 +21,21 @@ return {
     -- YELL
     yell = {
         Perm = "Player", Activation = "yell", ChatCommand = true,
-        Parameters = {"Chat : Message"}
+        Parameters = {"Cmd : Message"}
     },
     y = {
         Perm = "Player", Activation = "yell", ChatCommand = true,
-        Parameters = {"Chat : Message"}
+        Parameters = {"Cmd : Message"}
     },
     
     -- WHISPER
     whisper = {
         Perm = "Player", Activation = "whisper", ChatCommand = true,
-        Parameters = {"Chat : Message"}
+        Parameters = {"Cmd : Message"}
     },
     w = {
         Perm = "Player", Activation = "whisper", ChatCommand = true,
-        Parameters = {"Chat : Message"}
+        Parameters = {"Cmd : Message"}
     },
     
 }
