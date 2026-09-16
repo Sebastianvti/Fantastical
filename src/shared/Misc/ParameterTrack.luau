@@ -6,6 +6,7 @@ local AverageCommand = "[Command] [Players] [Args: Enum, Text]"
 function ParameterTrack.New(Parameters)
     local self = setmetatable({}, ParameterTrack)
 
+    self.LastIndexes = 1
     self.Parameters = Parameters
     self:Deconstruct()
     return self
@@ -24,13 +25,17 @@ function ParameterTrack:Deconstruct()
 end
 
 function ParameterTrack:Track(Text)
-    local fakeparams = {""}
     local Result = string.gsub(Text, " +", " ")
-    local SubTest = string.split(Text, " ")
-    print(string.len(SubTest[#SubTest]))
-    if string.len(SubTest[#SubTest]) == 1 then print("Begin new param") end
+    local SubTest = string.split(Result, " ")
+    if SubTest[#SubTest] == "" then table.remove(SubTest, #SubTest) end
 
-    print(Result)
+    print(SubTest)
+    print(self.LastIndexes)
+    print(#SubTest)
+    if #SubTest > self.LastIndexes then print("Begin new param") end
+    if #SubTest < self.LastIndexes then print("go back 1 param") end
+    self.LastIndexes = #SubTest
+
 end
 
 return ParameterTrack
