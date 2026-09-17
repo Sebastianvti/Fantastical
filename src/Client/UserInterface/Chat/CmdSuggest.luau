@@ -52,7 +52,6 @@ local function Suggest(Cmd : string, Parameters)
     
     CmdText.Text = (Cmd.." "..table.concat(Parameters, ", "))
     local Parameters = ParameterTrack.New(Parameters, CmdText)
-    Parameters:Highlight(Cmd)
     
     if Connection then Connection:Disconnect() end
     Connection = InputBar:GetPropertyChangedSignal("Text"):Connect(function()

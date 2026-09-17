@@ -28,15 +28,20 @@ function ParameterTrack:Highlight(Parameter : string)
     self.SuggestBar.Text = NewHighlight
 end
 
-function ParameterTrack:Parameter(Text)
+function ParameterTrack:GetParameters(Text)
     local CurrentParam = string.split(Text, ",")
- 
+    return #CurrentParam + 1
 end
 
 function ParameterTrack:Group(Text)
     local Groups = string.split(Text, " ")
+    if #Groups == 1 then self:Highlight(Groups[1]) return end
+    if #Groups == 2 then self:Highlight(self.Parameter[1]) return end
+    
+    local ArguementFields = self:GetParameters(Groups[#Groups])
+    if not self.Parameters[ArguementFields] then ArguementFields = #self.Parameters end 
 
-    self:Highlight()
+    self:Highlight(self.Parameter[ArguementFields])
 end
 
 function ParameterTrack:Track(Text)
