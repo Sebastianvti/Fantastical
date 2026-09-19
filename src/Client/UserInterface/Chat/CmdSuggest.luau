@@ -50,7 +50,7 @@ end
 local function Suggest(Cmd : string, Parameters)
     TweenBar(true)
     local Tracker = ParameterTrack.New(Parameters, CmdText)
-    if CmdText.Text == "" then CmdText.Text = ("/"..Cmd.." "..table.concat(Parameters, ", ")) Tracker:Highlight("/"..Cmd) end
+    if CmdText.Text == "" then CmdText.Text = ("/"..Cmd.." "..table.concat(Parameters, ", ")) Tracker:Track(InputBar.Text) end
 
     if Connection then Connection:Disconnect() end
     Connection = InputBar:GetPropertyChangedSignal("Text"):Connect(function()

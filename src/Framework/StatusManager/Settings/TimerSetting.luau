@@ -1,4 +1,3 @@
-local ProximityPromptService = game:GetService("ProximityPromptService")
 return function(Package)
     local Main = require(script.Parent.Parent)
     local TimerMain = require(script.Parent.Parent.Timer)

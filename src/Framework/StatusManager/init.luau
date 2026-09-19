@@ -30,7 +30,7 @@ local Statuses = script.Statuses
 function StatusManager.Start()
 
     for _,Module in Statuses:GetChildren() do
-        local ModName = Module.Name
+        local ModName = string.lower(Module.Name)
         StatusLibrary.Statuses[ModName] = require(Module)
         StatusLibrary.Groups[StatusLibrary.Statuses[ModName].Group] = StatusLibrary.Statuses[ModName].Name
     end
@@ -46,6 +46,8 @@ function StatusManager.New(Player , StatusName : string)
     self.Player = Player 
     self.CharacterSheet = CharacterSheets[Player.Character]
     self.Status = StatusManager.GetStatus(StatusName)
+    if not self.Status then return end
+
     self.Name = self.Status.Name
     self.Group = self.Status.Group
     self.Settings = self.Status.Settings

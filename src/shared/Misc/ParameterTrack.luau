@@ -1,9 +1,7 @@
 local ParameterTrack = {}
 ParameterTrack.__index = ParameterTrack
 
-local Group = require(script.Group)
-
-local function CleanString(Text)
+function ParameterTrack.CleanString(Text)
     local RemoveSlash = string.gsub(Text, "/", "")
     local Result = string.gsub(RemoveSlash, " +", " ")
     local RemoveSpacesBeforeComma = string.gsub(Result, "%s*,%s*", ",")
@@ -38,13 +36,13 @@ function ParameterTrack:Group(Text)
     
     local ArguementFields = self:GetParameters(Groups[#Groups])
     if not self.Parameters[ArguementFields] then ArguementFields = #self.Parameters end 
-    
+
     self:Highlight(self.Parameters[ArguementFields])
 end
 
 function ParameterTrack:Track(Text)
+    local CleanString = ParameterTrack.CleanString(Text)
     
-    local CleanString = CleanString(Text)
     self:Group(CleanString)
 end
 

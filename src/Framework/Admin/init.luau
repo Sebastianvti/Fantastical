@@ -5,14 +5,12 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage.Shared
-local Misc = Shared.Misc
 local Framework = script.Parent
 local Data = script.Data
 
 local Commands = {}
 
 local Network = require(Shared.Network)
-local ParameterTrack = require(Misc.ParameterTrack)
 local Repository = require(Data.Repository)
 local Ranks = require(Data.Ranks)
 local VIP = require(Data.VIP)
@@ -53,21 +51,6 @@ local function CleanString(Text)
     return string.gsub(Text, "%p", "")
 end
 
-local function GetPlayers(Text : string)
-    Text = CleanString(Text)
-    local Seperation = string.split(Text, ",")
-    local PlayersFound = {}
-
-    for _,Name in Seperation do
-        for _,Player in Players:GetPlayers() do
-            if (string.sub(string.lower(Player.Name), 1, string.len(Name))) == string.lower(Name) then
-                table.insert(PlayersFound, Player)
-            end
-        end
-    end
-    if #PlayersFound == 0 then return false end
-    return PlayersFound
-end
 
 local function GetParameters(Text : string)
     Text = CleanString(Text)
@@ -107,18 +90,23 @@ function Admin.DataLoaded(Player, Profile)
     AutoRank(Player)
 end
 
-function Admin.UpdatePermissions(Player, Profile)
+function Admin.GetHighestRank(Player, Profile)
+    if not Profile then Profile = DataStore.Profiles[Player] end
 
     local SlotRank = GetRank(Profile.Data.AdminPermission)
     local MasterRank = GetRank(DataStore.New(Player).Data.AdminPermission)
     local Rank
-    local Result = {}
 
     if MasterRank > SlotRank then
-        Rank = SlotRank
+        return SlotRank
     else
-        Rank = MasterRank
+        return MasterRank
     end
+end
+
+function Admin.UpdatePermissions(Player, Profile)
+    local Result = {}
+    local Rank = Admin.GetHighestRank(Player, Profile)
 
     for Command,Value in Repository do
         if Value.Perm < Rank then continue end
@@ -145,26 +133,48 @@ function Admin.New(Sender : Player, Text : string)
     if self.Command.ChatCommand then self:Execute() return self end
 
     local PlayersAndArgs = GetPlayersandArgs(self.Content) 
-    
-    self.Subjects = GetPlayers(PlayersAndArgs.Players)
-    if not self.Subject then return end
 
-    self.Args = GetParameters(Text)
-    --self:Execute()
+    self.Players = self:GetPlayers(PlayersAndArgs.Players)
+    if not self.Players then warn("Could not find players") return end
+
+    self.Args = GetParameters(PlayersAndArgs.Args)
+    print(self)
+    self:Execute()
 end
 
-local example = "tango,      arlgith m16,     params     "
+function Admin:GetPlayers(Text : string)
+    Text = string.lower(CleanString(Text))
+    local Seperation = string.split(Text, ",")
+    local PlayersFound = {}
 
-local cleanedText = string.gsub(example, " +", " ")
+    if table.find(Seperation, "all") then return self:All() end
 
+    for _,Name in Seperation do
+        for _,Player in Players:GetPlayers() do
+            
+            if Name == "me" then table.insert(PlayersFound, self.Sender) continue end
+
+            if (string.sub(string.lower(Player.Name), 1, string.len(Name))) == string.lower(Name) then
+                if table.find(PlayersFound, Player) then continue end
+                table.insert(PlayersFound, Player)
+            end
+        end
+    end
+    if #PlayersFound == 0 then return false end
+    return PlayersFound
+end
 
 function Admin:Execute()
     Commands[self.Activation](self)
 end
 
+function Admin:All() 
+    if #Players:GetPlayers() > 20 and Admin.GetHighestRank(self.Sender) >= 3 then return end
+    return Players:GetPlayers()
+end
+
 function Admin:CheckPermission()
-    if self.Permission >= GetRank(self.Profile.AdminPermission) then print("Slot had permission to run command.") return true end
-    if self.Permission >= GetRank(DataStore.New(self.Sender).Data.AdminPermission) then print("Master Profile had permission to run command.") return true end
+    if self.Permission >= Admin.GetHighestRank(self.Sender) then warn("combo worked") return true end
 
     warn(self.Sender.Name..(" had insufficient permissions for Command: "..(self.Activation)))
     return false

@@ -27,7 +27,7 @@ end
 
 local function  SplitPackage(Package, IndexPoint : number, EndNum : number)
     
-    local EndPoint
+    local EndPoint 
     local Index = 0
     local ReturnPackage = CreateTimerStatus(Package)
 

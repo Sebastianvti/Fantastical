@@ -13,29 +13,30 @@ return {
     -- If text/string is a parameter, then make it the very last, or else i have to write complicated code
 
     -- STATUS
-    status = {Perm = 2, Activation = "status"},
-    stat = {Perm = 2, Activation = "status"},
-
+    givestatus = {
+        Perm = 2, Activation = "status",
+        Parameters = {"Players {}", "Status : Name"}
+    },
     -- CHAT COMMANDS --
 
     -- YELL
     yell = {
         Perm = "Player", Activation = "yell", ChatCommand = true,
-        Parameters = {"Cmd : Message"}
+        Parameters = {"Message"}
     },
     y = {
         Perm = "Player", Activation = "yell", ChatCommand = true,
-        Parameters = {"Cmd : Message"}
+        Parameters = {"Message"}
     },
     
     -- WHISPER
     whisper = {
         Perm = "Player", Activation = "whisper", ChatCommand = true,
-        Parameters = {"Cmd : Message"}
+        Parameters = {"Message"}
     },
     w = {
         Perm = "Player", Activation = "whisper", ChatCommand = true,
-        Parameters = {"Cmd : Message"}
+        Parameters = {"Message"}
     },
     
 }
