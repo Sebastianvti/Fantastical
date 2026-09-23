@@ -9,11 +9,10 @@ local Misc = ReplicatedStorage.Shared.Misc
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer.PlayerGui
 
-local Charts = script.Parent.Charts
+local Data = script.Parent.Data
 local UserInterface = PlayerGui:WaitForChild("UserInterface")
 
-local Messaging = UserInterface.Messaging
-local Window : CanvasGroup = Messaging.Window
+local Window : CanvasGroup = UserInterface.Window
 
 local InputBar : TextBox = Window.InputBar
 local CmdBox : Frame = Window.CmdSuggest
@@ -21,7 +20,7 @@ local CmdText : TextLabel = CmdBox.Suggest
 local Connection
 
 local ParameterTrack = require(Misc.ParameterTrack)
-local Commands = require(Charts.Commands)
+local Commands = require(Data.Commands)
 
 
 function CmdParameter.Update(Packet)

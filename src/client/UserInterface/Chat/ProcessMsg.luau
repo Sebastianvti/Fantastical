@@ -1,10 +1,10 @@
 local ProcessMsg = {}
 
-local Charts = script.Parent.Charts
+local Data = script.Parent.Data
 
-local CorrectionChart = require(Charts.CorrectionChart)
-local ColorChart = require(Charts.ColorChart)
-local PrefixChart = require(Charts.PrefixChart)
+local CorrectionChart = require(Data.CorrectionChart)
+local ColorChart = require(Data.ColorChart)
+local PrefixChart = require(Data.PrefixChart)
 
 local function EnrichText(Text)
     for Symbol,Prefix in PrefixChart do

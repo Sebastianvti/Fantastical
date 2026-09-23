@@ -15,9 +15,8 @@ local Shared = ReplicatedStorage.Shared
 
 local Network = require(Shared.Network)
 
-local Messaging = UserInterface.Messaging
-local Window : CanvasGroup = Messaging.Window
-local Charts = script.Charts
+local Window : CanvasGroup = UserInterface.Window
+local Data = script.Data
 
 local Container = Window.Container 
 local ActiveContainers = Container.ActiveContainers
@@ -34,7 +33,7 @@ local Transparent = true -- On the chat window, every other message background i
 local ChatBubbles = {} -- This is not nested, all values passed here contain all essential information seperated by underscores. PlrName_ID_Type, the reason i use this over nested is because this can be indexed more easily
 local Threads = {}
 
-local RangeChart = require(Charts.RangeChart)
+local RangeChart = require(Data.RangeChart)
 local Processor = require(script.ProcessMsg)
 local CmdSuggest = require(script.CmdSuggest)
 
@@ -289,7 +288,8 @@ UserInputService.InputBegan:Connect(function(Input, GPE)
             Threads["HideInterface"] = nil 
             ChangeVisbility(0) 
         end
-         InputBar:CaptureFocus()
+            Window.Visible = true
+            InputBar:CaptureFocus()
     end
 end)
 
