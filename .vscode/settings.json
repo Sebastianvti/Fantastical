@@ -1,7 +1,16 @@
 {
-    "explorer.compactFolders": false,
-    "robloxLsp.diagnostics.neededFileStatus": {
-        "": "Opened"
-    }
-}
+  "explorer.compactFolders": false,
+  "robloxLsp.diagnostics.neededFileStatus": {
+    "": "Opened"
+  },
 
+    "material-icon-theme.folders.associations": {
+    "ToolService": "tools",
+    "toolservice": "tools",
+    "SoundScape": "audio",
+    "DataStore": "database",
+    "UserInterface" : "interface",
+    "StatusService": "server",
+    "Network": "benchmark",
+  },
+}

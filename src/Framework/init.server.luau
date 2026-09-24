@@ -1,29 +1,28 @@
 local Players = game:GetService("Players")
-local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
+local HttpService = game:GetService("HttpService")
+local ServerStorage = game:GetService("ServerStorage")
 local RunService = game:GetService("RunService")
 
+local StoreHouse = ServerStorage.StoreHouse
 local Shared = ReplicatedStorage.Shared
 
-local MainServices = {
-	Framework = ServerScriptService,
-	Shared = ReplicatedStorage
-}
-
+local NetworkFolder = Shared.Network
 local DataStore = require(script.DataStore)
 local ProfileStore = require(script.Library.ProfileStore)
 local MasterTemplate = require(script.DataStore.Templates.MasterTemplate)
-local Lync = require(Shared.Lync)
 
 local Cache = {}
 local FailModuleByType = {"function"}
+local MainServices = {Framework = ServerScriptService, Shared = ReplicatedStorage}
 
 local PlayerStore = ProfileStore.New(DataStore.GetStoreName(), MasterTemplate)
 
 -- You dont need to define ignore on all scripts you dont want, most of the time they are filtered out.
 -- If you have big ones like the networking system, best just ignore it just to be safe.
 local function PCallResult(Module)
-	if Module:GetAttribute("Ignore") then return end
+	if Module:GetAttribute("Ignore") or Module:GetAttribute("Client") then return end
 
 		local success, result = pcall(function()
 			return require(Module)
@@ -47,17 +46,17 @@ end
 
 local function RequireChildren(Module : ModuleScript)
 	for _,Module in Module:GetChildren() do
-		if not Module:IsA("ModuleScript") or Module:GetAttribute("Ignore") then continue end
+		if not Module:IsA("ModuleScript") or Module:GetAttribute("Ignore") or Module:GetAttribute("Client") then continue end
 
 		RequireChildren(Module)
 		PCallResult(Module)
 	end
 end
 
-local function Load()
+local function Load() -- it wasnt necessary to have this in 3 functions, but here we are. you win some you lose some
 	for Folder,Service  in MainServices do
 		for _,Module in Service[Folder]:GetChildren() do
-				if not Module:IsA("ModuleScript") and not Module:IsA("Folder") or Module:GetAttribute("Ignore") then continue end
+				if not Module:IsA("ModuleScript") and not Module:IsA("Folder") or Module:GetAttribute("Ignore") or Module:GetAttribute("Client") then continue end
 				if Module:IsA("ModuleScript") then PCallResult(Module) end
 
 				RequireChildren(Module)
@@ -70,6 +69,28 @@ local function DataLoaded(Player, PlrProfile)
 		if ModuleData.DataLoaded then
 			ModuleData.DataLoaded(Player, PlrProfile)
 		end
+	end
+end
+
+local function CreateFolder(Name : string)
+	local NewFolder = Instance.new("Folder")
+	NewFolder.Name = Name
+	NewFolder.Parent = NetworkFolder
+	return NewFolder
+end
+
+
+
+local function LoadEnums(Folder : Folder)
+	for _,Instance in Folder:GetChildren() do
+		if Instance:IsA("Folder") then LoadEnums(Instance) end
+		if Instance:IsA("Folder") then continue end
+
+		local AttributeParent = NetworkFolder:FindFirstChild(Instance.Parent.Name)
+		
+		if not AttributeParent then AttributeParent = CreateFolder(Instance.Parent.Name) end
+
+		AttributeParent:SetAttribute(HttpService:GenerateGUID(false), Instance.Name)
 	end
 end
 
@@ -114,10 +135,12 @@ for _,Player in Players:GetPlayers() do
 	task.spawn(PlayerAdded, Player)
 end
 
+LoadEnums(StoreHouse)
 Load()
 Players.PlayerAdded:Connect(PlayerAdded)
 Players.PlayerRemoving:Connect(PlayerRemoving)
 
+local Lync = require(Shared.Lync)
 Lync.start()
 RunService.PostSimulation:Connect(function() Lync.flush() end)
 game:BindToClose(Lync.close)

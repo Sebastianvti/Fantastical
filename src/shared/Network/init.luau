@@ -1,4 +1,8 @@
-local Lync = require(game:GetService("ReplicatedStorage").Shared.Lync)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Shared = ReplicatedStorage.Shared
+
+local Service = require(script.Service)
+local Lync = require(Shared.Lync)
 
 return Lync.define("Network", {
 	
@@ -14,4 +18,8 @@ return Lync.define("Network", {
 	AllowCommands = Lync.packet(Lync.struct({
 		CommandParams = Lync.map(Lync.str(1, 60), Lync.array(Lync.str(1, 100), 0, 8), 0, 200)
 	})),
+
+	AddTool = Lync.packet(Lync.struct({
+		Name = Lync.enum(Service.GetEnums("Tools"))
+	}))
 })

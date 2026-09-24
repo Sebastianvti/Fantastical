@@ -1,4 +1,4 @@
-local Players = game.GetService("Players")
+local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
 local LocalPlayer = Players.LocalPlayer
@@ -12,7 +12,7 @@ local Container = Interface.Container
 local ToolBar = {}
 
 local function GetPosition()
-    return #Interface:GetChildren() - 2
+    return #Interface:GetChildren() - 1
 end
 
 function ToolBar.AddItem(Name : string)
@@ -21,6 +21,7 @@ function ToolBar.AddItem(Name : string)
     Element.Name = Name
     Element.Text = (GetPosition().." - "..Name)
     Element.Parent = Interface
+    Element.Visible = true
 end
 
 function ToolBar.RemoveItem(Name : string)
