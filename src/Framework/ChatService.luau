@@ -12,8 +12,6 @@ local CharacterLoader = require(script.Parent.CharacterLoader)
 local Admin = require(script.Parent.Admin)
 
 local Overlap = OverlapParams.new()
-local Params = RaycastParams.new()
-Params.FilterType = Enum.RaycastFilterType.Exclude
 
 local function Filter(Text, Player)
 	if not Text or Text == "" then return end
@@ -34,18 +32,6 @@ local function ObserveArea(Character : Model)
     Overlap.FilterDescendantsInstances = CharacterLoader.AllCharacters
 
     return workspace:GetPartBoundsInRadius(Character.HumanoidRootPart.Position, 500, Overlap)
-end
-
-local function IsLooking(Head, Character)
-    local IsLooking = workspace:Raycast(Character.Head.Position, Head.Position - Character.Head.Position, Params)
-
-    if IsLooking and IsLooking.Instance == Head then
-        print("Returned true")
-        return true
-    else
-        print("Returned false")
-        return false
-    end
 end
 
 function ChatService.New(Packet, Client)
@@ -73,18 +59,16 @@ function ChatService:Inspect()
 end
 
 function ChatService:Execute()
-    Params.FilterDescendantsInstances = {self.Character}
-
     for _,Head in self.Area do
         
+        local Recipients = {}
         local Character = Head.Parent
         local Player = Players:GetPlayerFromCharacter(Character)
-        local AppearInWindow = true
 
-        if Player ~= self.Client then AppearInWindow = IsLooking(Head, self.Character) end
-
-       Network.Chatted:fireClient(Player, {Sender = self.Client, Message = self.Message, Type = self.Type, Windowed = self.Window or AppearInWindow})
+        table.insert(Recipients, Player)
+       
     end
+    Network.Chatted:fireClient(Recipients, {Sender = self.Client, Message = self.Message, Type = self.Type, Windowed = self.Window})
 end
 
 Network.Chatted:onServer(ChatService.New)

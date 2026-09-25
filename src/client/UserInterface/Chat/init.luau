@@ -27,6 +27,9 @@ local WindowTemplate = Container.MessageTemplate
 
 local ChatWindow : ScrollingFrame = Window.ChatWindow
 local InputBar : TextBox = Window.InputBar
+local Params = RaycastParams.new()
+Params.FilterType = Enum.RaycastFilterType.Exclude
+Params.FilterDescendantsInstances = {LocalPlayer.Character}
 
 local Transparent = true -- On the chat window, every other message background is transparent, this just turns off when the next message background needs to be non transparent. Generally insignificant
 
@@ -36,6 +39,32 @@ local Threads = {}
 local RangeChart = require(Data.RangeChart)
 local Processor = require(script.ProcessMsg)
 local CmdSuggest = require(script.CmdSuggest)
+
+local function IsLooking(Head, Character)
+    local IsLooking = workspace:Raycast(Character.Head.Position, Head.Position - Character.Head.Position, Params)
+
+    if IsLooking and IsLooking.Instance == Head then
+        print("Returned true")
+        return true
+    else
+        print("Returned false")
+        return false
+    end
+end
+
+local function ReceiveMessage(Package)
+    if not Package.Sender.Character then return end
+
+    print(Package)
+    if not Package.Windowed then Package.Windowed = IsLooking(Package.Sender.Character.Head, LocalPlayer.Character) end
+    if Package.Sender == LocalPlayer then Package.Windowed = true end
+
+    local ProcessedMsg = Processor.Process(Package.Message)
+    if not ProcessedMsg then return end
+
+    Package.Message = ProcessedMsg
+    Chat.New(Package)
+end
 
 local function ChangeVisbility(Transparency : number)
     if InputBar:IsFocused() and Transparency == 1 then Threads["HideInterface"] = task.delay(4, ChangeVisbility, 1) return end
@@ -47,17 +76,6 @@ end
 local function OverrideVisiblityThread()
     if Threads["HideInterface"] then task.cancel(Threads["HideInterface"]) end
     task.delay(8, ChangeVisbility, 1)
-end
-
-local function PassMessage(Package)
-    InputBar:ReleaseFocus()
-
-    -- if command then return end
-    local ProcessedMsg = Processor.Process(Package.Message)
-    if not ProcessedMsg then return end
-
-    Package.Message = ProcessedMsg
-    Chat.New(Package)
 end
 
 local function ResetPlaceHolder()
@@ -296,6 +314,6 @@ end)
 
 InputBar.FocusLost:Connect(FocusLost)
 Network.AllowCommands:onClient(CmdSuggest.Update)
-Network.Chatted:onClient(PassMessage)
+Network.Chatted:onClient(ReceiveMessage)
     
 return Chat
