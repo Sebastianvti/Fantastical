@@ -44,18 +44,14 @@ local function IsLooking(Head, Character)
     local IsLooking = workspace:Raycast(Character.Head.Position, Head.Position - Character.Head.Position, Params)
 
     if IsLooking and IsLooking.Instance == Head then
-        print("Returned true")
         return true
     else
-        print("Returned false")
         return false
     end
 end
 
 local function ReceiveMessage(Package)
     if not Package.Sender.Character then return end
-
-    print(Package)
     if not Package.Windowed then Package.Windowed = IsLooking(Package.Sender.Character.Head, LocalPlayer.Character) end
     if Package.Sender == LocalPlayer then Package.Windowed = true end
 
@@ -66,17 +62,23 @@ local function ReceiveMessage(Package)
     Chat.New(Package)
 end
 
-local function ChangeVisbility(Transparency : number)
-    if InputBar:IsFocused() and Transparency == 1 then Threads["HideInterface"] = task.delay(4, ChangeVisbility, 1) return end
+local function FadeWindow(Visible)
+    if InputBar:IsFocused() then Threads["Fade"] = task.delay(8, FadeWindow) return end -- minor fumble
+    if Chat.TweenWindow and Chat.TweenWindow.PlaybackState == Enum.PlaybackState.Playing and Visible then Chat.TweenWindow:Cancel() end
 
-    local Change = TweenService:Create(Window, TweenInfo.new(0.5), {GroupTransparency = Transparency})
-    Change:Play()
+    if not Visible then 
+        Chat.TweenWindow = TweenService:Create(Window, TweenInfo.new(0.25), {GroupTransparency = 1})
+    else
+        Chat.TweenWindow = TweenService:Create(Window, TweenInfo.new(0.25), {GroupTransparency = 0})
+    end
+   
+    Chat.TweenWindow:Play()
 end
 
-local function OverrideVisiblityThread()
-    if Threads["HideInterface"] then task.cancel(Threads["HideInterface"]) end
-    task.delay(8, ChangeVisbility, 1)
+local function ScheduleFade()
+    Threads["Fade"] = task.delay(8, FadeWindow)
 end
+
 
 local function ResetPlaceHolder()
     InputBar.PlaceholderText = "Press / to begin typing..."
@@ -87,8 +89,8 @@ local function GetMagnitude(Character : Model)
 end
 
 local function FocusLost(Enter)
+    ScheduleFade()
     if not Enter then return end
-    Threads["HideInterface"] = task.delay(8, ChangeVisbility, 1)
 
     local PreProcessedTxt = Processor.PreProcess(InputBar.Text)
     if not PreProcessedTxt then 
@@ -146,7 +148,6 @@ function Chat.CharacterStart() -- this is a dumb solution, but :CaptureFocus DOE
     -- it made me really frustrated, trying to work this out. i dont know the solution, tried everything. minor delays dont work no matter how long you set it to
     InputBar:CaptureFocus()
     InputBar:ReleaseFocus()
-    Threads["HideInterface"] = task.delay(4, ChangeVisbility, 1)
 end
 
 function Chat.New(ChatParams)
@@ -225,9 +226,9 @@ function Chat:Window()
     WindowMsg.Parent = ChatWindow
     WindowMsg.Visible = true
 
-    OverrideVisiblityThread()
-    ChangeVisbility(0)
     if Transparent then Transparent = false else Transparent = true end
+    FadeWindow(true)
+    ScheduleFade()
 end
 
 function Chat:RemoveBubble(TimedOut : boolean)
@@ -304,9 +305,10 @@ UserInputService.InputBegan:Connect(function(Input, GPE)
     else
         if Threads["HideInterface"] then task.cancel(Threads["HideInterface"]) 
             Threads["HideInterface"] = nil 
-            ChangeVisbility(0) 
+
         end
             Window.Visible = true
+            FadeWindow(true)
             InputBar:CaptureFocus()
     end
 end)
