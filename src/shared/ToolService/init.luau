@@ -33,10 +33,17 @@ function ToolService.Load(ToolData)
     LoadComponent(ToolData)
 end
 
+local function Recieved(Packet)
+    print("Recieved")
+    print(Packet)
+end
+
+Network.AddTool:onClient(Recieved)
     -- UserInputService.InputEnded:Connect(function(input)
     --     if not Tool[Name][input.KeyCode.Name] then return end
     --         Tool["Lantern"][input.KeyCode.Name]:Init()
 
     -- end)
+
 
 return ToolService

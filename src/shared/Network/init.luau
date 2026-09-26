@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage.Shared
+local ToolService = Shared.ToolService
 
 local Service = require(script.Service)
 local Lync = require(Shared.Lync)
@@ -10,7 +11,7 @@ return Lync.define("Network", {
 	Chatted = Lync.packet(Lync.struct({
 		Sender = Lync.inst(),
 		Message = Lync.str(1,300),
-		Type = Lync.optional(Lync.enum({"Normal", "Yell", "Whisper"})),
+		Type = Lync.optional(Lync.enum(Service.GetEnums("Chat"))),
 		Windowed = Lync.optional(Lync.bool())
 	})),
 
@@ -20,6 +21,12 @@ return Lync.define("Network", {
 	})),
 
 	AddTool = Lync.packet(Lync.struct({
-		Name = Lync.enum(Service.GetEnums("Tools"))
-	}))
+		Name = Lync.enum(Service.GetEnums("Tools")),
+		Components = Lync.map(
+			Lync.enum(Service.GetEnums(ToolService.Components)), 
+			Lync.struct({
+			Keybinds = Lync.optional(Lync.array(Lync.str(1, 5), 1, 5)),
+			Audio = Lync.optional(Lync.array(Lync.vlq(), 0, 10))}),1,5
+	)
+	})),
 })

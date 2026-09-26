@@ -1,11 +1,19 @@
 local Service = {}
 
-function Service.GetEnums(Parent : string)
+function Service.GetEnums(Parent : any)
+    local Enums = {}
+
+    if type(Parent) ~= "string" then
+        for _,Value in Parent:GetChildren() do
+            table.insert(Enums, Value.Name)
+        end
+        return Enums
+    end
+
     local Folder = script.Parent:FindFirstChild(Parent)
     if not Folder then warn("Could not find enum parent") return end
 
-    local Enums = {}
-    for Key,Value in Folder:GetAttributes() do
+    for _,Value in Folder:GetAttributes() do
         table.insert(Enums, Value)
     end
 

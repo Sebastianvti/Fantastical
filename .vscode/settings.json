@@ -12,5 +12,6 @@
     "UserInterface" : "interface",
     "StatusService": "server",
     "Network": "benchmark",
+    "EquipmentService": "tools",
   },
 }
