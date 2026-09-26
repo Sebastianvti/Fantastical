@@ -49,9 +49,10 @@ end
 local function Suggest(Cmd : string, Parameters)
     TweenBar(true)
     local Tracker = ParameterTrack.New(Parameters, CmdText)
-    if CmdText.Text == "" then CmdText.Text = ("/"..Cmd.." "..table.concat(Parameters, ", ")) Tracker:Track(InputBar.Text) end
 
+    CmdText.Text = ("/"..Cmd.." "..table.concat(Parameters, ", ")) Tracker:Track(InputBar.Text) 
     if Connection then Connection:Disconnect() end
+
     Connection = InputBar:GetPropertyChangedSignal("Text"):Connect(function()
         CmdText.Text = ("/"..Cmd.." "..table.concat(Parameters, ", "))
         local NoCommandMsg = InputBar.Text
@@ -63,15 +64,20 @@ end
 
 local function AssumeCommand(Text)
     local NoSlash = string.sub(Text, 2)
+    local ClosestMatch, MatchValue
     if not Commands.CommandParams then return end
 
     for Key,Value in Commands.CommandParams do
-        local SubString = string.sub(string.lower(Key), 1, string.len(NoSlash))
+        if string.len(NoSlash) > string.len(Key) then continue end
+        if string.lower(NoSlash) == string.lower(Key) then Suggest(Key,Value) return end
 
+        local SubString = string.sub(string.lower(Key), 1, string.len(NoSlash))
         if SubString ~= string.lower(NoSlash) or SubString == "" then continue end
-        Suggest(Key, Value)
-        return
+
+        ClosestMatch, MatchValue = Key,Value
     end
+    if ClosestMatch then print(ClosestMatch) Suggest(ClosestMatch, MatchValue) return end
+
     ClearSuggest()
 end
 

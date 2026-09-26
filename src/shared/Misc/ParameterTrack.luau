@@ -13,14 +13,15 @@ end
 function ParameterTrack.New(Parameters, SuggestionBar)
     local self = setmetatable({}, ParameterTrack)
 
-    self.LastIndexes = 1
     self.SuggestBar = SuggestionBar
     self.Parameters = Parameters
     return self
 end
 
 function ParameterTrack:Highlight(Parameter : string)
+    print(Parameter)
     local NewHighlight = string.gsub(self.SuggestBar.Text, Parameter, `<font color="#FFFF00">{Parameter}</font>`)
+    print(NewHighlight)
     self.SuggestBar.Text = NewHighlight
 end
 

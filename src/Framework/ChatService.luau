@@ -44,14 +44,14 @@ function ChatService.New(Packet, Client)
     self.Type = "Normal"
     self.Window = false -- if true, chat will always appear in chat box regardless of visibility to recieiver
     
-    self:Inspect()
+    if not self:Inspect() then return end
     self:Execute()
 end
 
 function ChatService:Inspect()
     if string.sub(self.Message, 1,1) ~= "/" then return end
         local Command = Admin.New(self.Client, self.Message)
-        if not Command then return end
+        -- if not Command then return end
 
         self.Type = Command.Content.Type
         self.Message = Command.Content.Message

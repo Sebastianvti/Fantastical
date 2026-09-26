@@ -14,8 +14,13 @@ return {
 
     -- STATUS
     givestatus = {
-        Perm = 2, Activation = "status",
+        Perm = "Core", Activation = "status",
         Parameters = {"Players {}", "Status : Name"}
+    },
+
+    give = {
+        Perm = "Admin", Activation = "give",
+        Parameters = {"Players {}", "Tool : Name"}
     },
     -- CHAT COMMANDS --
 
