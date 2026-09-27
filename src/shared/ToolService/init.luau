@@ -17,12 +17,6 @@ local Network = require(Shared.Network)
 local ToolService = {}
 ToolService.__index = ToolService
 
--- The tool system works by the server first sending the data about the tool. This comes in the form of the modules the tool requires to function.
--- Each module may require data such as animations or sound
--- Every module also comes with 3 keybinds, 1 for primary use and 2 for back up if the primary is used.
--- Essentially this system shoud let you create any tool possible, like a sword which can be used as a lantern or a musket that can be used as a sword.
--- Keybinds are tracked via 2 inputended events. 1 for the toolbar and 1 for the tool keys.
-
 local function ToolSignal(Packet)
     ToolService.Load(Packet)
 end
@@ -45,7 +39,7 @@ local function ToolInput(Input, GPE)
 
     local Equipped = Slots.Equipped
     local InputName = Input.KeyCode.Name
-    
+
     if Equipped.Tool[InputName] then
         Equipped.Tool[InputName]:Init()
     end
@@ -63,8 +57,9 @@ function ToolService.Load(ToolData)
     self.ToolBar = ToolBar.New(self.Name)
     self.Model = ToolData.Model
     self.ToolData = ToolData.Tool
-    self.Model.Parent = LocalPlayer.Backpack
+    -- self.Model.Parent = LocalPlayer.Backpack
 
+    print(self.Model)
 
     self:LoadComponents()
     local Position = TranslateNumber(self.ToolBar:GetPosition())
@@ -81,7 +76,7 @@ function ToolService:LoadComponents()
         local FirstKeybind = Value.Keybinds[1]
 
         self.Tool[FirstKeybind] = {}
-        self.Tool[FirstKeybind] = require(Components[Key]).New(self.ToolData)
+        self.Tool[FirstKeybind] = require(Components[Key]).New(self)
         self.ToolData = nil
     end
 end
