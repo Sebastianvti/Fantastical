@@ -70,11 +70,17 @@ end
 
 local function CharacterDied(Character)
 	print("Client Died")
+	for _,Value in Cache do
+		if Value.CharacterDied then
+			Value.CharacterDied()
+		end
+	end
 end
 
 local function PlayerAdded(Player)
 	if Player ~= LocalPlayer then return end
 	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 
 	if Player.Character then
 		task.defer(CharacterAdded, Player.Character)

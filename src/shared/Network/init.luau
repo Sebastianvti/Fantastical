@@ -21,12 +21,13 @@ return Lync.define("Network", {
 	})),
 
 	AddTool = Lync.packet(Lync.struct({
+		Model = Lync.inst(),
+		Tool = Lync.struct({
 		Name = Lync.enum(Service.GetEnums("Tools")),
 		Components = Lync.map(
 			Lync.enum(Service.GetEnums(ToolService.Components)), 
 			Lync.struct({
 			Keybinds = Lync.optional(Lync.array(Lync.str(1, 5), 1, 5)),
 			Audio = Lync.optional(Lync.array(Lync.vlq(), 0, 10))}),0,20
-	)
-	})),
+	)})})),
 })

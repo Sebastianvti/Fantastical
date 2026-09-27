@@ -19,9 +19,7 @@ function ParameterTrack.New(Parameters, SuggestionBar)
 end
 
 function ParameterTrack:Highlight(Parameter : string)
-    print(Parameter)
     local NewHighlight = string.gsub(self.SuggestBar.Text, Parameter, `<font color="#FFFF00">{Parameter}</font>`)
-    print(NewHighlight)
     self.SuggestBar.Text = NewHighlight
 end
 
