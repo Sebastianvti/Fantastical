@@ -185,17 +185,17 @@ function StatusManager.DeInit(Character)
 end
 
 
-ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(Player, StatusName)
-    local StartTime = os.clock()
-    local Status = StatusManager.GetStatus(StatusName)
+-- ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(Player, StatusName)
+--     local StartTime = os.clock()
+--     local Status = StatusManager.GetStatus(StatusName)
 
-    if not Status then return warn(Status.ErrorMsg) end
-    Status = StatusManager.New(Player, StatusName)
+--     if not Status then return warn(Status.ErrorMsg) end
+--     Status = StatusManager.New(Player, StatusName)
 
-    Status.Batch(Status)
+--     Status.Batch(Status)
 
-    print("Processing time : ", os.clock() - StartTime)
-    print("FINAL RESULT : ", StatusManager.GetSheet(Player.Character))
-end)
+--     print("Processing time : ", os.clock() - StartTime)
+--     print("FINAL RESULT : ", StatusManager.GetSheet(Player.Character))
+-- end)
 
 return StatusManager

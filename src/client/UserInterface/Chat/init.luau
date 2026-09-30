@@ -1,6 +1,10 @@
 local Chat = {}
 Chat.__index = Chat
 
+-- TO DO
+-- OPSEC
+-- change the shallow table stuff
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
@@ -177,7 +181,7 @@ function Chat:BubbleChat()
 
     self.BubbleChat = BubbleChatTemplate:Clone()
 
-    self.BubbleChat.Name = self.Player.Name.."_"..string.sub(HttpService:GenerateGUID(false),1, 8).."_"..(self.Type) -- PlrName | RandomName | Type
+    self.BubbleChat.Name = self.Player.Name.."_"..string.sub(HttpService:GenerateGUID(false),1, 8).."_"..(self.Type) -- PlrName | RandomName | Type  In hindsight this was not as smart as i thought it was, i didnt know you could just have this as a table
     self.BubbleChat.Message.Text = self.Content
     self.BubbleChat.Visible = true
     self.BubbleChat.Parent = Container.BubbleChatList

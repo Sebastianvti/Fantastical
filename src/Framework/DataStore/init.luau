@@ -11,8 +11,6 @@ local Templates = script.Templates
 local Library = script.Parent.Library
 local GetStoreName = RunService:IsStudio() and "Test" or "Live"
 
-local CharacterLoader = require(script.Parent.CharacterLoader)
-
 local ProfileStore = require(Library.ProfileStore)
 local CharacterTemplate = require(Templates.CharacterTemplate)
 local MasterTemplate = require(Templates.MasterTemplate)

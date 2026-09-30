@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage.Shared
 local ToolService = Shared.ToolService
@@ -9,9 +10,9 @@ return Lync.define("Network", {
 	
 	-- CHAT SERVICE --
 	Chatted = Lync.packet(Lync.struct({
-		Sender = Lync.inst(),
-		Message = Lync.str(1,300),
-		Type = Lync.optional(Lync.enum(Service.GetEnums("Chat"))),
+		Sender	 = Lync.inst(),
+		Message	 = Lync.str(1,300),
+		Type	 = Lync.optional(Lync.enum(Service.GetEnums("Chat"))),
 		Windowed = Lync.optional(Lync.bool())
 	})),
 
@@ -21,17 +22,25 @@ return Lync.define("Network", {
 	})),
 
 	AddTool = Lync.packet(Lync.struct({
-		Model = Lync.inst(),
-		Tool = Lync.struct({
-		Name = Lync.enum(Service.GetEnums("Tools")),
+		Model	 = Lync.inst(),
+		Tool	 = Lync.struct({
+		Name	 = Lync.enum(Service.GetEnums("Tools")),
 		Components = Lync.map(
 			Lync.enum(Service.GetEnums(ToolService.Components)), 
 			Lync.struct({
 			Keybinds = Lync.optional(Lync.array(Lync.str(1, 5), 1, 5)),
+			Cooldown = Lync.optional(Lync.vlq()),
 			Audio = Lync.optional(Lync.array(Lync.vlq(), 0, 10))}),0,20
 	)})})),
 	
 	Enable = Lync.packet(Lync.struct({
 		Instance = Lync.inst()
-	}))
+	})),
+
+	Fighters = Lync.replicate(Lync.struct({
+		owner = Lync.int(-10, 2^40),
+		name  = Lync.str(1, 20),
+		hp    = Lync.int(0, 100),
+	})):keyBy("owner")
+
 })

@@ -27,9 +27,7 @@ local function ToolbarInput(Input, GPE)
     local InputName = Input.KeyCode.Name
 
     if DataBar[InputName] then
-        DataBar[InputName]:Equip()
-        Slots.Equipped = DataBar[InputName]
-        print("Slot "..Input.KeyCode.Name.." Equipped")
+        DataBar[InputName]:Arming(InputName)
     end
 end
 
@@ -65,7 +63,6 @@ function ToolService.Load(ToolData)
     local Position = TranslateNumber(self.ToolBar:GetPosition())
     Slots.ToolBar[Position] = self
     print(Slots)
-    -- self:Equip()
 end
 
 function ToolService:LoadComponents()
@@ -81,17 +78,34 @@ function ToolService:LoadComponents()
     end
 end
 
-function ToolService:Equip()
-    if not LocalPlayer.Character then return end
-    local Humanoid = LocalPlayer.Character.Humanoid 
+function ToolService:Arming(InputName : string)
+    local Character = LocalPlayer.Character
+    if not Character then return end
+    local Humanoid = Character.Humanoid 
+    local DataBar = Slots.ToolBar
     
-    Humanoid:EquipTool(self.Model)
+    if Character:FindFirstChild(self.Model.Name) then 
+        Humanoid:UnequipTools()
+        Slots.Equipped = {}
+        print("Slot "..InputName.." Equipped")
+    else
+        Humanoid:EquipTool(self.Model)
+        Slots.Equipped = DataBar[InputName]
+        print("Slot "..InputName.." Unequipped")
+    end
 end
 
 function ToolService.CharacterDied()
     Slots = nil
 end
 
+Network.Fighters:onAdded(function(Recipient, AllData, OldData)
+    print(Recipient, AllData, OldData)
+end)
+
+Network.Fighters:onChanged(function(Recipient, AllData, OldData)
+    print(Recipient, AllData, OldData)
+end)
 Network.AddTool:onClient(ToolSignal)
 UserInputService.InputEnded:Connect(ToolbarInput)
 UserInputService.InputEnded:Connect(ToolInput)

@@ -1,4 +1,5 @@
 local Service = {}
+local Players = game:GetService("Players")
 
 function Service.GetEnums(Parent : any)
     local Enums = {}
@@ -19,5 +20,10 @@ function Service.GetEnums(Parent : any)
 
     return Enums
 end
+
+function Service.GetPlayerAudiences()
+    
+end
+
 
 return Service

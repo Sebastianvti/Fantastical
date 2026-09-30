@@ -9,10 +9,13 @@ local StoreHouse = ServerStorage.StoreHouse
 local Shared = ReplicatedStorage.Shared
 
 local NetworkFolder = Shared.Network
+
+local Lync = require(Shared.Lync)
 local DataStore = require(script.DataStore)
 local ProfileStore = require(script.Library.ProfileStore)
 local MasterTemplate = require(script.DataStore.Templates.MasterTemplate)
 
+local AllPlayers
 local Cache = {}
 local FailModuleByType = {"function"}
 local MainServices = {Framework = ServerScriptService, Shared = ReplicatedStorage}
@@ -33,7 +36,6 @@ local function PCallResult(Module)
 
 			local ModName = Module.Name
 			Cache[ModName] = result
-
 			if Cache[ModName].Start then
 				Cache[ModName].Start()
 			end
@@ -95,12 +97,20 @@ local function LoadEnums(Folder : Folder)
 end
 
 local function PlayerAdded(Player : Player) -- this is for the master profile, it is not tracked cause its not used the moment you load your character
-	
 	local Profile = PlayerStore:StartSessionAsync("Player_"..Player.UserId, {
 		Cancel = function()
 			return Player.Parent ~= Players
 		end
 	})
+
+	print(Lync.all)
+	if Player.Character then task.defer(Cache["CharacterLoader"].CharacterAdded, Player.Character) end 
+
+	Player.CharacterAdded:Connect(function(character)
+		Cache["CharacterLoader"].CharacterAdded(character, AllPlayers)
+
+	end)
+	Player.CharacterRemoving:Connect(Cache["CharacterLoader"].CharacterDied)
 
 	if Profile ~= nil then
 			Profile:AddUserId(Player.UserId)
@@ -136,11 +146,15 @@ for _,Player in Players:GetPlayers() do
 end
 
 LoadEnums(StoreHouse)
+local Network = require(Shared.Network)
+Lync.start()
+AllPlayers = Lync.group()
 Load()
+
+
 Players.PlayerAdded:Connect(PlayerAdded)
 Players.PlayerRemoving:Connect(PlayerRemoving)
 
-local Lync = require(Shared.Lync)
-Lync.start()
+
 RunService.PostSimulation:Connect(function() Lync.flush() end)
 game:BindToClose(Lync.close)
