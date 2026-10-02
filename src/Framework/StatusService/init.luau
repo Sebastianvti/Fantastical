@@ -1,6 +1,3 @@
-local StatusManager = {}
-StatusManager.__index = StatusManager
-
 -- Written 2026
 
 -- TO DO
@@ -8,21 +5,24 @@ StatusManager.__index = StatusManager
 -- put all threads into one table
 -- do staggered timers
 
-local StatusLibrary = {}
-StatusLibrary.Groups = {}
-StatusLibrary.Statuses = {}
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local CharacterSheets = {}
+local Statuses = script.Statuses
+local Shared = ReplicatedStorage.Shared
 
+local Network = require(Shared.Network)
 local Methods = require(script.Methods)
 local Template = require(script.Template)
 local Utility = require(script.Utility)
 local Settings = require(script.Settings)
 
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-local Statuses = script.Statuses
+local StatusManager = {}
+local StatusLibrary = {}
+local CharacterSheets = {}
+StatusLibrary.Groups = {}
+StatusLibrary.Statuses = {}
+StatusManager.__index = StatusManager
 
 -- Shallow tables whenever the table is not cosmetic
 -- Deep tables whenever the table is cosmetic and just for organization
@@ -176,11 +176,22 @@ function StatusManager.GetSheet(Character)
     return CharacterSheets[Character]
 end
 
-function StatusManager.Init(Character)
+function StatusManager.CharacterLoaded(Character)
+    local Player = Players:GetPlayerFromCharacter(Character)
+    local UserID = Player.UserId
+
     CharacterSheets[Character] = Template
+
+    if Network.Stats:get(UserID) then return end
+    
+    Network.VlqTest:audience(UserID, Player)
+    Network.VlqTest:add(UserID, {Owner = UserID, Modifiers = 5})
+
+    Network.Stats:audience(UserID, Player)
+    Network.Stats:add(UserID, {Owner = UserID, Modifiers = Template.Sheet})
 end
 
-function StatusManager.DeInit(Character)
+function StatusManager.CharacterDied(Character)
     CharacterSheets[Character] = nil
 end
 

@@ -49,5 +49,8 @@ function EquipmentService.Start()
 end
 
 Network.Enable:onServer(Enable)
+Network.Stats:onChanged(function()
+	print("ble")
+end)
 
 return EquipmentService

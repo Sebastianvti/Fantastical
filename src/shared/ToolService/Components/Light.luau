@@ -1,8 +1,12 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local Shared = ReplicatedStorage.Shared
+local LocalPlayer = Players.LocalPlayer
 
 local ActionService = require(Shared.ActionService)
 local Network = require(Shared.Network)
+
 local Light = {}
 Light.__index = Light
 
@@ -18,6 +22,7 @@ function Light.New(Tool)
 end
 
 function Light:Init()
+    print(Network.Stats:get(LocalPlayer.UserId))
     for _,Value in self.LightPoint:GetChildren() do
         if not Value:IsA("Light") then print("bruh") return end
             Network.Enable:fireServer({Instance = Value})

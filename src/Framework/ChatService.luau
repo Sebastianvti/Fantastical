@@ -47,11 +47,11 @@ function ChatService.New(Packet, Client)
     if not self:Inspect() then return end
     self:Execute()
 end
-
+-- Inspect checks for commands
 function ChatService:Inspect()
     if string.sub(self.Message, 1,1) ~= "/" then return true end
         local Command = Admin.New(self.Client, self.Message)
-        -- if not Command then return end
+         if not Command then return end
 
         self.Type = Command.Content.Type
         self.Message = Command.Content.Message

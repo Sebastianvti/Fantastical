@@ -1,4 +1,3 @@
-local TextService = game:GetService("TextService")
 return {
     -- Check perms in 
     -- Activation is the function
@@ -15,7 +14,7 @@ return {
     -- STATUS
     givestatus = {
         Perm = "Core", Activation = "status",
-        Parameters = {"Players {}", "Status : Name"}
+        Parameters = {"Players {}", "Status : Exact {Name}"}
     },
 
     give = {

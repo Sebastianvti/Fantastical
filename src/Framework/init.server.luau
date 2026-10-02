@@ -16,7 +16,7 @@ local ProfileStore = require(script.Library.ProfileStore)
 local MasterTemplate = require(script.DataStore.Templates.MasterTemplate)
 
 local AllPlayers
-local Cache = {}
+local Modules = {}
 local FailModuleByType = {"function"}
 local MainServices = {Framework = ServerScriptService, Shared = ReplicatedStorage}
 
@@ -35,9 +35,9 @@ local function PCallResult(Module)
 			if table.find(FailModuleByType, type(Module)) then print(Module)  return end
 
 			local ModName = Module.Name
-			Cache[ModName] = result
-			if Cache[ModName].Start then
-				Cache[ModName].Start()
+			Modules[ModName] = result
+			if Modules[ModName].Start then
+				Modules[ModName].Start()
 			end
 			
 		else
@@ -67,7 +67,7 @@ local function Load() -- it wasnt necessary to have this in 3 functions, but her
 end
 
 local function DataLoaded(Player, PlrProfile)
-	for _,ModuleData in Cache do
+	for _,ModuleData in Modules do
 		if ModuleData.DataLoaded then
 			ModuleData.DataLoaded(Player, PlrProfile)
 		end
@@ -81,7 +81,13 @@ local function CreateFolder(Name : string)
 	return NewFolder
 end
 
-
+local function CreateDataEnums()
+	local Target = require(script.StatusService.Template)
+	local NewEnum = CreateFolder("Stats")
+	for Stat,_ in Target.Sheet do
+		NewEnum:SetAttribute(HttpService:GenerateGUID(false), Stat)
+	end
+end
 
 local function LoadEnums(Folder : Folder)
 	for _,Instance in Folder:GetChildren() do
@@ -103,14 +109,10 @@ local function PlayerAdded(Player : Player) -- this is for the master profile, i
 		end
 	})
 
-	print(Lync.all)
-	if Player.Character then task.defer(Cache["CharacterLoader"].CharacterAdded, Player.Character) end 
+	if Player.Character then task.defer(Modules["CharacterLoader"].CharacterAdded, Player.Character) end 
 
-	Player.CharacterAdded:Connect(function(character)
-		Cache["CharacterLoader"].CharacterAdded(character, AllPlayers)
-
-	end)
-	Player.CharacterRemoving:Connect(Cache["CharacterLoader"].CharacterDied)
+	Player.CharacterAdded:Connect(Modules["CharacterLoader"].CharacterAdded)
+	Player.CharacterRemoving:Connect(Modules["CharacterLoader"].CharacterDied)
 
 	if Profile ~= nil then
 			Profile:AddUserId(Player.UserId)
@@ -145,12 +147,12 @@ for _,Player in Players:GetPlayers() do
 	task.spawn(PlayerAdded, Player)
 end
 
+CreateDataEnums()
 LoadEnums(StoreHouse)
 local Network = require(Shared.Network)
 Lync.start()
-AllPlayers = Lync.group()
 Load()
-
+Modules["CharacterLoader"].GetModules(Modules)
 
 Players.PlayerAdded:Connect(PlayerAdded)
 Players.PlayerRemoving:Connect(PlayerRemoving)

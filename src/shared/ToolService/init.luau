@@ -61,8 +61,8 @@ function ToolService.Load(ToolData)
 
     self:LoadComponents()
     local Position = TranslateNumber(self.ToolBar:GetPosition())
+    
     Slots.ToolBar[Position] = self
-    print(Slots)
 end
 
 function ToolService:LoadComponents()
@@ -99,13 +99,6 @@ function ToolService.CharacterDied()
     Slots = nil
 end
 
-Network.Fighters:onAdded(function(Recipient, AllData, OldData)
-    print(Recipient, AllData, OldData)
-end)
-
-Network.Fighters:onChanged(function(Recipient, AllData, OldData)
-    print(Recipient, AllData, OldData)
-end)
 Network.AddTool:onClient(ToolSignal)
 UserInputService.InputEnded:Connect(ToolbarInput)
 UserInputService.InputEnded:Connect(ToolInput)

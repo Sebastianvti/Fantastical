@@ -37,10 +37,14 @@ return Lync.define("Network", {
 		Instance = Lync.inst()
 	})),
 
-	Fighters = Lync.replicate(Lync.struct({
-		owner = Lync.int(-10, 2^40),
-		name  = Lync.str(1, 20),
-		hp    = Lync.int(0, 100),
-	})):keyBy("owner")
+	Stats = Lync.replicate(Lync.struct({
+		Owner = Lync.int(-10, 2^40),
+		Modifiers = Lync.map(Lync.enum(Service.GetEnums("Stats")), Lync.int(0, 100),1,100)
+	})):keyBy("Owner"),
 
+
+	VlqTest = Lync.replicate(Lync.struct({
+		Owner = Lync.int(-10, 2^40),
+		Modifiers = Lync.vlq()
+	})):keyBy("Owner")
 })

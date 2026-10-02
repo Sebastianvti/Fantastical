@@ -76,7 +76,7 @@ local function AssumeCommand(Text)
 
         ClosestMatch, MatchValue = Key,Value
     end
-    if ClosestMatch then print(ClosestMatch) Suggest(ClosestMatch, MatchValue) return end
+    if ClosestMatch then Suggest(ClosestMatch, MatchValue) return end
 
     ClearSuggest()
 end

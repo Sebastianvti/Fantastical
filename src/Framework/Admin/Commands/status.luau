@@ -1,6 +1,6 @@
 return function (self)
     local ServerScriptService = game:GetService("ServerScriptService")
-    local StatusManager = require(ServerScriptService.Framework.StatusManager)
+    local StatusManager = require(ServerScriptService.Framework.StatusService)
 
     for _,Player in self.Players do
        StatusManager.New(Player, string.lower(self.Args[1])):Batch()
