@@ -63,18 +63,14 @@ end
 local function CharacterAdded(Character)
 	print("Client Spawned")
 	for _,Value in Modules do
-		if Value.CharacterStart then
-			Value.CharacterStart()
-		end
+		if Value.CharacterStart then Value.CharacterStart() end
 	end
 end
 
 local function CharacterDied(Character)
 	print("Client Died")
 	for _,Value in Modules do
-		if Value.CharacterDied then
-			Value.CharacterDied()
-		end
+		if Value.CharacterDied then Value.CharacterDied() end
 	end
 end
 
@@ -91,10 +87,9 @@ end
 
 local function DistributeStats(UserId, Modifiers, OldModifiers)
 	print(UserId, Modifiers, OldModifiers)
-end
-
-local function Hmm(UserId, Modifiers, OldModifiers)
-	print(UserId, Modifiers, OldModifiers)
+	for _,Value in Modules do
+		if Value.StatsChanged then Value.StatsChanged({Id = UserId, NewStats = Modifiers, OldStats = OldModifiers}) end
+	end
 end
 
 for _,Player in Players:GetPlayers() do
@@ -107,9 +102,7 @@ Players.PlayerAdded:Connect(PlayerAdded)
 Lync.start()
 RunService.PostSimulation:Connect(function() Lync.flush() end)
 Network.Stats:onAdded(DistributeStats)
-Network.Stats:onChanged(function(Recipieint, New, Old)
-	print(Recipieint, New, Old)
-end)
+Network.Stats:onChanged(DistributeStats)
 
 
 -- test?
