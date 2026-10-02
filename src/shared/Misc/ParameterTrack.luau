@@ -1,6 +1,12 @@
 local ParameterTrack = {}
 ParameterTrack.__index = ParameterTrack
 
+local function Insensitive(pattern)
+    return (string.gsub(pattern, "%a", function(char)
+        return string.format("[%s%s]", string.lower(char), string.upper(char))
+    end))
+end
+
 function ParameterTrack.CleanString(Text)
     local RemoveSlash = string.gsub(Text, "/", "")
     local Result = string.gsub(RemoveSlash, " +", " ")
@@ -19,8 +25,10 @@ function ParameterTrack.New(Parameters, SuggestionBar)
 end
 
 function ParameterTrack:Highlight(Parameter : string)
-    Parameter = string.lower(Parameter)    
-    local NewHighlight = string.gsub(string.lower(self.SuggestBar.Text), Parameter, `<font color="#FFFF00">{Parameter}</font>`)
+    local OldParameter = Parameter
+    Parameter = Insensitive(Parameter)
+
+    local NewHighlight = string.gsub(self.SuggestBar.Text, Parameter, `<font color="#FFFF00">{OldParameter}}</font>`)
     self.SuggestBar.Text = NewHighlight
 end
 
