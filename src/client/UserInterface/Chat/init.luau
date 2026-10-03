@@ -148,7 +148,7 @@ local function LoopRange() -- Instead of using RunService, i use a loop to detec
 end
 -- PUBLIC ----------------------------------------------
 
-function Chat.CharacterStart() -- This exists because roblox input bars are generally unreliable. But this is a good solution so its whatever
+function Chat.CharacterAdded() -- This exists because roblox input bars are generally unreliable. But this is a good solution so its whatever
     InputBar:CaptureFocus()
     InputBar:ReleaseFocus()
 end

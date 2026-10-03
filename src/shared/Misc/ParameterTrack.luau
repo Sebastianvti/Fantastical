@@ -28,7 +28,7 @@ function ParameterTrack:Highlight(Parameter : string)
     local OldParameter = Parameter
     Parameter = Insensitive(Parameter)
 
-    local NewHighlight = string.gsub(self.SuggestBar.Text, Parameter, `<font color="#FFFF00">{OldParameter}}</font>`)
+    local NewHighlight = string.gsub(self.SuggestBar.Text, Parameter, `<font color="#FFFF00">{OldParameter}</font>`)
     self.SuggestBar.Text = NewHighlight
 end
 

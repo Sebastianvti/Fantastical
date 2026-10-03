@@ -12,7 +12,6 @@ local ConfigCache = {}
 
 local function Enable(Packet)
     local Instance = Packet.Instance
-    print(Instance)
     if Instance.Enabled then 
         Instance.Enabled = false
     else
@@ -50,7 +49,6 @@ end
 
 Network.Enable:onServer(Enable)
 Network.Stats:onChanged(function()
-	print("ble")
 end)
 
 return EquipmentService

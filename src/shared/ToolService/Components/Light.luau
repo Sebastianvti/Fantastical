@@ -4,28 +4,37 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage.Shared
 local LocalPlayer = Players.LocalPlayer
 
-local ActionService = require(Shared.ActionService)
+-- local ActionService = require(Shared.ActionService)
+local Cooldowns = require(Shared.Cooldown)
 local Network = require(Shared.Network)
 
 local Light = {}
 Light.__index = Light
 
 function Light.New(Tool)
-   local self = setmetatable({}, Light)
+    local self = setmetatable({}, Light)
 
-   self.InputType = "Combat"
-   self.Data = Tool.ToolData.Components[script.Name]
-   self.LightPoint = Tool.Model:FindFirstChild("LightPoint", true)
+    self.InputType = "M1"
+    self.CooldownMults = {"Cooldown_M1"}
 
-   ActionService.New({self.InputType, self.Data})
+    if not Tool then return self end
+    
+    self.Character = LocalPlayer.Character
+    self.Data = Tool.ToolData.Components[script.Name]
+    self.Cooldown = self.Data.Cooldown
+    self.LightPoint = Tool.Model:FindFirstChild("LightPoint", true)
+
+--    ActionService.New({self.InputType, self.Data})
    return self
 end
 
 function Light:Init()
-    print(Network.Stats:get(LocalPlayer.UserId))
+    if not Cooldowns.Begin(self) then return end
+
     for _,Value in self.LightPoint:GetChildren() do
         if not Value:IsA("Light") then print("bruh") return end
-            Network.Enable:fireServer({Instance = Value})
+
+        Network.Enable:fireServer({Instance = Value})
     end
 end
 

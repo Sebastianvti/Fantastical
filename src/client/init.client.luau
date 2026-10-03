@@ -63,14 +63,14 @@ end
 local function CharacterAdded(Character)
 	print("Client Spawned")
 	for _,Value in Modules do
-		if Value.CharacterStart then Value.CharacterStart() end
+		if Value.CharacterAdded then Value.CharacterAdded(Character) end
 	end
 end
 
 local function CharacterDied(Character)
 	print("Client Died")
 	for _,Value in Modules do
-		if Value.CharacterDied then Value.CharacterDied() end
+		if Value.CharacterDied then Value.CharacterDied(Character) end
 	end
 end
 
@@ -86,7 +86,6 @@ local function PlayerAdded(Player)
 end
 
 local function DistributeStats(UserId, Modifiers, OldModifiers)
-	print(UserId, Modifiers, OldModifiers)
 	for _,Value in Modules do
 		if Value.StatsChanged then Value.StatsChanged({Id = UserId, NewStats = Modifiers, OldStats = OldModifiers}) end
 	end
