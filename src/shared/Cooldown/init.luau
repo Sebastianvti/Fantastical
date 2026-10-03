@@ -40,6 +40,7 @@ function CooldownManager.Begin(Component)
     self.Character = Component.Character
     self.CooldownMults = Component.CooldownMults
     self.BaseCooldown = Component.Cooldown
+    
     self.CooldownProfile = Cooldowns[self.Character]
     self.InputCooldown = self.CooldownProfile[self.InputType]
     
@@ -48,8 +49,12 @@ function CooldownManager.Begin(Component)
     return self:Calculate()
 end
 
+function CooldownManager:Multiply()
+
+end
+
 function CooldownManager:Pass()
-    self.InputCooldown["Cooldown"] = self.BaseCooldown
+    self.InputCooldown["Cooldown"] = self:Multiply()
     self.InputCooldown["LastUsed"] = os.clock()
     
     print("launched")
