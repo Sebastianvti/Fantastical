@@ -5,6 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage.Shared
 
+local ActionService = require(Shared.ActionService)
 local Cache = require(Shared.Cache)
 
 local Playing = {
@@ -51,9 +52,10 @@ function Animation.New(Player : Player, AnimationId : number)
     return self
 end
 
-function Animation:Play()
+function Animation:Play(ActionState)
     if Playing[self.Priority] then return self end
-
+    if ActionState then ActionService.New(ActionState) end
+    
     Playing[self.Priority] = self.Animation_Name
 
     self.Track.Stopped:Once(function() self:Stopped() end)
