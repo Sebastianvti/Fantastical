@@ -183,9 +183,6 @@ function StatusManager.CharacterLoaded(Character)
     CharacterSheets[Character] = Template
 
     if Network.Stats:get(UserID) then return end
-    
-    Network.VlqTest:audience(UserID, Player)
-    Network.VlqTest:add(UserID, {Owner = UserID, Modifiers = 5})
 
     Network.Stats:audience(UserID, Player)
     Network.Stats:add(UserID, {Owner = UserID, Modifiers = Template.Sheet})

@@ -29,8 +29,10 @@ return Lync.define("Network", {
 			Lync.enum(Service.GetEnums(ToolService.Components)), 
 			Lync.struct({
 			Keybinds = Lync.optional(Lync.array(Lync.str(1, 5), 1, 5)),
+			Animations = Lync.optional(Lync.map(Lync.enum(Service.GetEnums(Shared.ActionService.Actions)),	Lync.array(Lync.vlq(),0,7),0,15)),
 			Cooldown = Lync.optional(Lync.vlq()),
-			Audio = Lync.optional(Lync.array(Lync.vlq(), 0, 10))}),0,20
+			Audio = Lync.optional(Lync.array(Lync.vlq(), 0, 10))
+		}),0,20
 	)})})),
 	
 	Enable = Lync.packet(Lync.struct({
@@ -42,9 +44,4 @@ return Lync.define("Network", {
 		Modifiers = Lync.map(Lync.enum(Service.GetEnums("Stats")), Lync.int(0, 100),1,100)
 	})):keyBy("Owner"),
 
-
-	VlqTest = Lync.replicate(Lync.struct({
-		Owner = Lync.int(-10, 2^40),
-		Modifiers = Lync.vlq()
-	})):keyBy("Owner")
 })

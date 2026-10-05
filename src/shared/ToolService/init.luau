@@ -9,6 +9,7 @@ local Shared = ReplicatedStorage.Shared
 local Components = script.Components
 local Data = script.Data
 
+local Utility = require(script.Utility)
 local Slots = require(Data.Slots)
 local Translate = require(Data.Translate)
 local ToolBar = require(UserInterfaceScripts.ToolBar)
@@ -55,10 +56,8 @@ function ToolService.Load(ToolData)
     self.ToolBar = ToolBar.New(self.Name)
     self.Model = ToolData.Model
     self.ToolData = ToolData.Tool
-    -- self.Model.Parent = LocalPlayer.Backpack
-
-    print(self.Model)
-
+    self.Model.Parent = LocalPlayer.Backpack
+    print(self)
     self:LoadComponents()
     local Position = TranslateNumber(self.ToolBar:GetPosition())
     
@@ -71,9 +70,10 @@ function ToolService:LoadComponents()
         -- TO DO: Check if keybind is currently being used and then get a back up if it is.
 
         local FirstKeybind = Value.Keybinds[1]
-
         self.Tool[FirstKeybind] = {}
-        self.Tool[FirstKeybind] = require(Components[Key]).New(self)
+
+        local Preload = Utility.Preload(Value)
+        self.Tool[FirstKeybind] = require(Components[Key]).New(self, Preload)
         self.ToolData = nil
     end
 end
@@ -81,6 +81,7 @@ end
 function ToolService:Arming(InputName : string)
     local Character = LocalPlayer.Character
     if not Character then return end
+
     local Humanoid = Character.Humanoid 
     local DataBar = Slots.ToolBar
     
@@ -96,7 +97,7 @@ function ToolService:Arming(InputName : string)
 end
 
 function ToolService.CharacterDied()
-    Slots = nil
+    Slots = {}
 end
 
 Network.AddTool:onClient(ToolSignal)
