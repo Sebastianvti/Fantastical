@@ -23,11 +23,7 @@ function Light.New(Tool, Preload)
     self.Character = LocalPlayer.Character
     self.Data = Tool.ToolData.Components[script.Name]
     self.LightPoint = Tool.Model:FindFirstChild("LightPoint", true)
-
-    -- if self.Data.Animations then  self.Animations = Animations.LoadAnimations(LocalPlayer, self.Data.Animations) end
-    self.Cooldown = self.Data.Cooldown
-
---    ActionService.New({self.InputType, self.Data})
+    
     print(self)
    return self
 end

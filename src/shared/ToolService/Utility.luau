@@ -5,6 +5,7 @@ local Shared = ReplicatedStorage.Shared
 local LocalPlayer = Players.LocalPlayer
 
 local Animations = require(Shared.Animation)
+local Cooldown = require(Shared.Cooldown)
 local Utility = {}
 
 function Utility.Preload(ToolData)
@@ -19,6 +20,10 @@ end
 
 function Utility.Animations(ToolData, Preload)
     Preload["Animations"] = Animations.LoadAnimations(LocalPlayer, ToolData.Animations)
+end
+
+function Utility.Cooldown(ToolData, Preload)
+    Preload["Cooldown"] = Cooldown.New(ToolData)
 end
 
 return Utility
