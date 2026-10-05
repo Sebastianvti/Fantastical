@@ -60,9 +60,9 @@ function ChatService:Inspect()
 end
 
 function ChatService:Execute()
+    local Recipients = {}
     for _,Head in self.Area do
         
-        local Recipients = {}
         local Character = Head.Parent
         local Player = Players:GetPlayerFromCharacter(Character)
 
