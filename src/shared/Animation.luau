@@ -8,15 +8,29 @@ local Shared = ReplicatedStorage.Shared
 local ActionService = require(Shared.ActionService)
 local Cache = require(Shared.Cache)
 
-local Playing = {
+local Playing = {}
 
-}
-
-function Animation.LoadAnimations(Player, Package)
-    for Key,Identification in Package do
-        Key = Animation.New(Player, Identification)
+local function LoopValue(Player, Value)
+    local Package = {}
+    for _,Id in Value do
+        local NewId = Animation.New(Player, Id)
+        table.insert(Package, NewId)
     end
     return Package
+end
+
+local function Choose(Repo)
+    local Chosen = math.random(1,#Repo)
+    Repo[Chosen]:Execute()
+end
+
+function Animation.LoadAnimations(Player, Package)
+    local Pack = {}
+
+    for Key,Identifications in Package do
+        Pack[Key] = LoopValue(Player, Identifications)
+    end
+    return Pack
 end
 
 function Animation:Stopped(Func)
@@ -52,14 +66,18 @@ function Animation.New(Player : Player, AnimationId : number)
     return self
 end
 
-function Animation:Play(ActionState)
+function Animation:Execute()
     if Playing[self.Priority] then return self end
-    if ActionState then ActionService.New(ActionState) end
     
     Playing[self.Priority] = self.Animation_Name
 
     self.Track.Stopped:Once(function() self:Stopped() end)
     self.Track:Play(0.1)
+end
+
+function Animation:Play(ActionState)
+    if ActionState then warn("action state") Choose(ActionState) return end
+    self:Execute()
 end
 
 function Animation:Event(Event, Function)
