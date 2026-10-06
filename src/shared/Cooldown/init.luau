@@ -27,6 +27,7 @@ end
 
 function CooldownManager.CharacterAdded(Character)
     Cooldowns[Character] = InputTypes
+    print(Cooldowns)
 end
 
 
@@ -38,49 +39,44 @@ function CooldownManager.New(Component)
     local self = setmetatable({}, CooldownManager)
     
     self.Character = LocalPlayer.Character
+    self.Component = Component
     self.BaseCooldown = Component.Cooldown
     self.CooldownProfile = Cooldowns[self.Character]
+    
     return self
 end
 
--- function CooldownManager.Begin(Component)
---     local self = setmetatable({}, CooldownManager)
+function CooldownManager:Init(Component)
+    if not self.Character then return end
 
---     self.InputType = Component.InputType
---     self.Character = Component.Character
---     self.CooldownMults = Component.CooldownMults
---     self.BaseCooldown = Component.Cooldown
+    self.InputType = Component.InputType
+    self.CooldownMults = Component.CooldownMults
     
---     self.CooldownProfile = Cooldowns[self.Character]
---     self.InputCooldown = self.CooldownProfile[self.InputType]
+    self.CooldownProfile = Cooldowns[self.Character]
+    self.InputCooldown = self.CooldownProfile[self.InputType]
     
---     if self.Character then 
---         self.Stats = Network.Stats:get(LocalPlayer.UserId) 
---     end
---     print(self.Stats)
---     return self:Calculate()
--- end
+    self.Stats = Network.Stats:get(LocalPlayer.UserId)
+    return self:Calculate()
+end
 
 function CooldownManager:Multiply()
+    self.ModifiedCooldown = self.BaseCooldown
+
     for _,Mult in self.CooldownMults do
-        self.BaseCooldown *= Mult
+        self.ModifiedCooldown = self.BaseCooldown * self.Stats.Modifiers[Mult]
     end
-    return self.BaseCooldown
+    return self.ModifiedCooldown
 end
 
 function CooldownManager:Pass()
-    -- self.InputCooldown["Cooldown"] = self:Multiply()
+    self.InputCooldown["Cooldown"] = self:Multiply()
     self.InputCooldown["LastUsed"] = os.clock()
-    
-    print("launched")
 end
 
 function CooldownManager:Calculate()
     if not self.InputCooldown then warn("Invalid input type") return end
-
     if not self.InputCooldown["LastUsed"] then self:Pass() return true end
-    print(self.InputCooldown["Cooldown"])
-    print(self.InputCooldown["LastUsed"])
+    
     if os.clock() - self.InputCooldown["LastUsed"] > self.InputCooldown["Cooldown"] then self:Pass() return true end
     return false
 end
