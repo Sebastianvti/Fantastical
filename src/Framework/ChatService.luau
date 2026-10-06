@@ -69,6 +69,8 @@ function ChatService:Execute()
         table.insert(Recipients, Player)
        
     end
+    
+    if #Recipients == 0 then return end
     Network.Chatted:fireClient(Recipients, {Sender = self.Client, Message = self.Message, Type = self.Type, Windowed = self.Window})
 end
 
