@@ -8,10 +8,9 @@ local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 
 local Templates = script.Templates
-local Library = script.Parent.Library
 local GetStoreName = RunService:IsStudio() and "Test" or "Live"
 
-local ProfileStore = require(Library.ProfileStore)
+local ProfileStore = require(script.Parent.ProfileStore)
 local CharacterTemplate = require(Templates.CharacterTemplate)
 local MasterTemplate = require(Templates.MasterTemplate)
 

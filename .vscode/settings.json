@@ -13,8 +13,10 @@
     "Network": "benchmark",
     "EquipmentService": "tools",
     "Framework": "server",
-    "CooldownService" : "rules",
+    "CooldownServer" : "rules",
     "ActionService" : "rules",
     "States" : "plugin",
+    "Actions" : "components",
+    "Effects" : "images",
   },
 }

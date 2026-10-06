@@ -4,15 +4,19 @@ Animation.__index = Animation
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage.Shared
+local Common = Shared.Common
+local Misc = script.Parent.Misc
 
-local ActionService = require(Shared.ActionService)
-local Cache = require(Shared.Cache)
+local ActionService = require(Common.ActionService)
+local Cache = require(Misc.Cache)
 
 local Playing = {}
 
 local function Choose(Repo)
     local Chosen = math.random(1,#Repo)
-    print(Repo[Chosen].Track.Length)
+
+    if not ActionService.New(Repo[Chosen].Action, Repo[Chosen].Track.Length) then return end
+
     Repo[Chosen]:Execute()
 end
 
@@ -20,6 +24,7 @@ local function LoopValue(Player, Value, Action)
     local Package = {}
     for _,Id in Value do
         local NewId = Animation.New(Player, Id)
+
         NewId.Action = Action
         table.insert(Package, NewId)
     end
@@ -78,7 +83,7 @@ function Animation:Execute()
 end
 
 function Animation:Play(ActionState)
-    if ActionState then Choose(ActionState) return end
+    if ActionState then return Choose(ActionState) end
     self:Execute()
 end
 

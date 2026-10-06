@@ -4,7 +4,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 
 local Shared = ReplicatedStorage.Shared
-local Cache = require(Shared.Cache)
+local Misc = Shared.Misc
+
+local Cache = require(Misc.Cache)
 
 local function SerializeSound(sound: Sound, Parent)
     local soundData = {

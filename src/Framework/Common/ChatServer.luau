@@ -5,11 +5,12 @@ local Players = game:GetService("Players")
 local TextService = game:GetService("TextService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Main = script.Parent.Parent
 local Shared = ReplicatedStorage.Shared
 local Network = require(Shared.Network)
 
-local CharacterLoader = require(script.Parent.CharacterLoader)
-local Admin = require(script.Parent.Admin)
+local CharacterLoader = require(Main.Core.CharacterLoader)
+local Admin = require(Main.Core.Admin)
 
 local Overlap = OverlapParams.new()
 

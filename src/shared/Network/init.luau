@@ -1,7 +1,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local Shared = ReplicatedStorage.Shared
-local ToolService = Shared.ToolService
+local Common = Shared.Common
 
 local Service = require(script.Service)
 local Lync = require(Shared.Lync)
@@ -26,11 +27,11 @@ return Lync.define("Network", {
 		Tool	 = Lync.struct({
 		Name	 = Lync.enum(Service.GetEnums("Tools")),
 		Components = Lync.map(
-			Lync.enum(Service.GetEnums(ToolService.Components)), 
+			Lync.enum(Service.GetEnums(Common.ToolService.Components)), 
 			Lync.struct({
 			Keybinds = Lync.optional(Lync.array(Lync.str(1, 5), 1, 5)),
-			Animations = Lync.optional(Lync.map(Lync.enum(Service.GetEnums(Shared.ActionService.Actions)),	Lync.array(Lync.vlq(),0,7),0,15)),
-			Cooldown = Lync.optional(Lync.vlq()),
+			Animations = Lync.optional(Lync.map(Lync.enum(Service.GetEnums(Common.ActionService.Actions)),	Lync.array(Lync.vlq(),0,7),0,15)),
+			Cooldown = Lync.optional(Lync.quant(0, 500, 0.5)),
 			Audio = Lync.optional(Lync.array(Lync.vlq(), 0, 10))
 		}),0,20
 	)})})),
@@ -44,4 +45,8 @@ return Lync.define("Network", {
 		Modifiers = Lync.map(Lync.enum(Service.GetEnums("Stats")), Lync.int(0, 100),1,100)
 	})):keyBy("Owner"),
 
+	ChangeAction = Lync.packet(Lync.struct({
+		Action = Lync.enum(Service.GetEnums(Common.ActionService.Actions)),
+		Time = Lync.f64()
+	}))
 })

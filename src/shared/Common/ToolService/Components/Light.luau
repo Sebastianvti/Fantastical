@@ -6,7 +6,6 @@ local LocalPlayer = Players.LocalPlayer
 
 -- local ActionService = require(Shared.ActionService)
 local Animations = require(Shared.Animation)
-local Cooldowns = require(Shared.Cooldown)
 local Network = require(Shared.Network)
 
 local Light = {}
@@ -30,7 +29,7 @@ end
 
 function Light:Init()
     if not self.Cooldown:Init(self) then return end
-    Animations:Play(self.Animations.General)
+    if not Animations:Play(self.Animations.General) then return end
 
     for _,Value in self.LightPoint:GetChildren() do
         if not Value:IsA("Light") then print("bruh") return end

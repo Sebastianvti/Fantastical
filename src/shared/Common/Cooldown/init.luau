@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage.Shared
 local Data = script.Data
 
-local ToolService = Shared.ToolService
+local ToolService = Shared.Common.ToolService
 local Components = ToolService.Components
 local LocalPlayer = Players.LocalPlayer
 
@@ -77,6 +77,7 @@ function CooldownManager:Calculate()
     if not self.InputCooldown then warn("Invalid input type") return end
     if not self.InputCooldown["LastUsed"] then self:Pass() return true end
     
+    print(self.InputCooldown["Cooldown"])
     if os.clock() - self.InputCooldown["LastUsed"] > self.InputCooldown["Cooldown"] then self:Pass() return true end
     return false
 end

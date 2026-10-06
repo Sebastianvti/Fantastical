@@ -2,7 +2,7 @@ local ServerStorage = game:GetService("ServerStorage")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage.Shared
-local ToolService = Shared.ToolService
+local ToolService = Shared.Common.ToolService
 local StoreHouse = ServerStorage.StoreHouse
 local ToolStorage = StoreHouse.Tools
 local Network = require(Shared.Network)

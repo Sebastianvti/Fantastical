@@ -7,13 +7,14 @@ local RunService = game:GetService("RunService")
 
 local StoreHouse = ServerStorage.StoreHouse
 local Shared = ReplicatedStorage.Shared
+local Core = script.Core
 
 local NetworkFolder = Shared.Network
 
 local Lync = require(Shared.Lync)
-local DataStore = require(script.DataStore)
-local ProfileStore = require(script.Library.ProfileStore)
-local MasterTemplate = require(script.DataStore.Templates.MasterTemplate)
+local DataStore = require(Core.DataStore)
+local ProfileStore = require(Core.ProfileStore)
+local MasterTemplate = require(Core.DataStore.Templates.MasterTemplate)
 
 local AllPlayers
 local Modules = {}
@@ -36,6 +37,7 @@ local function PCallResult(Module)
 
 			local ModName = Module.Name
 			Modules[ModName] = result
+			
 			if Modules[ModName].Start then
 				Modules[ModName].Start()
 			end
@@ -82,7 +84,7 @@ local function CreateFolder(Name : string)
 end
 
 local function CreateDataEnums()
-	local Target = require(script.StatusService.Template)
+	local Target = require(script.Services.StatusService.Template)
 	local NewEnum = CreateFolder("Stats")
 	for Stat,_ in Target.Sheet do
 		NewEnum:SetAttribute(HttpService:GenerateGUID(false), Stat)

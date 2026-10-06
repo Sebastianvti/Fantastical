@@ -3,7 +3,7 @@ return function (self)
     local ServerStorage = game:GetService("ServerStorage")
     local StoreHouse = ServerStorage.StoreHouse
     local Framework = ServerScriptService.Framework
-    local DataStore = require(Framework.DataStore)
+    local DataStore = require(Framework.Core.DataStore)
 
     local Arguement = string.lower(self.Args[1])
     local NewTool
