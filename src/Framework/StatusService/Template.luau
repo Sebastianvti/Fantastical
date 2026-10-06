@@ -7,7 +7,7 @@ return {
     Threads = {}, -- threads for staggered stat methods
     Sheet = {
         Damage_Multiplier = 1,
-        Cooldown_Multiplier = 30,
+        Cooldown_Multiplier = 2,
     }
 
 }

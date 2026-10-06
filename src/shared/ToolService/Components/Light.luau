@@ -29,7 +29,7 @@ function Light.New(Tool, Preload)
 end
 
 function Light:Init()
-    -- if not Cooldowns.Begin(self) then return end
+    if not self.Cooldown:Init(self) then return end
     Animations:Play(self.Animations.General)
 
     for _,Value in self.LightPoint:GetChildren() do

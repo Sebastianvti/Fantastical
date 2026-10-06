@@ -10,25 +10,27 @@ local Cache = require(Shared.Cache)
 
 local Playing = {}
 
-local function LoopValue(Player, Value)
+local function Choose(Repo)
+    local Chosen = math.random(1,#Repo)
+    print(Repo[Chosen].Track.Length)
+    Repo[Chosen]:Execute()
+end
+
+local function LoopValue(Player, Value, Action)
     local Package = {}
     for _,Id in Value do
         local NewId = Animation.New(Player, Id)
+        NewId.Action = Action
         table.insert(Package, NewId)
     end
     return Package
-end
-
-local function Choose(Repo)
-    local Chosen = math.random(1,#Repo)
-    Repo[Chosen]:Execute()
 end
 
 function Animation.LoadAnimations(Player, Package)
     local Pack = {}
 
     for Key,Identifications in Package do
-        Pack[Key] = LoopValue(Player, Identifications)
+        Pack[Key] = LoopValue(Player, Identifications, Key)
     end
     return Pack
 end
@@ -76,7 +78,7 @@ function Animation:Execute()
 end
 
 function Animation:Play(ActionState)
-    if ActionState then warn("action state") Choose(ActionState) return end
+    if ActionState then Choose(ActionState) return end
     self:Execute()
 end
 
