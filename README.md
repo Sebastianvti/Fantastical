@@ -19,4 +19,4 @@ Can be used in any script that is required automatically.
 .ServerStart() | Starts a script immediately on server launch.
 .CharacterLoaded(Character) | Passes character as parameter, when the player spawns in. On server this is located in CharacterLoader, client uses main script to pass
 .CharacterDied(Character) | Passes character as parameter, when player dies. On server this is located in CharacterLoader, client uses main script to pass
-.StatsChanged(UserId, Modifier, OldModifiers) | Client Only, activates when stats are changed on the server.
+.StatsChanged(UserId, Modifier, OldModifiers) | Client Only, activates when stats are changed on the server
