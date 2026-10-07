@@ -19,7 +19,7 @@ local MasterTemplate = require(Core.DataStore.Templates.MasterTemplate)
 local AllPlayers
 local Modules = {}
 local FailModuleByType = {"function"}
-local MainServices = {Framework = ServerScriptService, Shared = ReplicatedStorage}
+local MainServices = {Framework = ServerScriptService}
 
 local PlayerStore = ProfileStore.New(DataStore.GetStoreName(), MasterTemplate)
 

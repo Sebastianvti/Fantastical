@@ -44,7 +44,7 @@ function ActionService:Update()
         InputTrack[self.ActionGroup] = ""
     end)
     
-    Network.ActionChanged:fireServer({Action = self.Action, Time = os.clock()})
+    Network.ChangeAction:fireServer({Action = self.Action, Time = os.clock()})
     return true
 end
 

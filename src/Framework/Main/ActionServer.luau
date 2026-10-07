@@ -24,9 +24,9 @@ function ActionServer.CharacterLoaded(Character)
 
 end
 
-function ActionServer.New(Player, Package)
+function ActionServer.New(Package, Player)
     local NewTrack = {}
-    Package.Time = os.clock - Package.Time
+    Package.Time = os.clock() - Package.Time
 end
 
 function ActionServer.Time()
