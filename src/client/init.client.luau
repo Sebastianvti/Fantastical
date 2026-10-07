@@ -34,6 +34,8 @@ local function PCallResult(Module)
 
 			if Modules[ModName].Start then
 				Modules[ModName].Start()
+			elseif Modules[ModName].ClientStart then
+				Modules[ModName].ClientStart()
 			end
 			
 		else

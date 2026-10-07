@@ -22,8 +22,7 @@ function Light.New(Tool, Preload)
     self.Character = LocalPlayer.Character
     self.Data = Tool.ToolData.Components[script.Name]
     self.LightPoint = Tool.Model:FindFirstChild("LightPoint", true)
-    
-    print(self)
+
    return self
 end
 

@@ -27,7 +27,6 @@ end
 
 function CooldownManager.CharacterAdded(Character)
     Cooldowns[Character] = InputTypes
-    print(Cooldowns)
 end
 
 

@@ -42,8 +42,8 @@ local function GetAllSounds()
     print(Cache)
 end
 
-
-function CacheSounds.Start() 
+function CacheSounds.ClientStart() 
+    print("started")
     --GetAllSounds()
 end
 

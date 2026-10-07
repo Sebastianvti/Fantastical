@@ -40,6 +40,8 @@ local function PCallResult(Module)
 			
 			if Modules[ModName].Start then
 				Modules[ModName].Start()
+			elseif Modules[ModName].ServerStart then
+				Modules[ModName].ServerStart()
 			end
 			
 		else
