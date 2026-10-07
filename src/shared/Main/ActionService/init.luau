@@ -43,10 +43,8 @@ function ActionService:Update()
     Threads[HttpService:GenerateGUID(false)] = task.delay(self.Time, function()
         InputTrack[self.ActionGroup] = ""
     end)
-
-    -- steps
-    -- set time on client
-    -- send info to server
+    
+    Network.ActionChanged:fireServer({Action = self.Action, Time = os.clock()})
     return true
 end
 

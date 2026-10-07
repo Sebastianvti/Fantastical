@@ -2,11 +2,11 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage.Shared
-local Common = Shared.Common
+local Main = Shared.Main
 local LocalPlayer = Players.LocalPlayer
 
 local Animations = require(Shared.Animation)
-local Cooldown = require(Common.Cooldown)
+local Cooldown = require(Main.Cooldown)
 local Utility = {}
 
 function Utility.Preload(ToolData)

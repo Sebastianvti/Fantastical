@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage.Shared
 local Data = script.Data
 
-local ToolService = Shared.Common.ToolService
+local ToolService = Shared.Main.ToolService
 local Components = ToolService.Components
 local LocalPlayer = Players.LocalPlayer
 

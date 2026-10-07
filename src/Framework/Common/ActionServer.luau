@@ -1,3 +1,0 @@
-local ActionServer = {}
-
-return ActionServer

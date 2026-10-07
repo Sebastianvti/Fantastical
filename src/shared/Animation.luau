@@ -4,10 +4,10 @@ Animation.__index = Animation
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage.Shared
-local Common = Shared.Common
+local Main = Shared.Main
 local Misc = script.Parent.Misc
 
-local ActionService = require(Common.ActionService)
+local ActionService = require(Main.ActionService)
 local Cache = require(Misc.Cache)
 
 local Playing = {}
