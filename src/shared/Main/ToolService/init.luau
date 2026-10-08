@@ -72,7 +72,8 @@ function ToolService:LoadComponents()
         local FirstKeybind = Value.Keybinds[1]
         self.Tool[FirstKeybind] = {}
 
-        local Preload = Utility.Preload(Value)
+        local Preload = Utility.Preload({ToolData = self, ComponentName = Key, ComponentData = Value})
+        
         self.Tool[FirstKeybind] = require(Components[Key]).New(self, Preload)
         self.ToolData = nil
     end

@@ -2,9 +2,9 @@ local ServerStorage = game:GetService("ServerStorage")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage.Shared
-local ToolService = Shared.Main.ToolService
 local StoreHouse = ServerStorage.StoreHouse
 local ToolStorage = StoreHouse.Tools
+
 local Network = require(Shared.Network)
 
 local EquipmentService = {}
@@ -47,8 +47,15 @@ function EquipmentService.Start()
     end
 end
 
+function EquipmentService.GetTools()
+    return ConfigCache
+end
+
+function EquipmentService.GetTool(Tool : string)
+    if not ConfigCache[Tool] then warn("Could not find school") return end
+    return ConfigCache[Tool]
+end
+
 Network.Enable:onServer(Enable)
-Network.Stats:onChanged(function()
-end)
 
 return EquipmentService

@@ -9,22 +9,26 @@ local Animations = require(Shared.Animation)
 local Cooldown = require(Main.Cooldown)
 local Utility = {}
 
-function Utility.Preload(ToolData)
-    local Preload = {}
-    for Key,_ in ToolData do
+function Utility.Preload(Data)
+    local Preload = {
+        Main = Data.ToolData.Name,
+        Name = Data.ComponentName
+    }
+
+    for Key,_ in Data.ComponentData do
         if not Utility[Key] then continue end
-        Utility[Key](ToolData, Preload)
+        Utility[Key](Preload, Data)
     end
 
     return Preload
 end
 
-function Utility.Animations(ToolData, Preload)
-    Preload["Animations"] = Animations.LoadAnimations(LocalPlayer, ToolData.Animations)
+function Utility.Animations(Preload, Data)
+    Preload["Animations"] = Animations.LoadAnimations(LocalPlayer, Data.ComponentData.Animations)
 end
 
-function Utility.Cooldown(ToolData, Preload)
-    Preload["Cooldown"] = Cooldown.New(ToolData)
+function Utility.Cooldown(Preload, Data)
+    Preload["Cooldown"] = Cooldown.New(Data, Preload)
 end
 
 return Utility

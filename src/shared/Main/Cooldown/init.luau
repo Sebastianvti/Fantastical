@@ -26,6 +26,7 @@ function CooldownManager.Start()
 end
 
 function CooldownManager.CharacterAdded(Character)
+    print("Active", Character)
     Cooldowns[Character] = InputTypes
 end
 
@@ -34,12 +35,14 @@ function CooldownManager.CharacterDied(Character)
     Cooldowns[Character] = nil
 end
 
-function CooldownManager.New(Component)
+function CooldownManager.New(Data, Preload)
     local self = setmetatable({}, CooldownManager)
     
     self.Character = LocalPlayer.Character
-    self.Component = Component
-    self.BaseCooldown = Component.Cooldown
+    self.Name = Data.ToolData.Name
+    self.ComponentName = Data.ComponentName
+    self.Component = Data.ComponentData
+    self.BaseCooldown = Data.ComponentData.Cooldown
     self.CooldownProfile = Cooldowns[self.Character]
     
     return self
@@ -70,8 +73,8 @@ end
 function CooldownManager:Pass()
     self.InputCooldown["Cooldown"] = self:Multiply()
     self.InputCooldown["LastUsed"] = os.clock()
-    
-    -- Network.ChangeCooldown:fireServer({})
+
+    Network.ChangeCooldown:fireServer({Tool = self.Name, Component = self.ComponentName, Cooldown = self.InputCooldown["Cooldown"], Mults = self.CooldownMults})
 end
 
 function CooldownManager:Calculate()

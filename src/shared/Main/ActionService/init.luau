@@ -31,8 +31,7 @@ function ActionService.New(Action : string, Time : number) -- we will see if thi
     self.ActionGroup = Actions[Action].Group
     self.Action = Action
     self.Time = Time
-
-    print(InputTrack)
+    
     if InputTrack[self.ActionGroup] == "" then return self:Update() end
     return false
 end
