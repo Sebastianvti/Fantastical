@@ -8,7 +8,7 @@ return {
     Sheet = {
         Damage_Multiplier = 1,
         Cooldown_Multiplier = 2,
-    }
-    
+    },
+    Cooldown = {},
 
 }

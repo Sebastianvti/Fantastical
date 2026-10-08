@@ -3,7 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage.Shared
 local Main = Shared.Main
 
-local ActionService = Main.ActionService
+
 
 local Network = require(Shared.Network)
 
@@ -13,7 +13,7 @@ function CooldownServer.CharacterLoaded(Character)
 
 end
 
-function CooldownServer.New(Package)
+function CooldownServer.New(Package, Player)
     Package.Time = os.clock - Package.Time
 end
 
@@ -21,6 +21,6 @@ function CooldownServer.Time()
     
 end
 
--- Network.ChangeAction:onServer(CooldownServer.New)
+Network.ChangeCooldown:onServer(CooldownServer.New)
 
 return CooldownServer

@@ -86,7 +86,7 @@ local function CreateFolder(Name : string)
 end
 
 local function CreateDataEnums()
-	local Target = require(script.Services.StatusService.Template)
+	local Target = require(Core.CharacterLoader.Template)
 	local NewEnum = CreateFolder("Stats")
 	for Stat,_ in Target.Sheet do
 		NewEnum:SetAttribute(HttpService:GenerateGUID(false), Stat)

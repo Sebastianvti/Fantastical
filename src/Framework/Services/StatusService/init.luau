@@ -13,7 +13,6 @@ local Shared = ReplicatedStorage.Shared
 
 local Network = require(Shared.Network)
 local Methods = require(script.Methods)
-local Template = require(script.Template)
 local Utility = require(script.Utility)
 local Settings = require(script.Settings)
 
@@ -172,25 +171,28 @@ function StatusManager.GetStatus(Name : string)
     return StatusData
 end
 
-function StatusManager.GetSheet(Character)
-    return CharacterSheets[Character]
+function StatusManager.GetSheet(Sheet)
+    CharacterSheets = Sheet
+    print(CharacterSheets)
+    print(Sheet)
+end
+
+function StatusManager.CharacterDied(Character)
+    print(CharacterSheets)
+    print(CharacterSheets[Character])
 end
 
 function StatusManager.CharacterLoaded(Character)
     local Player = Players:GetPlayerFromCharacter(Character)
     local UserID = Player.UserId
 
-    CharacterSheets[Character] = Template
+    -- if Network.Stats:get(UserID) then return end
 
-    if Network.Stats:get(UserID) then return end
-
-    Network.Stats:audience(UserID, Player)
-    Network.Stats:add(UserID, {Owner = UserID, Modifiers = Template.Sheet})
+    -- Network.Stats:audience(UserID, Player)
+    -- Network.Stats:add(UserID, {Owner = UserID, Modifiers = Template.Sheet})
 end
 
-function StatusManager.CharacterDied(Character)
-    CharacterSheets[Character] = nil
-end
+
 
 
 -- ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(Player, StatusName)
