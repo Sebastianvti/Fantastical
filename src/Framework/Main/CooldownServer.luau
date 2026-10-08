@@ -41,16 +41,21 @@ function CooldownServer.Multiply(Package, Referenced : number, Character)
 end
 
 function CooldownServer.Calculate(Package, Player)
+    if not Player.Character then return end
+
     local Tool = Tools:FindFirstChild(Package.Tool) 
-    if not Tool then warn("Tool was not found") return end
-    local Character = Player.Character
+    if not Tool then warn("Tool was not found") return end  
+
+    local Config = require(Tool.Config)
+    local Component = Config[Package.Component]
+    local Cooldown = Component.Cooldown
     
-    if not CooldownServer.Multiply(Package, Package.Cooldown, Character) then
+    if not CooldownServer.Multiply(Package, Package.Cooldown, Player.Character) then
         warn(Player.Name.." has been detected with a mismatched cooldown")
         Suspicious[Player] = {}
     end
 end
 
-Network.ChangeCooldown:onServer(CooldownServer.New)
+Network.ChangeCooldown:onServer(CooldownServer.Calculate)
 
 return CooldownServer
