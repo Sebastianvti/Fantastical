@@ -14,11 +14,13 @@ local NetworkFolder = Shared.Network
 local Lync = require(Shared.Lync)
 local DataStore = require(Core.DataStore)
 local ProfileStore = require(Core.ProfileStore)
+local CharacterLoader = require(Core.CharacterLoader)
 local MasterTemplate = require(Core.DataStore.Templates.MasterTemplate)
 
 local AllPlayers
 local Modules = {}
 local FailModuleByType = {"function"}
+local CharacterSheets = CharacterLoader.Sheets
 local MainServices = {Framework = ServerScriptService}
 
 local PlayerStore = ProfileStore.New(DataStore.GetStoreName(), MasterTemplate)
@@ -39,9 +41,9 @@ local function PCallResult(Module)
 			Modules[ModName] = result
 			
 			if Modules[ModName].Start then
-				Modules[ModName].Start()
+				Modules[ModName].Start(CharacterSheets)
 			elseif Modules[ModName].ServerStart then
-				Modules[ModName].ServerStart()
+				Modules[ModName].ServerStart(CharacterSheets)
 			end
 			
 		else
@@ -88,7 +90,7 @@ end
 local function CreateDataEnums()
 	local Target = require(Core.CharacterLoader.Template)
 	local NewEnum = CreateFolder("Stats")
-	for Stat,_ in Target.Sheet do
+	for Stat,_ in Target.Mult_Sheet do
 		NewEnum:SetAttribute(HttpService:GenerateGUID(false), Stat)
 	end
 end

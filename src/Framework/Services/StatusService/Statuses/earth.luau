@@ -27,7 +27,7 @@ return {
     IncompatibleGroups = {},
     Whitelist = {},
 
-    Sheet = {
+    Mult_Sheet = {
         Damage_Multiplier = 4,
         Cooldown_Multiplier = 4,
     },

@@ -5,7 +5,7 @@ return {
     Timer_Thread = {}, -- detailed information about each timer
     Stagger_Thread = {}, -- in hindsight i shouldve had this be a value of an active key but its too late
     Threads = {}, -- threads for staggered stat methods
-    Sheet = {
+    Mult_Sheet = {
         Damage_Multiplier = 1,
         Cooldown_Multiplier = 2,
     },

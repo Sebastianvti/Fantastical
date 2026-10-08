@@ -27,11 +27,11 @@ end
 
 local function Process(self, Operator : string)
     local Changes = {}
-    for Key, Value in pairs(self.Status.Sheet) do
-        if not self.CharacterSheet.Sheet[Key] then continue end
-        local Result = Math[Operator](self.CharacterSheet.Sheet[Key], Value)
+    for Key, Value in pairs(self.Status.Mult_Sheet) do
+        if not self.CharacterSheet.Mult_Sheet[Key] then continue end
+        local Result = Math[Operator](self.CharacterSheet.Mult_Sheet[Key], Value)
 
-        self.CharacterSheet.Sheet[Key] = Result
+        self.CharacterSheet.Mult_Sheet[Key] = Result
         Changes[Key] = Result
     end
     if next(Changes) == nil then print("..") return end
@@ -58,12 +58,12 @@ end
 function Utility.Modify(self, Index)
     self = setmetatable(self,  Utility)
 
-    local Sheet = self.CharacterSheet
+    local Mult_Sheet = self.CharacterSheet
     local Status = self.Status
 
     local _ = Status.Custom[self.Base[Index]] and Status.Custom[self.Base[Index]](self)
         
-    Sheet.Active = TableOperators[self.Base[Index]](Sheet.Active, Status.Name)
+    Mult_Sheet.Active = TableOperators[self.Base[Index]](Mult_Sheet.Active, Status.Name)
 
     return self
 end
@@ -71,10 +71,10 @@ end
 function Utility.CanStack(self, Index)
     local self = Utility.Modify(self, Index)
 
-    local Sheet = self.CharacterSheet
+    local Mult_Sheet = self.CharacterSheet
     local Status = self.Status
 
-    local Stack = Sheet.Active_Stacks
+    local Stack = Mult_Sheet.Active_Stacks
     local StackKey = (Status.Name.."_Stack")
 
     Stack[StackKey] = TableOperators[self.Base[Index]](Stack[StackKey], Status.Name)
