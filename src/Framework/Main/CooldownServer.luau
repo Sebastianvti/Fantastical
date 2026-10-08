@@ -17,6 +17,8 @@ local Components = ToolService.Components
 local Network = require(Shared.Network)
 
 local CooldownServer = {}
+CooldownServer.__index = CooldownServer
+
 local Suspicious = {}
 local CooldownSheet = {}
 
@@ -32,14 +34,25 @@ function CooldownServer.Start(Sheet)
 end
 
 function CooldownServer.Multiply(Package, Referenced : number, Character)
-   
+    local ModifiedCooldown = 0
+   for _,Mult in Package.Mults do
+        local ModifiedCooldown = self.BaseCooldown * self.Stats.Modifiers[Mult]
+    end
+
+    if not Referenced ~= ModifiedCooldown then return false end
 end
 
-function CooldownServer.Calculate(Package, Player)
-    local Tool = Tools:FindFirstChild(Package.Tool) 
-    if not Tool then warn("Tool was not found") return end
-    local Character = Player.Character
+function CooldownServer.New(Package, Player)
+    local self = setmetatable({}, CooldownServer)
     
+    self.Player = Player
+    self.Character = Player.Character
+    self.PlayerResult = Package.Cooldown
+    if not self.Character then return end
+
+    self.Tool = Tools:FindFirstChild(Package.Tool) 
+    if not self.Tool then warn("Tool was not found") return end
+
     if not CooldownServer.Multiply(Package, Package.Cooldown, Character) then
         warn(Player.Name.." has been detected with a mismatched cooldown")
         Suspicious[Player] = {}

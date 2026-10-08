@@ -52,6 +52,7 @@ return Lync.define("Network", {
 
 	ChangeCooldown = Lync.packet(Lync.struct({
 		Tool = Lync.enum(Service.GetEnums("Tools")),
+		Component = Lync.enum(Service.GetEnums(Main.ToolService.Components)),
 		Cooldown = Lync.f32(),
 		Mults = Lync.array(Lync.enum(Service.GetEnums("Stats")), 0, 15)
 	})),

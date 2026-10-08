@@ -70,13 +70,14 @@ end
 function CooldownManager:Pass()
     self.InputCooldown["Cooldown"] = self:Multiply()
     self.InputCooldown["LastUsed"] = os.clock()
+    
+    -- Network.ChangeCooldown:fireServer({})
 end
 
 function CooldownManager:Calculate()
     if not self.InputCooldown then warn("Invalid input type") return end
     if not self.InputCooldown["LastUsed"] then self:Pass() return true end
     
-    print(self.InputCooldown["Cooldown"])
     if os.clock() - self.InputCooldown["LastUsed"] > self.InputCooldown["Cooldown"] then self:Pass() return true end
     return false
 end
