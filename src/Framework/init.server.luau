@@ -115,10 +115,10 @@ local function PlayerAdded(Player : Player) -- this is for the master profile, i
 		end
 	})
 
-	if Player.Character then task.defer(Modules["CharacterLoader"].CharacterAdded, Player.Character) end 
+	if Player.Character then task.defer(CharacterLoader.CharacterAdded, Player.Character) end 
 
-	Player.CharacterAdded:Connect(Modules["CharacterLoader"].CharacterAdded)
-	Player.CharacterRemoving:Connect(Modules["CharacterLoader"].CharacterDied)
+	Player.CharacterAdded:Connect(CharacterLoader.CharacterAdded)
+	Player.CharacterRemoving:Connect(CharacterLoader.CharacterDied)
 
 	if Profile ~= nil then
 			Profile:AddUserId(Player.UserId)

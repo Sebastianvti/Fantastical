@@ -10,7 +10,7 @@ function CharacterLoader.GetModules(Modules)
 end
 
 function CharacterLoader.CharacterAdded(Character)
-	warn("Character Loaded")
+	warn(Character.Name.."'s Character Loaded")
 	CharacterLoader.Sheets[Character] = Template
 
 	for Module,Value in CharacterLoader.Modules do
@@ -31,6 +31,7 @@ function CharacterLoader.CharacterDied(Character)
 	end
 
 	table.remove(CharacterLoader.AllCharacters, table.find(CharacterLoader.AllCharacters, Character.Head))
+	warn(Character.Name.."'s Character Died")
 end
 
 return CharacterLoader
