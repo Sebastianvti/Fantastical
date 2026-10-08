@@ -9,5 +9,6 @@ return {
         Damage_Multiplier = 1,
         Cooldown_Multiplier = 2,
     },
-    InputTypes = {}
+    InputTypes = {},
+    ActionTrack = {},
 }

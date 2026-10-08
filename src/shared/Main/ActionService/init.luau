@@ -13,10 +13,6 @@ local Actions = {}
 local ActionService = {}
 ActionService.__index = ActionService
 
-local function AddToInputTrack(InputType : string)
-
-end
-
 function ActionService.Start()
     for _,Module in ActionFolder:GetChildren() do
         local NewModule = require(Module)
@@ -31,7 +27,7 @@ function ActionService.New(Action : string, Time : number) -- we will see if thi
     self.ActionGroup = Actions[Action].Group
     self.Action = Action
     self.Time = Time
-    
+
     if InputTrack[self.ActionGroup] == "" then return self:Update() end
     return false
 end

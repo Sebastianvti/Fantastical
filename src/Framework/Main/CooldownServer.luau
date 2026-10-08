@@ -3,7 +3,6 @@
 -- This will calculate their tools basecooldown * {multipliers}
 -- This system will make no attempt at correcting the client, it is only there to act as warning
 -- This system is forgiving, latency can cause a cooldown mismatch, but this is rare
-local ProximityPromptService = game:GetService("ProximityPromptService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
@@ -30,12 +29,12 @@ local Suspicious = {}
 function CooldownServer.Start(Sheet)
     Characters = Sheet
 
-    for _,Component in Components:GetChildren() do
-        local NewComponent = require(Component).New(nil, {})
-        if not NewComponent.InputType then continue end
+    -- for _,Component in Components:GetChildren() do
+    --     local NewComponent = require(Component).New(nil, {})
+    --     if not NewComponent.InputType then continue end
 
-        CharacterSheet.InputTypes[NewComponent.InputType] = {}
-    end
+    --     CharacterSheet.InputTypes[NewComponent.InputType] = {}
+    -- end
 end
 
 function CooldownServer.Multiply(Data)
