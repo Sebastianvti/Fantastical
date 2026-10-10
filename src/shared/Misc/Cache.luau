@@ -1,5 +1,3 @@
-local RunService = game:GetService("RunService")
-local ServerStorage = game:GetService("ServerStorage")
 local HttpService = game:GetService("HttpService")
 
 local Cache = {}
@@ -9,11 +7,11 @@ Cache.__index = Cache
 function Cache.New(Instance : string, Amount : number, Dynamic: boolean)
     local self = setmetatable({}, Cache)
 
+    self.Identification =  string.sub(HttpService:GenerateGUID(false),1, 7)
     self.Instance = Instance
     self.Amount = Amount
     self.Dynamic = Dynamic
 
-    self.Active = {}
     self.Reserve = self:CreateInstances()
     return self
 end
@@ -21,7 +19,9 @@ end
 function Cache:CreateInstances()
     local NewCache = {}
     for i = 1, self.Amount do 
-        table.insert(NewCache, Instance.new(self.Instance))
+        local NewInstance = Instance.new(self.Instance)
+        NewInstance:AddTag(self.Identification)
+        table.insert(NewCache, NewInstance)
     end
     return NewCache
 end
@@ -32,16 +32,14 @@ function Cache:GetInstance()
         if not self.Dynamic then return end
 
         print("Dynamic sizing is enabled, creating new instance to compensate.")
-        table.insert(self.Reserve, Instance.new(self.Instance))
+        table.insert(self.Reserve, Instance.new(self.Instance):AddTag(self.Identification))
     end
 
-    table.insert(self.Active, self.Reserve[1])
     table.remove(self.Reserve, 1)
     return self.Reserve[1]
 end
 
 function Cache:Withdraw(Instance)
-    table.remove(self.Active, table.find(self.Active, Instance))
     table.insert(self.Reserve, Instance)
 end
 

@@ -46,7 +46,7 @@ function Animation:Stopped(Func)
 		connection:Disconnect()
 	end
 
-    self.Animation = Cache:Withdraw(self.Animation)
+    Cache:Withdraw(self.Animation)
     
     Playing[self.Priority] = nil
 	self.Connections = {}

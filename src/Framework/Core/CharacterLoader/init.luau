@@ -25,7 +25,7 @@ end
 
 function CharacterLoader.CharacterDied(Character)
 	CharacterLoader.Sheets[Character] = nil
-
+	
 	for Module,Value in CharacterLoader.Modules do
 		if Module == script.Name then continue end
 		
