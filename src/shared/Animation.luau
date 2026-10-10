@@ -8,7 +8,7 @@ local Main = Shared.Main
 local Misc = script.Parent.Misc
 
 local ActionService = require(Main.ActionService)
-local Cache = require(Misc.Cache)
+local Cache = require(Misc.Cache).New("Animation", 10, true)
 
 local Playing = {}
 
@@ -42,12 +42,12 @@ end
 
 function Animation:Stopped(Func)
     local _ = Func and Func() 
-    -- connect events to this possibly
-   	if self.AnimationInstance then self.AnimationInstance.Deployed = false end
         for _, connection in pairs(self.Connections or {}) do
 		connection:Disconnect()
 	end
 
+    self.Animation = Cache:Withdraw(self.Animation)
+    
     Playing[self.Priority] = nil
 	self.Connections = {}
 end
@@ -59,10 +59,8 @@ function Animation.New(Player : Player, AnimationId : number)
     self.Player = Player
     self.Humanoid = Player.Character:FindFirstChildOfClass("Humanoid")
 
-    self.AnimationInstance = Cache.GetAnimation()
+    self.Animation = Cache:GetInstance()
     self.Animator = self.Humanoid.Animator
-    self.Animation_Name = self.AnimationInstance.ID
-    self.Animation = self.AnimationInstance.Animation
     self.Animation.AnimationId = ('rbxassetid://'..AnimationId)
 
     self.Track = self.Animator:LoadAnimation(self.Animation)

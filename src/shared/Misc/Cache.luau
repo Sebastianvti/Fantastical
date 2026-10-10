@@ -1,68 +1,48 @@
 local RunService = game:GetService("RunService")
+local ServerStorage = game:GetService("ServerStorage")
 local HttpService = game:GetService("HttpService")
 
 local Cache = {}
 Cache.__index = Cache
 
-Stash = {
-    Sounds = {},
-    Animations = {}
-}
 
-local PreloadServices = {
-    Animation = 4,
-    --Sound = 10
-}
-
-local function GenName(Prefix : string)
-    return (Prefix.."_"..string.sub(HttpService:GenerateGUID(false), 1, 7))
-end
-
-function Cache:AddToCache(Storage : string)
-    Stash[Storage][self.ID] = {}
-    Stash[Storage][self.ID] = self
-end
-
-function Cache.NewAnimation(Deploy : boolean?)
+function Cache.New(Instance : string, Amount : number, Dynamic: boolean)
     local self = setmetatable({}, Cache)
 
-    self.ID = GenName("Animations")
-    self.Animation = Instance.new("Animation")
-    self.Deployed = Deploy or false -- Default is false, but if you are using it immeediately best set it to true
+    self.Instance = Instance
+    self.Amount = Amount
+    self.Dynamic = Dynamic
 
-    self:AddToCache("Animations")
+    self.Active = {}
+    self.Reserve = self:CreateInstances()
     return self
 end
 
-function Cache.NewSound(Deploy : boolean?)
-    local self = setmetatable({}, Cache)
-
-    self.ID = GenName("Sounds")
-    self.Attachment = Instance.new("Attachment")
-    self.Sound = Instance.new("Sound")
-    self.Deployed = Deploy or false
-
-    self:AddToCache("Sounds")
-    return self
+function Cache:CreateInstances()
+    local NewCache = {}
+    for i = 1, self.Amount do 
+        table.insert(NewCache, Instance.new(self.Instance))
+    end
+    return NewCache
 end
 
-function Cache.GetAnimation()
-    for _,Value in Stash.Animations do
-        if not Value.Deployed then return Value end
+function Cache:GetInstance()
+    if #self.Reserve == 0 then
+        warn("Cache containing "..(self.Instance).." was exhausted since all "..(self.Amount).." instances were used.")
+        if not self.Dynamic then return end
+
+        print("Dynamic sizing is enabled, creating new instance to compensate.")
+        table.insert(self.Reserve, Instance.new(self.Instance))
     end
-    warn("Cache is full, creating new instance")
-    return Cache.NewAnimation()
+
+    table.insert(self.Active, self.Reserve[1])
+    table.remove(self.Reserve, 1)
+    return self.Reserve[1]
 end
 
-function Cache.Start()
-    if not RunService:IsClient() then return end
-    
-    for Key,Instances in PreloadServices do
-        for i = 1, Instances do
-            Cache["New"..Key]()
-        end
-    end
-    print("[Preloaded Cache]: ", Stash.Animations)
+function Cache:Withdraw(Instance)
+    table.remove(self.Active, table.find(self.Active, Instance))
+    table.insert(self.Reserve, Instance)
 end
 
 return Cache
