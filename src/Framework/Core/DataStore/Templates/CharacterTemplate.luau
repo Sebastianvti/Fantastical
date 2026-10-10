@@ -1,11 +1,15 @@
 return {
-    FirstName = "John",
-    Nickname = "Grauss",
-    LastName = "Manei",
+    FirstName = "",
+    Nickname = "",
+    LastName = "",
     Xenotype = "",
 
-    Age = 30,
+    Gender = "",
+
+    Age = 18,
     DateOfBirth = "",
+    
+    Size = 1,
 
     ToolBar = {},
     Inventory = {},

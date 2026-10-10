@@ -10,6 +10,7 @@ local HttpService = game:GetService("HttpService")
 local Templates = script.Templates
 local GetStoreName = RunService:IsStudio() and "Test" or "Live"
 
+local RandomProfile = require(script.RandomProfile)
 local ProfileStore = require(script.Parent.ProfileStore)
 local CharacterTemplate = require(Templates.CharacterTemplate)
 local MasterTemplate = require(Templates.MasterTemplate)
@@ -49,9 +50,7 @@ function DataStore:StartProfile()
 	self.MasterProfile.Data.LastUsed = ProfileName
     self:LinkAccount()
 
-
 	if self.CharacterProfile then 
-
 			self.CharacterProfile:AddUserId(self.Player.UserId)
 			self.CharacterProfile:Reconcile()
 			self.CharacterProfile.OnSessionEnd:Connect(function()
