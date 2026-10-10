@@ -1,4 +1,5 @@
 local CharacterLoader = {}
+local Attachments = require(script.Attachments)
 local Template = require(script.Template)
 
 CharacterLoader.Sheets = {}
@@ -13,6 +14,7 @@ function CharacterLoader.CharacterAdded(Character)
 	warn(Character.Name.."'s Character Loaded")
 	CharacterLoader.Sheets[Character] = Template
 
+	Attachments.Create(Character)
 	for Module,Value in CharacterLoader.Modules do
 		if Module == script.Name then continue end
 
