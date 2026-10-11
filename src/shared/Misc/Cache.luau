@@ -16,12 +16,11 @@ function Cache.New(Instance : string, Amount : number, Dynamic: boolean)
     return self
 end
 
-function Cache:CreateInstances()
-    local NewCache = {}
-    for i = 1, self.Amount do 
-        local NewInstance = Instance.new(self.Instance)
-        NewInstance:AddTag(self.Identification)
-        table.insert(NewCache, NewInstance)
+function Cache:CreateInstances(Reserve : {Instance}, Amount : number)
+    local NewCache, Amount = Reserve or {}, Amount or self.Amount
+
+    for _ = 1, Amount do 
+        table.insert(NewCache, Instance.new(self.Instance))
     end
     return NewCache
 end
@@ -32,11 +31,11 @@ function Cache:GetInstance()
         if not self.Dynamic then return end
 
         print("Dynamic sizing is enabled, creating new instance to compensate.")
-        table.insert(self.Reserve, Instance.new(self.Instance):AddTag(self.Identification))
+        self:CreateInstances(self.Reserve, self.Amount - #self.Reserve)
     end
 
-    table.remove(self.Reserve, 1)
-    return self.Reserve[1]
+    local Asset = self.Reserve[1] table.remove(self.Reserve, 1)
+    return Asset
 end
 
 function Cache:Withdraw(Instance)
