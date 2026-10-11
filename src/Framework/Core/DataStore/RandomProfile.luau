@@ -19,7 +19,7 @@ function RandomProfile.New(Profile)
     self.FirstName = self:GetFirstName()
     self.LastName = self:GetLastName()
     self.Xenotype = self:RollXenotype()
-    
+    self.Size = math.random(0.9,1.1)
     return self
 end
 

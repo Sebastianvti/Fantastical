@@ -98,7 +98,8 @@ function ToolService:Arming(InputName : string)
 end
 
 function ToolService.CharacterDied()
-    Slots = {}
+    Slots.Equipped = {}
+    Slots.ToolBar = {}
 end
 
 Network.AddTool:onClient(ToolSignal)
