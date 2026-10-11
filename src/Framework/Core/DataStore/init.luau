@@ -18,10 +18,26 @@ local MasterTemplate = require(Templates.MasterTemplate)
 local PlayerStore = ProfileStore.New(GetStoreName, CharacterTemplate)
 local MasterStore = ProfileStore.New(GetStoreName, MasterTemplate)
 
+local DataStoreAttempts = 1000
+
 
 local function GenName()
 	local GeneratedID = HttpService:GenerateGUID(false)
 	return ("Character_"..string.sub(GeneratedID, 1, 10))
+end
+-- Not sure if this yields the entire script.
+function DataStore.GetProfile(Player : Player)
+	local Profiles, Attempts = DataStore.Profiles, 0
+
+	if not Profiles[Player] then
+		while true do
+			if Profiles[Player] then print(Attempts) return Profiles[Player] end
+			task.wait(0.025)
+			Attempts += 1
+			if Attempts > DataStoreAttempts then Player:Kick("Failed to fetch data") return end
+		end
+	end
+	return Profiles[Player]
 end
 
 function DataStore:GetAllLinked()
@@ -61,7 +77,7 @@ function DataStore:StartProfile()
 			if self.Player.Parent == Players then
 				DataStore.Profiles[self.Player] = self.CharacterProfile
 				self.MasterProfile:EndSession()
-				print("[ProfileStore]: Loaded as "..ProfileName)
+				print("[ProfileStore]: "..(self.Player.Name).." Loaded as "..ProfileName)
 				return self.CharacterProfile
 			else
 				warn("Player was not parented to Player service")
