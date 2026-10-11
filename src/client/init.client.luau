@@ -93,9 +93,8 @@ local function DistributeStats(UserId, Modifiers, OldModifiers)
 	end
 end
 
-for _,Player in Players:GetPlayers() do
-	task.defer(PlayerAdded, Player)
-end
+for _,Player in Players:GetPlayers() do task.defer(PlayerAdded, Player) end
+if LocalPlayer.Character then CharacterAdded(LocalPlayer.Character) end
 
 Load()
 Players.PlayerAdded:Connect(PlayerAdded)
