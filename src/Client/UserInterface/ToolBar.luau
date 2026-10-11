@@ -16,6 +16,18 @@ local function GetAllPositions()
     return #Interface:GetChildren() - 1
 end
 
+local function Wipe()
+    for _,Element in Interface:GetChildren() do
+        if Element:IsA("TextLabel") then
+            Element:Destroy()
+        end
+    end
+end
+
+function ToolBar.CharacterDied()
+    Wipe()
+end
+
 function ToolBar.New(Name : string)
     local self = setmetatable({}, ToolBar)
 
