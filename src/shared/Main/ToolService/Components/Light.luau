@@ -20,7 +20,7 @@ function Light.New(Tool, Preload)
     if not Tool then return self end
     
     self.Character = LocalPlayer.Character
-    self.Data = Tool.ToolData.Components[script.Name]
+    self.Data = Tool.ToolData[script.Name]
     self.LightPoint = Tool.Model:FindFirstChild("LightPoint", true)
 
    return self

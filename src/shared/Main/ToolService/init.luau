@@ -52,11 +52,11 @@ function ToolService.Load(ToolData)
     local self = setmetatable({}, ToolService)
 
     self.Tool = {}
-    self.Name = ToolData.Tool.Name
+    self.Name = ToolData.Name
     self.ToolBar = ToolBar.New(self.Name)
     self.Model = ToolData.Model
-    self.ToolData = ToolData.Tool
-    self.Model.Parent = LocalPlayer.Backpack
+    self.ToolData = ToolData.Components
+    -- self.Model.Parent = LocalPlayer.Backpack
     print(self)
     self:LoadComponents()
     local Position = TranslateNumber(self.ToolBar:GetPosition())
@@ -65,7 +65,7 @@ function ToolService.Load(ToolData)
 end
 
 function ToolService:LoadComponents()
-    for Key,Value in self.ToolData.Components do
+    for Key,Value in self.ToolData do
         if not Components:FindFirstChild(Key) then continue end
         -- TO DO: Check if keybind is currently being used and then get a back up if it is.
 

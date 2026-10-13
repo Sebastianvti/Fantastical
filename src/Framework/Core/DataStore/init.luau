@@ -31,7 +31,7 @@ function DataStore.GetProfile(Player : Player)
 
 	if not Profiles[Player] then
 		while true do
-			if Profiles[Player] then print(Attempts) return Profiles[Player] end
+			if Profiles[Player] then return Profiles[Player] end
 			task.wait(0.025)
 			Attempts += 1
 			if Attempts > DataStoreAttempts then Player:Kick("Failed to fetch data") return end

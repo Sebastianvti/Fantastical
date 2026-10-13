@@ -24,7 +24,6 @@ return Lync.define("Network", {
 
 	AddTool = Lync.packet(Lync.struct({
 		Model	 = Lync.inst(),
-		Tool	 = Lync.struct({
 		Name	 = Lync.enum(Service.GetEnums("Tools")),
 		Components = Lync.map(
 			Lync.enum(Service.GetEnums(Main.ToolService.Components)), 
@@ -34,7 +33,7 @@ return Lync.define("Network", {
 			Cooldown = Lync.optional(Lync.quant(0, 500, 0.5)),
 			Audio = Lync.optional(Lync.array(Lync.vlq(), 0, 10))
 		}),0,20
-	)})})),
+	)})),
 	
 	Enable = Lync.packet(Lync.struct({
 		Instance = Lync.inst()
