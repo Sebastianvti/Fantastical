@@ -14,10 +14,11 @@ local Playing = {}
 
 local function Choose(Repo)
     local Chosen = math.random(1,#Repo)
-
-    if not ActionService.New(Repo[Chosen].Action, Repo[Chosen].Track.Length) then return end
+    local Result = ActionService.New(Repo[Chosen].Action, Repo[Chosen].Track.Length)
+    if not Result then return end
 
     Repo[Chosen]:Execute()
+    return true
 end
 
 local function LoopValue(Player, Value, Action)
