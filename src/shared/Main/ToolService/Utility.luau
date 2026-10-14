@@ -5,9 +5,25 @@ local Shared = ReplicatedStorage.Shared
 local Main = Shared.Main
 local LocalPlayer = Players.LocalPlayer
 
+local Network = require(Shared.Network)
 local Animations = require(Shared.Animation)
 local Cooldown = require(Main.Cooldown)
 local Utility = {}
+
+local function NativeHolster(self, Humanoid : Humanoid, Equipping)
+    if not Equipping then Humanoid:UnequipTools() else Humanoid:EquipTool(self.Model) end
+    if not self.Holster then return end
+
+    Network.NativeHolster:fireServer({HolsterModel = self.Holster, Transparency = Equipping or false})
+end
+
+function Utility.Equip(self, Humanoid : Humanoid)
+    if self.Model:IsA("Tool") then NativeHolster(self, Humanoid, true) return end
+end
+
+function Utility.UnEquip(self, Humanoid : Humanoid)
+    if self.Model:IsA("Tool") then NativeHolster(self, Humanoid, false) return end
+end
 
 function Utility.Preload(Data)
     local Preload = {

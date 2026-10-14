@@ -24,24 +24,18 @@ end
 
 local function ToolbarInput(Input, GPE)
     if GPE then return end
-    local DataBar = Slots.ToolBar
-    local InputName = Input.KeyCode.Name
+    local DataBar, InputName = Slots.ToolBar, Input.KeyCode.Name
 
-    if DataBar[InputName] then
-        DataBar[InputName]:Arming(InputName)
-    end
+    if DataBar[InputName] then DataBar[InputName]:Arming(InputName) end
 end
 
 local function ToolInput(Input, GPE)
     if next(Slots.Equipped) == nil then return end
     if GPE then return end
 
-    local Equipped = Slots.Equipped
-    local InputName = Input.KeyCode.Name
+    local Equipped, InputName = Slots.Equipped, Input.KeyCode.Name
+    if Equipped.Tool[InputName] then Equipped.Tool[InputName]:Init() end
 
-    if Equipped.Tool[InputName] then
-        Equipped.Tool[InputName]:Init()
-    end
 end
 
 local function TranslateNumber(Position : number)
@@ -55,8 +49,9 @@ function ToolService.Load(ToolData)
     self.Name = ToolData.Name
     self.ToolBar = ToolBar.New(self.Name)
     self.Model = ToolData.Model
+    self.Holster = ToolData.Holster
     self.ToolData = ToolData.Components
-    -- self.Model.Parent = LocalPlayer.Backpack
+
     print(self)
     self:LoadComponents()
     local Position = TranslateNumber(self.ToolBar:GetPosition())
@@ -83,15 +78,14 @@ function ToolService:Arming(InputName : string)
     local Character = LocalPlayer.Character
     if not Character then return end
 
-    local Humanoid = Character.Humanoid 
-    local DataBar = Slots.ToolBar
+    local Humanoid, DataBar = Character.Humanoid, Slots.ToolBar
     
     if Character:FindFirstChild(self.Model.Name) then 
-        Humanoid:UnequipTools()
+        Utility.UnEquip(self, Humanoid)
         Slots.Equipped = {}
         print("Slot "..InputName.." Equipped")
     else
-        Humanoid:EquipTool(self.Model)
+        Utility.Equip(self, Humanoid)
         Slots.Equipped = DataBar[InputName]
         print("Slot "..InputName.." Unequipped")
     end
