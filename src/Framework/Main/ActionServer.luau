@@ -48,7 +48,6 @@ end
 
 function ActionServer:Update()
     self.Sheet.ActionTrack[self.ActionGroup] = self.Action
-    print(CharacterSheets)
 end
 
 Network.ChangeAction:onServer(ActionServer.New)

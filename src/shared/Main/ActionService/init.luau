@@ -8,8 +8,7 @@ local Data = script.Data
 local InputTrack = require(Data.InputTrack)
 local Network = require(Shared.Network)
 
-local Threads = {}
-local Actions = {}
+local Actions, Threads = {}, {}
 local ActionService = {}
 ActionService.__index = ActionService
 
