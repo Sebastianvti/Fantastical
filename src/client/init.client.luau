@@ -93,10 +93,10 @@ local function DistributeStats(UserId, Modifiers, OldModifiers)
 	end
 end
 
+Load()
 for _,Player in Players:GetPlayers() do task.defer(PlayerAdded, Player) end
 if LocalPlayer.Character then CharacterAdded(LocalPlayer.Character) end
 
-Load()
 Lync.start()
 Players.PlayerAdded:Connect(PlayerAdded)
 RunService.PostSimulation:Connect(function() Lync.flush() end)
