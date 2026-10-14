@@ -19,5 +19,7 @@
     "Actions" : "components",
     "Effects" : "images",
     "CharacterLoader" : "utils",
+    "LoadOrder" : "components",
+    "Appearance" : "images"
   },
 }

@@ -11,14 +11,24 @@ CharacterLoader.Sheets = {}
 CharacterLoader.AllCharacters = {}
 CharacterLoader.Modules = {}
 
+local function EditCharacter(Character : Model, Profile : {any})
+	Character:ScaleTo(Profile.Data.Size)
+end
+
 function CharacterLoader.GetModules(Modules)
 	CharacterLoader.Modules = Modules
 end
 
-function CharacterLoader.CharacterAdded(Character)
+function CharacterLoader.CharacterAdded(Character) -- apologies for the amazing naming conventions. characterinit is for code targetting the character, characterloaded is when all of that is done, so basically just character added
 	local Player = Players:GetPlayerFromCharacter(Character)
 	local Profile = DataStore.GetProfile(Player)
 	CharacterLoader.Sheets[Character] = Template
+	EditCharacter(Character, Profile)
+
+	for _,Name in LoadOrder do
+		if not CharacterLoader.Modules[Name].CharacterInit then continue end
+		CharacterLoader.Modules[Name].CharacterInit(Character)
+	end
 
 	for Module,Value in CharacterLoader.Modules do
 		if Module == script.Name then continue end
@@ -43,17 +53,5 @@ function CharacterLoader.CharacterDied(Character)
 	warn(Character.Name.."'s Character Died")
 end
 
-function CharacterLoader.DataLoaded(Player : Player, Profile)
-	local Character: Model, Data, Humanoid = Player.Character, Profile.Data, Player.Character.Humanoid
-
-	Character:ScaleTo(Data.Size)
-	-- Humanoid:RemoveAccessories() remove accessories is a bit bad
-
-	-- important ones are first going down to least important
-	for _,Name in LoadOrder do
-		if not CharacterLoader.Modules[Name].CharacterLoad then continue end
-		CharacterLoader.Modules[Name].CharacterLoad(Character)
-	end
-end
 
 return CharacterLoader
