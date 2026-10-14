@@ -1,8 +1,6 @@
 local Players = game:GetService("Players")
 local ServerStorage = game:GetService("ServerStorage")
-local CollectionService, Tag, CosmeticCore = game:GetService("CollectionService"), "Appearance", "CosmeticMain"
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Workspace = game:GetService("Workspace")
 
 local Shared = ReplicatedStorage.Shared
 local StoreHouse = ServerStorage.StoreHouse
@@ -10,19 +8,28 @@ local ToolStorage = StoreHouse.Tools
 
 local Network = require(Shared.Network)
 
+local Tag, CosmeticCore = "Appearance", "CosmeticMain" -- this causes one issue in the future just centralize it somewhere
 local EquipmentService = {}
 local ConfigCache = {}
 
 local function InspectItem(Item) -- Welds the parts that stay on character after equip.
     if not Item:FindFirstChild(CosmeticCore) then return end
+    local Index = 0
+    local MainConstraint = Instance.new("WeldConstraint")
 
-    for Index,Part : BasePart in Item:GetChildren() do
+    MainConstraint.Name = Item.Name..(CosmeticCore)
+    MainConstraint.Parent = Item[CosmeticCore]
+    MainConstraint.Part1 = Item[CosmeticCore]
+
+    for _,Part : BasePart in Item:GetChildren() do
         if not Part:IsA("BasePart") then continue end
         if not Part:HasTag(Tag) then continue end
         local Weld : Weld = Instance.new("WeldConstraint")  
-        
+        Index += 1
+
         Weld.Name = (Index).."_Weld"
         Weld.Parent = Item[CosmeticCore]
+
         Weld.Part0 = Item[CosmeticCore]
         Weld.Part1 = Part
     end
@@ -62,28 +69,36 @@ end
 
 local function Holster(Package)
     local HolsterModel : Model, Attachment : Attachment, WeldConstraint : WeldConstraint = Package.Holster:Clone(), Package.Player.Character:FindFirstChild(Package.Data.Attachment, true), Instance.new("WeldConstraint")
+    -- i assume you set it up correctly so this will neeever error right
 
     HolsterModel.Parent = Attachment.Parent
     HolsterModel:PivotTo(Attachment.WorldCFrame * Package.Data.Offset)
 
+    WeldConstraint.Name = Package.Data.Name.."ToolMain"
     WeldConstraint.Parent = Attachment.Parent
     WeldConstraint.Part0 = Attachment.Parent
     WeldConstraint.Part1 = HolsterModel.Handle
+    if Package.Data.Holster then HolsterModel[CosmeticCore][Package.Data.Name..CosmeticCore].Part0 = Attachment.Parent end
+    return HolsterModel
 end
 
 local function LoadToolbar(Player, Profile)
     for _,Value in Profile.Data.ToolBar do
         local Item = ToolStorage:FindFirstChild(Value)
         local ItemData = ConfigCache[Item.Name]
-
-        local Packaged = {Data = ItemData, Model = Item, Player = Player}
+        local Packaged, HolsterModel = {Data = ItemData, Model = Item, Player = Player}
 
         if ItemData.Holster then
             Packaged["Holster"] = ToolStorage.Holsters[Item.Name]
-            Holster(Packaged)
+            HolsterModel = Holster(Packaged)
         end
 
-        Network.AddTool:fireClient(Player, {Model = ReplicateTool(Player, Item), Name = ItemData.Name, Components = ItemData.Components})
+        Network.AddTool:fireClient(Player, {
+            Model = ReplicateTool(Player, Item), 
+            Holster = HolsterModel, 
+            Name = ItemData.Name, 
+            Components = ItemData.Components
+        })
     end
 end
 
@@ -106,6 +121,7 @@ function EquipmentService.Start()
 
     for _,Part : BasePart in ToolStorage:GetDescendants() do
         if Part:IsA("BasePart") then  -- create exemption attribute if u really need to
+            Part:SetAttribute("Transparency", Part.Transparency)
             Part.CanCollide = false 
             Part.CanQuery = false 
 
