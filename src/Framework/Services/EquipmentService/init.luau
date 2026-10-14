@@ -7,6 +7,7 @@ local StoreHouse = ServerStorage.StoreHouse
 local ToolStorage = StoreHouse.Tools
 
 local Network = require(Shared.Network)
+local Assign = require(script.Assign)
 
 local Tag, CosmeticCore = "Appearance", "CosmeticMain" -- this causes one issue in the future just centralize it somewhere
 local EquipmentService = {}
@@ -49,15 +50,6 @@ local function ConvertToModel(Tool : Tool)
 
 
     NewModel.Parent = Holsters
-end
-
-local function Enable(Packet) -- move somewhere else later
-    local Instance = Packet.Instance
-    if Instance.Enabled then 
-        Instance.Enabled = false
-    else
-        Instance.Enabled = true
-    end
 end
 
 local function ReplicateTool(Player: Player, Model : Model)
@@ -111,20 +103,19 @@ function EquipmentService.Start()
         if not Item:FindFirstChild("Config") then continue end
         if ConfigCache[Item.Name] then warn("Duplicate tool found, skipping... "..Item.Name) continue end
 
+        for _,Part : BasePart in ToolStorage:GetDescendants() do
+            if Part:IsA("BasePart") then  -- create exemption attribute if u really need to
+                Part.CanCollide = false 
+                Part.CanQuery = false 
+            end
+        end
+
         ConfigCache[Item.Name] = require(Item.Config)
         if ConfigCache[Item.Name].Holster and Item:IsA("Tool") then
             local NewTool = Item:Clone()
+            Assign.Classes(NewTool)
             InspectItem(NewTool) 
             ConvertToModel(NewTool) 
-        end
-    end
-
-    for _,Part : BasePart in ToolStorage:GetDescendants() do
-        if Part:IsA("BasePart") then  -- create exemption attribute if u really need to
-            Part:SetAttribute("Transparency", Part.Transparency)
-            Part.CanCollide = false 
-            Part.CanQuery = false 
-
         end
     end
 end
@@ -137,8 +128,5 @@ function EquipmentService.GetTool(Tool : string)
     if not ConfigCache[Tool] then warn("Could not find school") return end
     return ConfigCache[Tool]
 end
-
-
-Network.Enable:onServer(Enable)
 
 return EquipmentService
