@@ -3,8 +3,10 @@ local HttpService = game:GetService("HttpService")
 local Cache = {}
 Cache.__index = Cache
 
+-- in order to improve performance, on run time scripts call the cache in order to store instances that will be used later.
+-- supports both instance.new and currently existing instances.
 
-function Cache.New(Instance : string, Amount : number, Dynamic: boolean)
+function Cache.New(Instance : Instance | string, Amount : number, Dynamic: boolean)
     local self = setmetatable({}, Cache)
 
     self.Identification =  string.sub(HttpService:GenerateGUID(false),1, 7)
@@ -19,8 +21,10 @@ end
 function Cache:CreateInstances(Reserve : {Instance}, Amount : number)
     local NewCache, Amount = Reserve or {}, Amount or self.Amount
 
-    for _ = 1, Amount do 
-        table.insert(NewCache, Instance.new(self.Instance))
+    if typeof(self.Instance) == "string" then
+        for _ = 1, Amount do table.insert(NewCache, Instance.new(self.Instance)) end
+    else
+        for _ = 1, Amount do table.insert(NewCache, self.Instance:Clone()) end
     end
     return NewCache
 end
