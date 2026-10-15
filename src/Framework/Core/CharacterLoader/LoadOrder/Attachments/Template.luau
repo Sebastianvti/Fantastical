@@ -1,6 +1,6 @@
 return {
-    ["RightWaistAttachment"] = {Parent = "Torso", Location = CFrame.new(1,-1,0)},
-    ["LeftWaistAttachment"] = {Parent = "Torso", Location = CFrame.new(-1,-1,0)},
+    ["WaistRightAttachment"] = {Parent = "Torso", Location = CFrame.new(1,-1,0)},
+    ["WaistLeftAttachment"] = {Parent = "Torso", Location = CFrame.new(-1,-1,0)},
 
     ["TorsoRightLegAttachment"] = {Parent = "Torso", Location = CFrame.new(1,-2,0)},
     ["TorsoLeftLegAttachment"] = {Parent = "Torso", Location = CFrame.new(-1,-2,0)},
