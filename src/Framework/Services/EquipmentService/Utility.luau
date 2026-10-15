@@ -9,13 +9,11 @@ local Utlity = {}
 
 local function Enable(Packet) -- move somewhere else later
     local Instance = Packet.Instance
-    print(Instance.Enabled)
     Instance.Enabled = not Instance.Enabled and true or false
-    print(Instance.Enabled)
 end
 
 function Utlity.NativeHolster(Package, Player)
-    local Character : Model, HolsterModel : Model, Transparency = Player.Character, Package.HolsterModel, Package.Transparency and 1 or nil
+    local Character : Model, HolsterModel : Model = Player.Character, Package.HolsterModel
     if not Character then return end
     if not Character:FindFirstChild(HolsterModel.Name) and Package.Transparency then return end -- if latency is too slow and player equips too fast
     
@@ -24,10 +22,10 @@ function Utlity.NativeHolster(Package, Player)
         local Property, Assignment = Value:GetAttribute("Property"), Value:GetAttribute("Value")
 
         if type(Assignment) == "number" then
-            Assignment = Package.Transparency and 1 or Value:GetAttribute("Value")
+            Assignment = Package.Transparency and 1 or Assignment
             Value[Property] = Assignment
         elseif type(Assignment) == "boolean" then
-            Assignment = Package.Transparency and false or Value:GetAttribute("Value")
+            Assignment = not Package.Transparency and Assignment or false
             Value[Property] = Assignment
         end
     end
