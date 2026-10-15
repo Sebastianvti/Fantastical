@@ -7,11 +7,26 @@ local StoreHouse = ServerStorage.StoreHouse
 local ToolStorage = StoreHouse.Tools
 
 local Network = require(Shared.Network)
-local Assign = require(script.Assign)
 
 local Tag, CosmeticCore = "Appearance", "CosmeticMain" -- this causes one issue in the future just centralize it somewhere
 local EquipmentService = {}
 local ConfigCache = {}
+
+
+local function Assign(Tool : Tool | Model)
+    for _,Value in Tool:GetDescendants() do
+        if Value:IsA("BasePart") then
+            Value:SetAttribute("Property", "Transparency")
+            Value:SetAttribute("Value", Value.Transparency)
+        -- elseif Value:IsA("ParticleEmitter") then -- i suppose youll just have to ask why this is all commented out
+        --     Value:SetAttribute("Property", "Enabled")
+        --     Value:SetAttribute("Value", Value.Enabled)
+        -- elseif Value:IsA("Light") then
+        --     Value:SetAttribute("Property", "Enabled")
+        --     Value:SetAttribute("Value", Value.Enabled)
+        end
+    end
+end
 
 local function InspectItem(Item) -- Welds the parts that stay on character after equip.
     if not Item:FindFirstChild(CosmeticCore) then return end
@@ -36,8 +51,11 @@ local function InspectItem(Item) -- Welds the parts that stay on character after
     end
 end
 
-local function ConvertToModel(Tool : Tool)
+local function ConvertToModel(Tool : Tool | Model)
     local NewModel : Model, Holsters : Folder = Instance.new("Model"), ToolStorage.Holsters
+    if Tool:IsA("Model") and not Tool:IsA("Tool") then Tool.Parent = Holsters return end -- if tool is just a model then its all good
+
+    -- convert to model if tool is a tool class
     NewModel.Name = Tool.Name
     NewModel:PivotTo(Tool:GetBoundingBox())
 
@@ -70,6 +88,8 @@ local function Holster(Package)
     WeldConstraint.Parent = Attachment.Parent
     WeldConstraint.Part0 = Attachment.Parent
     WeldConstraint.Part1 = HolsterModel.Handle
+    
+    if not HolsterModel:FindFirstChild(CosmeticCore) then return HolsterModel end
     if Package.Data.Holster then HolsterModel[CosmeticCore][Package.Data.Name..CosmeticCore].Part0 = Attachment.Parent end
     return HolsterModel
 end
@@ -111,9 +131,9 @@ function EquipmentService.Start()
         end
 
         ConfigCache[Item.Name] = require(Item.Config)
-        if ConfigCache[Item.Name].Holster and Item:IsA("Tool") then
+        if ConfigCache[Item.Name].Holster then
             local NewTool = Item:Clone()
-            Assign.Classes(NewTool)
+            Assign(NewTool)
             InspectItem(NewTool) 
             ConvertToModel(NewTool) 
         end
