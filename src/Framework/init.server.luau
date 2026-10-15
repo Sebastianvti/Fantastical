@@ -148,21 +148,18 @@ local function PlayerRemoving(Player : Player)
 	Profile:EndSession()
 	DataStore.Profiles[Player] = nil
 end
+CreateDataEnums()
+LoadEnums(StoreHouse)
+local Network = require(Shared.Network) -- it just has to be here, it just does
+Lync.start()
+Load()
+
+Modules["CharacterLoader"].GetModules(Modules)
+Players.PlayerAdded:Connect(PlayerAdded)
+Players.PlayerRemoving:Connect(PlayerRemoving)
+RunService.PostSimulation:Connect(function() Lync.flush() end)
 
 for _,Player in Players:GetPlayers() do
 	task.spawn(PlayerAdded, Player)
 end
-
-CreateDataEnums()
-LoadEnums(StoreHouse)
-local Network = require(Shared.Network)
-Lync.start()
-Load()
-Modules["CharacterLoader"].GetModules(Modules)
-
-Players.PlayerAdded:Connect(PlayerAdded)
-Players.PlayerRemoving:Connect(PlayerRemoving)
-
-
-RunService.PostSimulation:Connect(function() Lync.flush() end)
 game:BindToClose(Lync.close)
