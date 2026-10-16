@@ -24,24 +24,18 @@ end
 
 local function ToolbarInput(Input, GPE)
     if GPE then return end
-    local DataBar = Slots.ToolBar
-    local InputName = Input.KeyCode.Name
+    local DataBar, InputName = Slots.ToolBar, Input.KeyCode.Name
 
-    if DataBar[InputName] then
-        DataBar[InputName]:Arming(InputName)
-    end
+    if DataBar[InputName] then DataBar[InputName]:Arming(InputName) end
 end
 
 local function ToolInput(Input, GPE)
     if next(Slots.Equipped) == nil then return end
     if GPE then return end
 
-    local Equipped = Slots.Equipped
-    local InputName = Input.KeyCode.Name
+    local Equipped, InputName = Slots.Equipped, Input.KeyCode.Name
+    if Equipped.Tool[InputName] then Equipped.Tool[InputName]:Init() end
 
-    if Equipped.Tool[InputName] then
-        Equipped.Tool[InputName]:Init()
-    end
 end
 
 local function TranslateNumber(Position : number)
@@ -52,11 +46,12 @@ function ToolService.Load(ToolData)
     local self = setmetatable({}, ToolService)
 
     self.Tool = {}
-    self.Name = ToolData.Tool.Name
+    self.Name = ToolData.Name
     self.ToolBar = ToolBar.New(self.Name)
     self.Model = ToolData.Model
-    self.ToolData = ToolData.Tool
-    self.Model.Parent = LocalPlayer.Backpack
+    self.Holster = ToolData.Holster
+    self.ToolData = ToolData.Components
+
     print(self)
     self:LoadComponents()
     local Position = TranslateNumber(self.ToolBar:GetPosition())
@@ -65,7 +60,7 @@ function ToolService.Load(ToolData)
 end
 
 function ToolService:LoadComponents()
-    for Key,Value in self.ToolData.Components do
+    for Key,Value in self.ToolData do
         if not Components:FindFirstChild(Key) then continue end
         -- TO DO: Check if keybind is currently being used and then get a back up if it is.
 
@@ -83,15 +78,14 @@ function ToolService:Arming(InputName : string)
     local Character = LocalPlayer.Character
     if not Character then return end
 
-    local Humanoid = Character.Humanoid 
-    local DataBar = Slots.ToolBar
+    local Humanoid, DataBar = Character.Humanoid, Slots.ToolBar
     
     if Character:FindFirstChild(self.Model.Name) then 
-        Humanoid:UnequipTools()
+        Utility.UnEquip(self, Humanoid)
         Slots.Equipped = {}
         print("Slot "..InputName.." Equipped")
     else
-        Humanoid:EquipTool(self.Model)
+        Utility.Equip(self, Humanoid)
         Slots.Equipped = DataBar[InputName]
         print("Slot "..InputName.." Unequipped")
     end

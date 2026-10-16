@@ -1,13 +1,13 @@
 return {
-    ["RightWaistAttachment"] = {Parent = "Torso", Location = CFrame.new(1,-1,0)},
-    ["LeftWaistAttachment"] = {Parent = "Torso", Location = CFrame.new(-1,-1,0)},
+    ["WaistRightAttachment"] = {Parent = "Torso", Location = CFrame.new(1,-1,0)},
+    ["WaistLeftAttachment"] = {Parent = "Torso", Location = CFrame.new(-1,-1,0)},
 
     ["TorsoRightLegAttachment"] = {Parent = "Torso", Location = CFrame.new(1,-2,0)},
     ["TorsoLeftLegAttachment"] = {Parent = "Torso", Location = CFrame.new(-1,-2,0)},
 
     ["LeftLegBackAttachment"] = {Parent = ("Left Leg"), Location = CFrame.new(0,0,0.5)},
     ["LeftLegFrontAttachment"] = {Parent = ("Left Leg"), Location = CFrame.new(0,0,-0.5)},
-    ["LeftLegSidetAttachment"] = {Parent = ("Left Leg"), Location = CFrame.new(-0.5,0,0)},
+    ["LeftLegSideAttachment"] = {Parent = ("Left Leg"), Location = CFrame.new(-0.5,0,0)},
 
     ["RightLegBackAttachment"] = {Parent = ("Right Leg"), Location = CFrame.new(0,0,0.5)},
     ["RightLegFrontAttachment"] = {Parent = ("Right Leg"), Location = CFrame.new(0,0,-0.5)},

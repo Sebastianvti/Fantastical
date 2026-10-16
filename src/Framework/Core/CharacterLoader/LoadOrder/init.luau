@@ -1,3 +1,4 @@
 return {
     "Attachments",
+    "Appearance",
 }

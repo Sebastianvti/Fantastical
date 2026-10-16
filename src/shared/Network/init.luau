@@ -24,17 +24,22 @@ return Lync.define("Network", {
 
 	AddTool = Lync.packet(Lync.struct({
 		Model	 = Lync.inst(),
-		Tool	 = Lync.struct({
+		Holster  = Lync.optional(Lync.inst()),
 		Name	 = Lync.enum(Service.GetEnums("Tools")),
 		Components = Lync.map(
 			Lync.enum(Service.GetEnums(Main.ToolService.Components)), 
 			Lync.struct({
 			Keybinds = Lync.optional(Lync.array(Lync.str(1, 5), 1, 5)),
-			Animations = Lync.optional(Lync.map(Lync.enum(Service.GetEnums(Main.ActionService.Actions)),	Lync.array(Lync.vlq(),0,7),0,15)),
+			Animations = Lync.optional(Lync.map(Lync.enum(Service.GetEnums(Main.ActionService.Actions)), Lync.array(Lync.vlq(),0,7),0,15)),
 			Cooldown = Lync.optional(Lync.quant(0, 500, 0.5)),
 			Audio = Lync.optional(Lync.array(Lync.vlq(), 0, 10))
 		}),0,20
-	)})})),
+	)})),
+
+	NativeHolster = Lync.packet(Lync.struct({
+		HolsterModel = Lync.inst(),
+		Transparency = Lync.bool()
+	})),
 	
 	Enable = Lync.packet(Lync.struct({
 		Instance = Lync.inst()

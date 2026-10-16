@@ -8,12 +8,11 @@ local Misc = Shared.Misc
 
 local Cache = require(Misc.Cache).New("Attachment", 2850, true) -- 2850 is the amount of attachments a 150 player server would have
 
-local Datastore = require(Core.DataStore)
 local Template = require(script.Template)
 
 local Attachments = {}
 
-function Attachments.CharacterLoad(Character : Model)
+function Attachments.CharacterInit(Character : Model)
     local Size = Character:GetScale()
     for Name,Value in Template do
         local NewAttachment : Attachment = Cache:GetInstance()
