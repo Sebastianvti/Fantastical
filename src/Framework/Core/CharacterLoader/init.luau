@@ -23,7 +23,7 @@ function CharacterLoader.CharacterAdded(Character) -- apologies for the amazing 
 	local Player = Players:GetPlayerFromCharacter(Character)
 	local Profile = DataStore.GetProfile(Player)
 	CharacterLoader.Sheets[Character] = Template
-	EditCharacter(Character, Profile)
+	-- EditCharacter(Character, Profile)
 
 	for _,Name in LoadOrder do
 		if not CharacterLoader.Modules[Name].CharacterInit then continue end
@@ -38,6 +38,10 @@ function CharacterLoader.CharacterAdded(Character) -- apologies for the amazing 
 
 	table.insert(CharacterLoader.AllCharacters, Character.Head)
 	warn(Character.Name.."'s Character Loaded")
+end
+
+function CharacterLoader.DataLoaded(Player, Profile)
+	EditCharacter(Player.Character, Profile)
 end
 
 function CharacterLoader.CharacterDied(Character)
