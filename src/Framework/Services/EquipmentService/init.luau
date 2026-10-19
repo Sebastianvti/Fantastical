@@ -7,6 +7,7 @@ local StoreHouse = ServerStorage.StoreHouse
 local ToolStorage = StoreHouse.Tools
 
 local Network = require(Shared.Network)
+local Cache = require(Shared.Misc.Cache).New("Motor6D", Players.MaxPlayers * 2, "Increment", 4)
 
 local Tag, CosmeticCore = "Appearance", "CosmeticMain" -- this causes one issue in the future just centralize it somewhere
 local EquipmentService = {}
@@ -78,16 +79,16 @@ local function ReplicateTool(Player: Player, Model : Model)
 end
 
 local function Holster(Package)
-    local HolsterModel : Model, Attachment : Attachment, WeldConstraint : WeldConstraint = Package.Holster:Clone(), Package.Player.Character:FindFirstChild(Package.Data.Attachment, true), Instance.new("WeldConstraint")
+    local HolsterModel : Model, Attachment : Attachment, Motor6D : Motor6D = Package.Holster:Clone(), Package.Player.Character:FindFirstChild(Package.Data.Attachment, true), Cache:GetInstance()
     -- i assume you set it up correctly so this will neeever error right
 
     HolsterModel.Parent = Attachment.Parent
     HolsterModel:PivotTo(Attachment.WorldCFrame * Package.Data.Offset)
 
-    WeldConstraint.Name = Package.Data.Name.."ToolMain"
-    WeldConstraint.Parent = Attachment.Parent
-    WeldConstraint.Part0 = Attachment.Parent
-    WeldConstraint.Part1 = HolsterModel.Handle
+    Motor6D.Name = Package.Data.Name.." ToolMain"
+    Motor6D.Parent = Package.Player.Character
+    Motor6D.Part0 = Attachment.Parent
+    Motor6D.Part1 = HolsterModel.Handle
     
     if not HolsterModel:FindFirstChild(CosmeticCore) then return HolsterModel end
     if Package.Data.Holster then HolsterModel[CosmeticCore][Package.Data.Name..CosmeticCore].Part0 = Attachment.Parent end
@@ -109,6 +110,7 @@ local function LoadToolbar(Player, Profile)
             Model = ReplicateTool(Player, Item), 
             Holster = HolsterModel, 
             Name = ItemData.Name, 
+            GlobalAnimations = ItemData.GlobalAnimations,
             Components = ItemData.Components
         })
     end
