@@ -80,14 +80,14 @@ function ToolService:Arming(InputName : string)
 
     local Humanoid, DataBar = Character.Humanoid, Slots.ToolBar
     
-    if Character:FindFirstChild(self.Model.Name) then 
-        Utility.UnEquip(self, Humanoid)
-        Slots.Equipped = {}
-        print("Slot "..InputName.." Equipped")
-    else
+    if next(Slots.Equipped) == nil then 
         Utility.Equip(self, Humanoid)
         Slots.Equipped = DataBar[InputName]
-        print("Slot "..InputName.." Unequipped")
+        print("Slot "..InputName.." Equipped")
+    else
+        Utility.UnEquip(self, Humanoid)
+        Slots.Equipped = {}
+        print("Slot "..InputName.."Unequipped")
     end
 end
 
