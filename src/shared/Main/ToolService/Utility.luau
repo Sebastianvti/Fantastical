@@ -19,10 +19,16 @@ end
 
 function Utility.Equip(self, Humanoid : Humanoid)
     if self.Model:IsA("Tool") then NativeHolster(self, Humanoid, true) return end
+    if not self.Holster then return end
+    if not self.GlobalAnimations or not self.GlobalAnimations.Equip then Network.CustomHolster:fireServer({HolsterModel = self.Model, Equipping = true}) return end
+
 end
 
 function Utility.UnEquip(self, Humanoid : Humanoid)
     if self.Model:IsA("Tool") then NativeHolster(self, Humanoid, false) return end
+    if not self.Holster then return end
+    -- if not self.GlobalAnimations or not self.GlobalAnimations.Equip then Network.CustomHolster:fireServer({HolsterModel = self.Model, Equipping = false}) return end
+
 end
 
 function Utility.Preload(Data)

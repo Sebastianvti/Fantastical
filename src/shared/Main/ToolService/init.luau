@@ -49,6 +49,7 @@ function ToolService.Load(ToolData)
     self.Name = ToolData.Name
     self.ToolBar = ToolBar.New(self.Name)
     self.Model = ToolData.Model
+    self.GlobalAnimations = ToolData.GlobalAnimations
     self.Holster = ToolData.Holster
     self.ToolData = ToolData.Components
 
@@ -70,7 +71,6 @@ function ToolService:LoadComponents()
         local Preload = Utility.Preload({ToolData = self, ComponentName = Key, ComponentData = Value})
         
         self.Tool[FirstKeybind] = require(Components[Key]).New(self, Preload)
-        self.ToolData = nil
     end
 end
 

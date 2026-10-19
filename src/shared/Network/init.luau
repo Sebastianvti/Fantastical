@@ -23,22 +23,28 @@ return Lync.define("Network", {
 	})),
 
 	AddTool = Lync.packet(Lync.struct({
-		Model	 = Lync.inst(),
-		Holster  = Lync.optional(Lync.inst()),
-		Name	 = Lync.enum(Service.GetEnums("Tools")),
-		Components = Lync.map(
+		Model	 			= Lync.inst(),
+		Holster  			= Lync.optional(Lync.inst()),
+		Name	 			= Lync.enum(Service.GetEnums("Tools")),
+		GlobalAnimations 	= Lync.optional(Lync.map(Lync.enum({"Equip", "Unequip"}), Lync.array(Lync.vlq(),0,7),0,15)),
+		Components = Lync.optional(Lync.map(
 			Lync.enum(Service.GetEnums(Main.ToolService.Components)), 
 			Lync.struct({
-			Keybinds = Lync.optional(Lync.array(Lync.str(1, 5), 1, 5)),
-			Animations = Lync.optional(Lync.map(Lync.enum(Service.GetEnums(Main.ActionService.Actions)), Lync.array(Lync.vlq(),0,7),0,15)),
-			Cooldown = Lync.optional(Lync.quant(0, 500, 0.5)),
-			Audio = Lync.optional(Lync.array(Lync.vlq(), 0, 10))
+			Keybinds 	= Lync.optional(Lync.array(Lync.str(1, 5), 1, 5)),
+			Animations 	= Lync.optional(Lync.map(Lync.enum(Service.GetEnums(Main.ActionService.Actions)), Lync.array(Lync.vlq(),0,7),0,15)),
+			Cooldown 	= Lync.optional(Lync.quant(0, 500, 0.5)),
+			Audio 		= Lync.optional(Lync.array(Lync.vlq(), 0, 10))
 		}),0,20
-	)})),
+	))})),
 
 	NativeHolster = Lync.packet(Lync.struct({
-		HolsterModel = Lync.inst(),
-		Transparency = Lync.bool()
+		HolsterModel 	= Lync.inst(),
+		Transparency 	= Lync.bool()
+	})),
+
+	CustomHolster = Lync.packet(Lync.struct({
+		HolsterModel 	= Lync.inst(),
+		Equipping 		= Lync.bool()
 	})),
 	
 	Enable = Lync.packet(Lync.struct({
@@ -46,19 +52,19 @@ return Lync.define("Network", {
 	})),
 
 	Stats = Lync.replicate(Lync.struct({
-		Owner = Lync.int(-10, 2^40),
-		Modifiers = Lync.map(Lync.enum(Service.GetEnums("Stats")), Lync.int(0, 100),1,100)
+		Owner 		= Lync.int(-10, 2^40),
+		Modifiers 	= Lync.map(Lync.enum(Service.GetEnums("Stats")), Lync.int(0, 100),1,100)
 	})):keyBy("Owner"),
 
 	ChangeAction = Lync.packet(Lync.struct({
-		Action = Lync.enum(Service.GetEnums(Main.ActionService.Actions)),
-		Time = Lync.f64()
+		Action 	= Lync.enum(Service.GetEnums(Main.ActionService.Actions)),
+		Time 	= Lync.f64()
 	})),
 
 	ChangeCooldown = Lync.packet(Lync.struct({
-		Tool = Lync.enum(Service.GetEnums("Tools")),
-		Component = Lync.enum(Service.GetEnums(Main.ToolService.Components)),
-		Cooldown = Lync.f32(),
-		Mults = Lync.array(Lync.enum(Service.GetEnums("Stats")), 0, 15)
+		Tool 		= Lync.enum(Service.GetEnums("Tools")),
+		Component 	= Lync.enum(Service.GetEnums(Main.ToolService.Components)),
+		Cooldown 	= Lync.f32(),
+		Mults 		= Lync.array(Lync.enum(Service.GetEnums("Stats")), 0, 15)
 	})),
 })
