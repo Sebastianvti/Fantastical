@@ -8,7 +8,7 @@ local Main = Shared.Main
 local Misc = script.Parent.Misc
 
 local ActionService = require(Main.ActionService)
-local Cache = require(Misc.Cache).New("Animation", 10, true)
+local Cache = require(Misc.Cache).New("Animation", 10, "Double")
 
 local Playing = {}
 

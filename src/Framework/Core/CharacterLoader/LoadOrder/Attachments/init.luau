@@ -6,7 +6,7 @@ local Core = script.Parent.Parent
 local Shared = ReplicatedStorage.Shared
 local Misc = Shared.Misc
 
-local Cache = require(Misc.Cache).New("Attachment", 2850, true) -- 2850 is the amount of attachments a 150 player server would have
+local Cache = require(Misc.Cache).New("Attachment", 2850, "Increment", 2850 * 0.25) -- 2850 is the amount of attachments a 150 player server would have
 
 local Template = require(script.Template)
 

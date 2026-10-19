@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 local ServerStorage = game:GetService("ServerStorage")
@@ -11,7 +12,7 @@ local InvisHead, HeadsFolder = StoreHouse.Cache.Head, Directory.Heads
 local Cache = require(Shared.Misc.Cache)
 local Template = require(script.Template)
 
-local HeadCache,WeldCache,DecalCache = Cache.New(InvisHead, 150, true), Cache.New("WeldConstraint", 150, true), Cache.New("Decal", 1050 + 100, true) --1050 decals for a 150 server + surplus
+local HeadCache,WeldCache,DecalCache = Cache.New(InvisHead, Players.MaxPlayers, "Increment", 10), Cache.New("WeldConstraint", Players.MaxPlayers, "Increment", 10), Cache.New("Decal", 1150, "Increment", 100)
 local Appearance = {}
 
 function Appearance.CharacterInit(Character : Model)

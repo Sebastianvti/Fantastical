@@ -10,6 +10,7 @@ return {
     DateOfBirth = "",
     
     Size = 1,
+    HeadOffset = 0,
 
     ToolBar = {},
     Inventory = {},
