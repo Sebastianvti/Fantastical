@@ -1,13 +1,17 @@
 local Players = game:GetService("Players")
+local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Core = ServerScriptService.Framework.Core
 local Shared = ReplicatedStorage.Shared
 local StoreHouse = ServerStorage.StoreHouse
 local ToolStorage = StoreHouse.Tools
 
 local Network = require(Shared.Network)
+
 local Cache = require(Shared.Misc.Cache).New("Motor6D", Players.MaxPlayers * 2, "Increment", 4)
+local Attachments = require(Core.CharacterLoader.LoadOrder.Attachments).GetAttachments()
 
 local Tag, CosmeticCore = "Appearance", "CosmeticMain" -- this causes one issue in the future just centralize it somewhere
 local EquipmentService = {}
@@ -79,17 +83,20 @@ local function ReplicateTool(Player: Player, Model : Model)
 end
 
 local function Holster(Package)
-    local HolsterModel : Model, Attachment : Attachment, Motor6D : Motor6D = Package.Holster:Clone(), Package.Player.Character:FindFirstChild(Package.Data.Attachment, true), Cache:GetInstance()
-    -- i assume you set it up correctly so this will neeever error right
+    local HolsterModel : Model, Character : Model, Motor6D : Motor6D = Package.Holster:Clone(), Package.Player.Character, Cache:GetInstance()
+    local Attachment : Attachment = Character[EquipmentService.GetAttachmentParent(Package.Data.Attachment)][Package.Data.Attachment]
 
-    HolsterModel.Parent = Attachment.Parent
-    HolsterModel:PivotTo(Attachment.WorldCFrame * Package.Data.Offset)
+    HolsterModel.Name = HolsterModel.Name..("_Holster")
+    HolsterModel.Parent = Package.Player.Character
 
     Motor6D.Name = Package.Data.Name.." ToolMain"
-    Motor6D.Parent = Package.Player.Character
     Motor6D.Part0 = Attachment.Parent
     Motor6D.Part1 = HolsterModel.Handle
-    
+
+    Motor6D.C0 = Attachment.CFrame * Package.Data.Offset
+    Motor6D.C1 = CFrame.new(0,0,0)
+
+    Motor6D.Parent = Package.Player.Character
     if not HolsterModel:FindFirstChild(CosmeticCore) then return HolsterModel end
     if Package.Data.Holster then HolsterModel[CosmeticCore][Package.Data.Name..CosmeticCore].Part0 = Attachment.Parent end
     return HolsterModel
@@ -144,6 +151,11 @@ end
 
 function EquipmentService.GetTools()
     return ConfigCache
+end
+
+function EquipmentService.GetAttachmentParent(Attachment : string)
+    if not Attachments[Attachment] then warn("No attachment found") return end
+    return Attachments[Attachment]
 end
 
 function EquipmentService.GetTool(Tool : string)

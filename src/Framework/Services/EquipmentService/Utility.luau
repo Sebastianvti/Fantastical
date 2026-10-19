@@ -3,8 +3,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage.Shared
 
-local Cache = require(Shared.Misc.Cache).New("Motor6D", Players.MaxPlayers, "Increment", 10)
 local Network = require(Shared.Network)
+local EquipmentService = require(script.Parent)
 
 local Tag = "Appearance" -- this causes one issue in the future just centralize it somewhere
 local Utlity = {}
@@ -17,16 +17,26 @@ end
 
 local function CustomHolster(Package, Player)
     local Character : Model, HolsterModel : Model = Player.Character, Package.HolsterModel
-    if not Character then return end
-    -- if not Character:FindFirstChild(HolsterModel.Name) and Package.Equipping then return end
-    if not Character[HolsterModel.Name.." ToolMain"] then warn("No weld constraint found for "..HolsterModel.Name) return end
+    local Motor6D : Motor6D = Character:FindFirstChild(HolsterModel.Name.." ToolMain")
 
-    -- local Motor6D : Motor6D = Cache:GetInstance()
-    -- Motor6D.Name = "ToolWeld - "..(HolsterModel.Name)
-    -- Motor6D.Parent = Character
-    -- Motor6D.Part0 = Character["Right Arm"]
-    -- Motor6D.Part1 = HolsterModel.Handle
-    Character[HolsterModel.Name.." ToolMain"].Part0 = Character["Right Arm"]
+    if not Character then return end
+    if not Motor6D then warn("No Motor6D found for "..HolsterModel.Name) return end
+
+    local ItemData = EquipmentService.GetTool(HolsterModel.Name)
+    local BodyPart : BasePart, AttachmentName : string = EquipmentService.GetAttachmentParent(ItemData.HeldAttachment), ItemData.HeldAttachment
+    local HandleAttach, HolsterParent : Attachment = Motor6D.Part1[AttachmentName], EquipmentService.GetAttachmentParent(ItemData.Attachment)
+
+    if not Package.Equipping then 
+        Motor6D.Part0 = Character[HolsterParent]
+        Motor6D.C0 = Character[HolsterParent][ItemData.Attachment].CFrame * ItemData.Offset
+        Motor6D.C1 = CFrame.new(0,0,0)
+        
+    else
+
+        Motor6D.Part0 = Character[BodyPart]
+        Motor6D.C0 = Character[BodyPart][AttachmentName].CFrame
+        Motor6D.C1 = HandleAttach.CFrame
+    end
 end
 
 local function NativeHolster(Package, Player)
