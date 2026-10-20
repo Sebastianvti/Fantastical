@@ -82,7 +82,7 @@ local function ReplicateTool(Player: Player, Model : Model)
     return NewModel
 end
 
-local function Holster(Package)
+local function CreateHolster(Package)
     local HolsterModel : Model = Package.Holster:Clone()
     local Attachment : string, Offset : CFrame
 
@@ -129,7 +129,7 @@ local function LoadToolbar(Player, Profile)
 
         if ItemData.Holster then
             Packaged["Holster"] = ToolStorage.Holsters[Item.Name]
-            HolsterModel = Holster(Packaged)
+            HolsterModel = CreateHolster(Packaged)
         end
 
         Network.AddTool:fireClient(Player, {
