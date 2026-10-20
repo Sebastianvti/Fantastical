@@ -11,14 +11,14 @@ function Cache.New(Instance : Instance | string, Amount : number, ExpansionType:
 
     self.Identification =  string.sub(HttpService:GenerateGUID(false),1, 7)
     self.Instance = Instance
-    self.Amount = Amount
+    self.Amount = math.round(Amount)
     self.ExpansionType = ExpansionType
     -- Types
     -- Double will simply double the amount that existed from start, so 150 is 300 now
     -- Increment will increase by the number specieifed, so 150 is 160. pretty simple
 
     if not IncrementSize or IncrementSize < 1 then IncrementSize = 1 end
-    self.IncrementSize = IncrementSize or 1
+    self.IncrementSize = math.round(IncrementSize) or 1
 
     self.Reserve = self:CreateInstances()
     return self
@@ -53,11 +53,11 @@ function Cache:Withdraw(Instance)
 end
 
 function Cache.Increment(self)
-    return self.IncrementSize
+    return math.round(self.IncrementSize)
 end
 
 function Cache.Double(self)
-    return self.Amount
+    return math.round(self.Amount)
 end
 
 return Cache
