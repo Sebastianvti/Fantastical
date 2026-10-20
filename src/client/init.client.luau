@@ -95,7 +95,7 @@ end
 
 Load()
 for _,Player in Players:GetPlayers() do task.defer(PlayerAdded, Player) end
-if LocalPlayer.Character then CharacterAdded(LocalPlayer.Character) end
+-- if LocalPlayer.Character then CharacterAdded(LocalPlayer.Character) end
 
 Lync.start()
 Players.PlayerAdded:Connect(PlayerAdded)

@@ -93,10 +93,12 @@ function ToolService:Arming(InputName : string)
         print("Slot "..InputName.." Equipped")
 
     else
+        
         if self:NativeSwitch(Slots.EquippedTool, Humanoid, InputName) then return end
         Utility.UnEquip(Slots.EquippedTool, Humanoid)
         Slots.EquippedTool.Equipped, Slots.EquippedTool = false, {}
         print("Slot "..InputName.."Unequipped")
+
     end
 end
 
