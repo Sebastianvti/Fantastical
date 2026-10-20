@@ -10,7 +10,7 @@ local ToolStorage = StoreHouse.Tools
 
 local Network = require(Shared.Network)
 
-local Cache = require(Shared.Misc.Cache).New("Motor6D", Players.MaxPlayers * 2, "Increment", 4)
+local Cache = require(Shared.Misc.Cache).New("Motor6D", Players.MaxPlayers * 3, "Increment", 8)
 local Attachments = require(Core.CharacterLoader.LoadOrder.Attachments).GetAttachments()
 
 local Tag, CosmeticCore = "Appearance", "CosmeticMain" -- this causes one issue in the future just centralize it somewhere
@@ -83,31 +83,49 @@ local function ReplicateTool(Player: Player, Model : Model)
 end
 
 local function Holster(Package)
-    local HolsterModel : Model, Character : Model, Motor6D : Motor6D = Package.Holster:Clone(), Package.Player.Character, Cache:GetInstance()
-    local Attachment : Attachment = Character[EquipmentService.GetAttachmentParent(Package.Data.Attachment)][Package.Data.Attachment]
+    local HolsterModel : Model = Package.Holster:Clone()
+    local Attachment : string, Offset : CFrame
 
-    HolsterModel.Name = HolsterModel.Name..("_Holster")
-    HolsterModel.Parent = Package.Player.Character
+    for HandlePart,Value in Package.Data.HolsterAttachments do 
+        if not HolsterModel:FindFirstChild(HandlePart) then continue end
 
-    Motor6D.Name = Package.Data.Name.." ToolMain"
-    Motor6D.Part0 = Attachment.Parent
-    Motor6D.Part1 = HolsterModel.Handle
+        local Character : Model = Package.Player.Character
+        Attachment, Offset = Value.Attachment, Value.Offset or CFrame.new(0,0,0)
 
-    Motor6D.C0 = Attachment.CFrame * Package.Data.Offset
-    Motor6D.C1 = CFrame.new(0,0,0)
+        local AttachmentParent : Attachment = EquipmentService.GetAttachmentParent(Attachment)
+        local BodyPart, Motor6D : Motor6D = Character[AttachmentParent], Cache:GetInstance()
 
-    Motor6D.Parent = Package.Player.Character
-    
+        local Position = Offset.Position * Character:GetScale()
+        Offset = CFrame.new(Position) * Offset.Rotation
+
+        HolsterModel.Name = HolsterModel.Name..("_Holster")
+        HolsterModel.Parent = Character
+
+        Motor6D.Name = Package.Data.Name.." ToolMain"
+        Motor6D.Part0 = BodyPart
+        Motor6D.Part1 = HolsterModel[HandlePart]
+
+        Motor6D.C0 = BodyPart[Attachment].CFrame * Offset
+        Motor6D.C1 = CFrame.new(0,0,0)
+
+        Motor6D.Parent = Package.Player.Character
+    end
+
     if not HolsterModel:FindFirstChild(CosmeticCore) then return HolsterModel end
-    if Package.Data.Holster then HolsterModel[CosmeticCore][Package.Data.Name..CosmeticCore].Part0 = Attachment.Parent end
+    if Package.Data.Holster then
+        HolsterModel[CosmeticCore][Package.Data.Name..CosmeticCore].Part0 = Attachment.Parent -- uhhhhh
+    end
     return HolsterModel
 end
 
 local function LoadToolbar(Player, Profile)
     for _,Value in Profile.Data.ToolBar do
         local Item = ToolStorage:FindFirstChild(Value)
+        if not Item then  continue end
+
+        local HolsterModel
         local ItemData = ConfigCache[Item.Name]
-        local Packaged, HolsterModel = {Data = ItemData, Model = Item, Player = Player}
+        local Packaged = {Data = ItemData, Model = Item, Player = Player}
 
         if ItemData.Holster then
             Packaged["Holster"] = ToolStorage.Holsters[Item.Name]
