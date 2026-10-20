@@ -97,6 +97,7 @@ local function Holster(Package)
     Motor6D.C1 = CFrame.new(0,0,0)
 
     Motor6D.Parent = Package.Player.Character
+    
     if not HolsterModel:FindFirstChild(CosmeticCore) then return HolsterModel end
     if Package.Data.Holster then HolsterModel[CosmeticCore][Package.Data.Name..CosmeticCore].Part0 = Attachment.Parent end
     return HolsterModel

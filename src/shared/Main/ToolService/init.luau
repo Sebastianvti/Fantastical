@@ -30,16 +30,21 @@ local function ToolbarInput(Input, GPE)
 end
 
 local function ToolInput(Input, GPE)
-    if next(Slots.Equipped) == nil then return end
+    if next(Slots.EquippedTool) == nil then return end
     if GPE then return end
 
-    local Equipped, InputName = Slots.Equipped, Input.KeyCode.Name
+    local Equipped, InputName = Slots.EquippedTool, Input.KeyCode.Name
     if Equipped.Tool[InputName] then Equipped.Tool[InputName]:Init() end
 
 end
 
 local function TranslateNumber(Position : number)
     return Translate[Position]
+end
+
+local function IsNative(self)
+    if self.Model:IsA("Tool") then return true end
+    return false
 end
 
 function ToolService.Load(ToolData)
@@ -52,6 +57,8 @@ function ToolService.Load(ToolData)
     self.GlobalAnimations = ToolData.GlobalAnimations
     self.Holster = ToolData.Holster
     self.ToolData = ToolData.Components
+    self.Equipped = false
+    self.Native = IsNative(self)
 
     print(self)
     self:LoadComponents()
@@ -80,20 +87,33 @@ function ToolService:Arming(InputName : string)
 
     local Humanoid, DataBar = Character.Humanoid, Slots.ToolBar
     
-    if next(Slots.Equipped) == nil then 
+    if next(Slots.EquippedTool) == nil then 
         Utility.Equip(self, Humanoid)
-        Slots.Equipped = DataBar[InputName]
+        Slots.EquippedTool, Slots.EquippedTool.Equipped = DataBar[InputName], true
         print("Slot "..InputName.." Equipped")
+
     else
-        Utility.UnEquip(self, Humanoid)
-        Slots.Equipped = {}
+        if self:NativeSwitch(Slots.EquippedTool, Humanoid, InputName) then return end
+        Utility.UnEquip(Slots.EquippedTool, Humanoid)
+        Slots.EquippedTool.Equipped, Slots.EquippedTool = false, {}
         print("Slot "..InputName.."Unequipped")
     end
 end
 
+function ToolService:NativeSwitch(Equipped, Humanoid, InputName)
+    if not self.Native and not Equipped.Native then return end
+    local DataBar = Slots.ToolBar
+
+    Utility.UnEquip(Slots.EquippedTool, Humanoid)
+    Slots.EquippedTool.Equipped, Slots.EquippedTool = false, {}
+
+    Utility.Equip(self, Humanoid)
+    Slots.EquippedTool, Slots.EquippedTool.Equipped = DataBar[InputName], true
+    return true
+end
+
 function ToolService.CharacterDied()
-    Slots.Equipped = {}
-    Slots.ToolBar = {}
+    Slots.ToolBar, Slots.EquippedTool = {}, {}
 end
 
 Network.AddTool:onClient(ToolSignal)

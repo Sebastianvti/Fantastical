@@ -1,4 +1,4 @@
 return {
     ToolBar = {},
-    Equipped = {}
+    EquippedTool = {}
 }
