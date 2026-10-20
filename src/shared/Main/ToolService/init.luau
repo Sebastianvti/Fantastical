@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
@@ -51,13 +52,17 @@ function ToolService.Load(ToolData)
     local self = setmetatable({}, ToolService)
 
     self.Tool = {}
+    self.Id = HttpService:GenerateGUID(false)
     self.Name = ToolData.Name
+
     self.ToolBar = ToolBar.New(self.Name)
     self.Model = ToolData.Model
     self.GlobalAnimations = ToolData.GlobalAnimations
+
     self.Holster = ToolData.Holster
     self.ToolData = ToolData.Components
     self.Equipped = false
+
     self.Native = IsNative(self)
 
     print(self)
@@ -93,7 +98,7 @@ function ToolService:Arming(InputName : string)
         print("Slot "..InputName.." Equipped")
 
     else
-        
+
         if self:NativeSwitch(Slots.EquippedTool, Humanoid, InputName) then return end
         Utility.UnEquip(Slots.EquippedTool, Humanoid)
         Slots.EquippedTool.Equipped, Slots.EquippedTool = false, {}
@@ -103,7 +108,8 @@ function ToolService:Arming(InputName : string)
 end
 
 function ToolService:NativeSwitch(Equipped, Humanoid, InputName)
-    if not self.Native and not Equipped.Native then return end
+    if self.Id == Equipped.Id then return end
+    if not self.Native and not Equipped.Native and Equipped ~= self then return end
     local DataBar = Slots.ToolBar
 
     Utility.UnEquip(Slots.EquippedTool, Humanoid)
