@@ -5,14 +5,13 @@ local Shared = ReplicatedStorage.Shared
 local Network = require(Shared.Network)
 local EquipmentService = require(script.Parent)
 
-local Tag = "Appearance" -- this causes one issue in the future just centralize it somewhere
-local EquipLogic = {}
+local Tag, EquipLogic = "Appearance", {}
 -- handles server events for tools
 
 local function NativeHolster(Package, Player)
     local Character : Model, HolsterModel : Model = Player.Character, Package.HolsterModel
     if not Character then return end
-    if Package.Transparency then return end -- if latency is too slow and player equips too fast
+    if not Character:FindFirstChild(HolsterModel.Name) and Package.Transparency then return end  -- if latency is too slow and player equips too fast
 
     for _,Value : BasePart in HolsterModel:GetDescendants() do
         if not Value:IsA("BasePart") or not Value:HasTag(Tag) then continue end
@@ -21,8 +20,9 @@ local function NativeHolster(Package, Player)
         if type(Assignment) == "number" then
             Assignment = Package.Transparency and 1 or Assignment
             Value[Property] = Assignment
+            print(Value[Property])
         elseif type(Assignment) == "boolean" then
-            Assignment = not Package.Transparency and Assignment or false
+            Assignment = not Package.Transparency and Assignment or false -- can someone fix this. i just dont feel like touching this ever again
             Value[Property] = Assignment
         end
     end
