@@ -10,7 +10,8 @@ local ToolStorage = StoreHouse.Tools
 
 local Network = require(Shared.Network)
 
-local Cache = require(Shared.Misc.Cache).New("Motor6D", Players.MaxPlayers * 3, "Increment", 8)
+local Cache = require(Shared.Misc.Cache)
+local MotorCache, ConstraintCache = Cache.New("Motor6D", Players.MaxPlayers * 3, "Increment", 8), Cache.New("WeldConstraint", 50, "Double")
 local Attachments = require(Core.CharacterLoader.LoadOrder.Attachments).GetAttachments()
 
 local Tag, CosmeticCore = "Appearance", "CosmeticMain" -- this causes one issue in the future just centralize it somewhere
@@ -23,7 +24,7 @@ local function Assign(Tool : Tool | Model)
         if Value:IsA("BasePart") then
             Value:SetAttribute("Property", "Transparency")
             Value:SetAttribute("Value", Value.Transparency)
-        -- elseif Value:IsA("ParticleEmitter") then -- i suppose youll just have to ask why this is all commented out
+        -- elseif Value:IsA("ParticleEmitter") then -- Commented out ~10th October, 2026 | might need it
         --     Value:SetAttribute("Property", "Enabled")
         --     Value:SetAttribute("Value", Value.Enabled)
         -- elseif Value:IsA("Light") then
@@ -59,7 +60,6 @@ end
 local function ConvertToModel(Tool : Tool | Model)
     local NewModel : Model, Holsters : Folder = Instance.new("Model"), ToolStorage.Holsters
     if Tool:IsA("Model") and not Tool:IsA("Tool") then Tool.Parent = Holsters return end -- if tool is just a model then its all good
-
     -- convert to model if tool is a tool class
     NewModel.Name = Tool.Name
     NewModel:PivotTo(Tool:GetBoundingBox())
@@ -71,8 +71,33 @@ local function ConvertToModel(Tool : Tool | Model)
         Inst.Parent = NewModel
     end
 
-
     NewModel.Parent = Holsters
+end
+
+local function ValidateEverything(Model : Model, Config) -- Checks if attachments were spelled correctly, and if handle is present. Also welds together parts that will be seperated when equipped.
+    if not Model:FindFirstChild("Handle") then error("Handle part was not found on "..Model.Name.." all tools require a Handle.") end
+
+    for Key,Value in Config do
+        if type(Value) ~= "table" or type(Value) ~= "table" and not Value.Attachment then continue end
+        if not Value.Attachment then continue end
+
+        if not EquipmentService.GetAttachmentParent(Value.Attachment) then
+            error(Config.Name.." is either missing or has a mispelled attachment on Key : "..Key)
+        end
+    end
+
+    if not Config.HeldAttachments then return end
+    print("?")
+    for PartName,_ in Config.HeldAttachments do
+        if Config.HolsterAttachments[PartName] then continue end
+
+        local Constraint : WeldConstraint = ConstraintCache:GetInstance()
+        Constraint.Name = "HolsterConstraint_"..PartName
+        Constraint.Parent = Model
+        Constraint.Part0 = Model[PartName]
+        Constraint.Part1 = Model.Handle
+        print(Constraint)
+    end
 end
 
 local function ReplicateTool(Player: Player, Model : Model)
@@ -93,7 +118,7 @@ local function CreateHolster(Package)
         Attachment, Offset = Value.Attachment, Value.Offset or CFrame.new(0,0,0)
 
         local AttachmentParent : Attachment = EquipmentService.GetAttachmentParent(Attachment)
-        local BodyPart, Motor6D : Motor6D = Character[AttachmentParent], Cache:GetInstance()
+        local BodyPart, Motor6D : Motor6D = Character[AttachmentParent], MotorCache:GetInstance()
 
         local Position = Offset.Position * Character:GetScale()
         Offset = CFrame.new(Position) * Offset.Rotation
@@ -159,6 +184,9 @@ function EquipmentService.Start()
         end
 
         ConfigCache[Item.Name] = require(Item.Config)
+
+        ValidateEverything(Item, ConfigCache[Item.Name]) -- IMPORTANT | THROWS ERRORS
+        
         if ConfigCache[Item.Name].Holster then
             local NewTool = Item:Clone()
             Assign(NewTool)

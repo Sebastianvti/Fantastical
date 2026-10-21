@@ -7,7 +7,7 @@ local Utility = {}
 
 local function Enable(Packet) -- move somewhere else later
     local Instance = Packet.Instance
-    Instance.Enabled = not Instance.Enabled and true or false
+    Instance.Enabled = not Instance.Enabled
 end
 
 Network.Enable:onServer(Enable)
